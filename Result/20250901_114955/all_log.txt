@@ -1,0 +1,14 @@
+2025-09-01 11:49:55,795 - aw.py[line:131] - INFO: 设备连接成功
+2025-09-01 11:49:55,796 - iTrace.py[line:52] - INFO: trace线程开始运行
+2025-09-01 11:49:55,875 - aw.py[line:118] - INFO: ============== set_up开始执行===============
+2025-09-01 11:49:55,887 - PerformanceDynamic_58city_0010.py[line:18] - INFO: 测试环境开始准备
+2025-09-01 11:49:56,365 - aw.py[line:120] - INFO: ============== set_up执行结束===============
+2025-09-01 11:49:56,378 - aw.py[line:118] - INFO: ============= run_case开始执行==============
+2025-09-01 11:49:56,390 - PerformanceDynamic_58city_0010.py[line:30] - INFO: 用例开始执行
+2025-09-01 11:49:56,404 - connectionpool.py[line:244] - DEBUG: Starting new HTTP connection (1): localhost:8100
+2025-09-01 11:49:56,473 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /wda/locked HTTP/1.1" 200 77
+2025-09-01 11:49:56,486 - iTrace.py[line:58] - INFO: trace线程开始抓取trace
+2025-09-01 11:49:59,315 - iTrace.py[line:84] - INFO: No devices found matching: iPhoned (18.5)
+2025-09-01 11:50:24,618 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /wda/homescreen HTTP/1.1" 200 76
+2025-09-01 11:50:24,621 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /status HTTP/1.1" 200 542
+2025-09-01 11:50:24,863 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/2C28C55C-C911-4014-8D4C-0813F033AD07/window/size HTTP/1.1" 200 115

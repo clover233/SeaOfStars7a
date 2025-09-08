@@ -1,0 +1,29 @@
+2025-09-01 11:50:28,169 - aw.py[line:131] - INFO: 设备连接成功
+2025-09-01 11:50:28,169 - iTrace.py[line:52] - INFO: trace线程开始运行
+2025-09-01 11:50:28,232 - aw.py[line:118] - INFO: ============== set_up开始执行===============
+2025-09-01 11:50:28,245 - PerformanceDynamic_58city_0010.py[line:18] - INFO: 测试环境开始准备
+2025-09-01 11:50:28,736 - aw.py[line:120] - INFO: ============== set_up执行结束===============
+2025-09-01 11:50:28,748 - aw.py[line:118] - INFO: ============= run_case开始执行==============
+2025-09-01 11:50:28,761 - PerformanceDynamic_58city_0010.py[line:30] - INFO: 用例开始执行
+2025-09-01 11:50:28,774 - connectionpool.py[line:244] - DEBUG: Starting new HTTP connection (1): localhost:8100
+2025-09-01 11:50:28,833 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /wda/locked HTTP/1.1" 200 77
+2025-09-01 11:50:28,846 - iTrace.py[line:58] - INFO: trace线程开始抓取trace
+2025-09-01 11:50:31,657 - iTrace.py[line:84] - INFO: No devices found matching: iPhoned (18.5)
+2025-09-01 11:50:31,674 - iTrace.py[line:58] - INFO: trace线程开始抓取trace
+2025-09-01 11:50:34,431 - iTrace.py[line:84] - INFO: No devices found matching: iPhoned (18.5)
+2025-09-01 11:50:34,444 - iTrace.py[line:58] - INFO: trace线程开始抓取trace
+2025-09-01 11:50:37,215 - iTrace.py[line:84] - INFO: No devices found matching: iPhoned (18.5)
+2025-09-01 11:50:37,228 - iTrace.py[line:58] - INFO: trace线程开始抓取trace
+2025-09-01 11:50:39,991 - iTrace.py[line:84] - INFO: No devices found matching: iPhoned (18.5)
+2025-09-01 11:50:40,002 - iTrace.py[line:58] - INFO: trace线程开始抓取trace
+2025-09-01 11:50:42,756 - iTrace.py[line:84] - INFO: No devices found matching: iPhoned (18.5)
+2025-09-01 11:50:42,769 - iTrace.py[line:58] - INFO: trace线程开始抓取trace
+2025-09-01 11:50:45,532 - iTrace.py[line:84] - INFO: No devices found matching: iPhoned (18.5)
+2025-09-01 11:50:45,542 - iTrace.py[line:58] - INFO: trace线程开始抓取trace
+2025-09-01 11:50:48,306 - iTrace.py[line:84] - INFO: No devices found matching: iPhoned (18.5)
+2025-09-01 11:50:48,319 - iTrace.py[line:58] - INFO: trace线程开始抓取trace
+2025-09-01 11:50:50,640 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /wda/homescreen HTTP/1.1" 200 76
+2025-09-01 11:50:50,643 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /status HTTP/1.1" 200 542
+2025-09-01 11:50:50,866 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/2C28C55C-C911-4014-8D4C-0813F033AD07/window/size HTTP/1.1" 200 115
+2025-09-01 11:50:51,090 - iTrace.py[line:84] - INFO: No devices found matching: iPhoned (18.5)
+2025-09-01 11:50:51,097 - iTrace.py[line:58] - INFO: trace线程开始抓取trace

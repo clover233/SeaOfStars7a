@@ -1,0 +1,30 @@
+2025-09-01 11:38:42,777 - aw.py[line:118] - INFO: ============== set_up开始执行===============
+2025-09-01 11:38:42,789 - PerformanceDynamic_Alipay_0010.py[line:18] - INFO: 测试环境开始准备
+2025-09-01 11:38:43,295 - aw.py[line:120] - INFO: ============== set_up执行结束===============
+2025-09-01 11:38:43,308 - aw.py[line:118] - INFO: ============= run_case开始执行==============
+2025-09-01 11:38:43,321 - PerformanceDynamic_Alipay_0010.py[line:30] - INFO: 用例开始执行
+2025-09-01 11:38:43,334 - connectionpool.py[line:244] - DEBUG: Starting new HTTP connection (1): localhost:8100
+2025-09-01 11:38:43,393 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /wda/locked HTTP/1.1" 200 77
+2025-09-01 11:38:43,405 - PerformanceDynamic_Alipay_0010.py[line:38] - INFO: 应用启动
+2025-09-01 11:38:43,417 - iTrace.py[line:119] - ERROR: trace not start
+2025-09-01 11:38:43,448 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /status HTTP/1.1" 200 542
+2025-09-01 11:38:43,710 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:38:43,754 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/tap/0 HTTP/1.1" 404 384
+2025-09-01 11:38:43,766 - main_top48.py[line:133] - ERROR: WDARequestError(status=110, value={'error': 'unknown command', 'message': 'Unhandled endpoint: /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/tap/0 -- http://localhost:8100/ with parameters {\n    wildcards =     (\n        "session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/tap/0"\n    );\n}'})
+2025-09-01 11:38:48,777 - iTrace.py[line:49] - INFO: Trace进程未运行！无需停止.
+2025-09-01 11:38:48,836 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /wda/homescreen HTTP/1.1" 200 76
+2025-09-01 11:38:49,133 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:38:50,838 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:38:51,133 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:38:52,142 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:38:54,435 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:38:55,423 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:38:57,706 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:38:58,894 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:39:01,178 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:39:02,325 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:39:04,697 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/elements HTTP/1.1" 200 232
+2025-09-01 11:39:05,070 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/elements HTTP/1.1" 200 232
+2025-09-01 11:39:05,277 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/element/69030000-0000-0000-2400-000000000000/rect HTTP/1.1" 200 142
+2025-09-01 11:39:05,831 - main_top48.py[line:146] - INFO: succ_num - 0
+2025-09-01 11:39:05,849 - main_top48.py[line:147] - INFO: fail_num - 1

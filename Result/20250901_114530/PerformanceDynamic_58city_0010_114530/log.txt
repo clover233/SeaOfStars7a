@@ -1,0 +1,15 @@
+2025-09-01 11:45:30,480 - aw.py[line:118] - INFO: ============== set_up开始执行===============
+2025-09-01 11:45:30,493 - PerformanceDynamic_58city_0010.py[line:18] - INFO: 测试环境开始准备
+2025-09-01 11:45:31,117 - aw.py[line:120] - INFO: ============== set_up执行结束===============
+2025-09-01 11:45:31,130 - aw.py[line:118] - INFO: ============= run_case开始执行==============
+2025-09-01 11:45:31,142 - PerformanceDynamic_58city_0010.py[line:30] - INFO: 用例开始执行
+2025-09-01 11:45:31,156 - connectionpool.py[line:244] - DEBUG: Starting new HTTP connection (1): localhost:8100
+2025-09-01 11:45:31,225 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /wda/locked HTTP/1.1" 200 77
+2025-09-01 11:45:31,238 - PerformanceDynamic_58city_0010.py[line:38] - INFO: 应用启动
+2025-09-01 11:45:31,250 - iTrace.py[line:119] - ERROR: trace not start
+2025-09-01 11:45:31,294 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /wda/locked HTTP/1.1" 200 77
+2025-09-01 11:45:31,332 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session HTTP/1.1" 200 221
+2025-09-01 11:45:31,459 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/8E4070AD-BE22-48E6-86FE-C0F07DADBD87/wda/apps/launch HTTP/1.1" 200 76
+2025-09-01 11:45:31,484 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /status HTTP/1.1" 200 542
+2025-09-01 11:45:31,723 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/8E4070AD-BE22-48E6-86FE-C0F07DADBD87/window/size HTTP/1.1" 200 115
+2025-09-01 11:45:31,822 - connectionpool.py[line:244] - DEBUG: Starting new HTTP connection (2): localhost:8100

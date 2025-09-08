@@ -1,0 +1,31 @@
+2025-09-01 11:42:54,840 - aw.py[line:131] - INFO: 设备连接成功
+2025-09-01 11:42:54,840 - iTrace.py[line:52] - INFO: trace线程开始运行
+2025-09-01 11:42:54,916 - aw.py[line:118] - INFO: ============== set_up开始执行===============
+2025-09-01 11:42:54,929 - PerformanceDynamic_Alipay_0010.py[line:18] - INFO: 测试环境开始准备
+2025-09-01 11:42:55,440 - aw.py[line:120] - INFO: ============== set_up执行结束===============
+2025-09-01 11:42:55,452 - aw.py[line:118] - INFO: ============= run_case开始执行==============
+2025-09-01 11:42:55,465 - PerformanceDynamic_Alipay_0010.py[line:30] - INFO: 用例开始执行
+2025-09-01 11:42:55,465 - connectionpool.py[line:244] - DEBUG: Starting new HTTP connection (1): localhost:8100
+2025-09-01 11:42:55,521 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /wda/locked HTTP/1.1" 200 77
+2025-09-01 11:42:55,534 - PerformanceDynamic_Alipay_0010.py[line:38] - INFO: 应用启动
+2025-09-01 11:42:55,546 - iTrace.py[line:119] - ERROR: trace not start
+2025-09-01 11:42:55,590 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /status HTTP/1.1" 200 542
+2025-09-01 11:42:55,773 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/apps/launch HTTP/1.1" 200 76
+2025-09-01 11:42:57,977 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:42:59,682 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:43:00,549 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /wda/homescreen HTTP/1.1" 200 76
+2025-09-01 11:43:00,729 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:43:02,436 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:43:02,710 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:43:03,691 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:43:05,994 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:43:07,143 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:43:09,420 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:43:10,519 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:43:12,812 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:43:13,830 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:43:16,216 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/elements HTTP/1.1" 200 232
+2025-09-01 11:43:16,597 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/elements HTTP/1.1" 200 232
+2025-09-01 11:43:16,784 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/element/69030000-0000-0000-2400-000000000000/rect HTTP/1.1" 200 142
+2025-09-01 11:43:16,800 - main_top48.py[line:146] - INFO: succ_num - 0
+2025-09-01 11:43:16,812 - main_top48.py[line:147] - INFO: fail_num - 0

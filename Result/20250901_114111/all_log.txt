@@ -1,0 +1,30 @@
+2025-09-01 11:41:11,321 - aw.py[line:131] - INFO: 设备连接成功
+2025-09-01 11:41:11,321 - iTrace.py[line:52] - INFO: trace线程开始运行
+2025-09-01 11:41:11,401 - aw.py[line:118] - INFO: ============== set_up开始执行===============
+2025-09-01 11:41:11,412 - PerformanceDynamic_Alipay_0010.py[line:18] - INFO: 测试环境开始准备
+2025-09-01 11:41:11,926 - aw.py[line:120] - INFO: ============== set_up执行结束===============
+2025-09-01 11:41:11,938 - aw.py[line:118] - INFO: ============= run_case开始执行==============
+2025-09-01 11:41:11,950 - PerformanceDynamic_Alipay_0010.py[line:30] - INFO: 用例开始执行
+2025-09-01 11:41:11,964 - connectionpool.py[line:244] - DEBUG: Starting new HTTP connection (1): localhost:8100
+2025-09-01 11:41:12,028 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /wda/locked HTTP/1.1" 200 77
+2025-09-01 11:41:12,041 - PerformanceDynamic_Alipay_0010.py[line:38] - INFO: 应用启动
+2025-09-01 11:41:12,053 - iTrace.py[line:119] - ERROR: trace not start
+2025-09-01 11:41:12,065 - main_top48.py[line:133] - ERROR: type object 'SeaOfStarsAW' has no attribute 'BaseClient'
+2025-09-01 11:41:17,079 - iTrace.py[line:49] - INFO: Trace进程未运行！无需停止.
+2025-09-01 11:41:17,137 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /wda/homescreen HTTP/1.1" 200 76
+2025-09-01 11:41:17,162 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /status HTTP/1.1" 200 542
+2025-09-01 11:41:17,439 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:41:19,126 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:41:19,406 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:41:20,377 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:41:22,687 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:41:23,687 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:41:25,982 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:41:27,117 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:41:29,411 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/window/size HTTP/1.1" 200 115
+2025-09-01 11:41:30,406 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:41:32,793 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/elements HTTP/1.1" 200 232
+2025-09-01 11:41:33,158 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/elements HTTP/1.1" 200 232
+2025-09-01 11:41:33,352 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/BEA09D90-392C-4EEC-AD27-41B868DB46BD/element/69030000-0000-0000-2400-000000000000/rect HTTP/1.1" 200 142
+2025-09-01 11:41:33,840 - main_top48.py[line:146] - INFO: succ_num - 0
+2025-09-01 11:41:33,852 - main_top48.py[line:147] - INFO: fail_num - 1

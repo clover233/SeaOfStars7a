@@ -1,0 +1,37 @@
+2025-09-01 11:45:43,080 - aw.py[line:118] - INFO: ============== set_up开始执行===============
+2025-09-01 11:45:43,092 - PerformanceDynamic_58city_0010.py[line:18] - INFO: 测试环境开始准备
+2025-09-01 11:45:43,554 - aw.py[line:120] - INFO: ============== set_up执行结束===============
+2025-09-01 11:45:43,566 - aw.py[line:118] - INFO: ============= run_case开始执行==============
+2025-09-01 11:45:43,579 - PerformanceDynamic_58city_0010.py[line:30] - INFO: 用例开始执行
+2025-09-01 11:45:43,580 - connectionpool.py[line:244] - DEBUG: Starting new HTTP connection (1): localhost:8100
+2025-09-01 11:45:43,645 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /wda/locked HTTP/1.1" 200 77
+2025-09-01 11:45:43,658 - PerformanceDynamic_58city_0010.py[line:38] - INFO: 应用启动
+2025-09-01 11:45:43,664 - iTrace.py[line:119] - ERROR: trace not start
+2025-09-01 11:45:43,689 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /wda/locked HTTP/1.1" 200 77
+2025-09-01 11:45:43,721 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session HTTP/1.1" 200 221
+2025-09-01 11:45:44,967 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/2C28C55C-C911-4014-8D4C-0813F033AD07/wda/apps/launch HTTP/1.1" 200 76
+2025-09-01 11:45:44,998 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /status HTTP/1.1" 200 542
+2025-09-01 11:45:45,231 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/2C28C55C-C911-4014-8D4C-0813F033AD07/window/size HTTP/1.1" 200 115
+2025-09-01 11:45:46,646 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/2C28C55C-C911-4014-8D4C-0813F033AD07/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:45:48,915 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/2C28C55C-C911-4014-8D4C-0813F033AD07/window/size HTTP/1.1" 200 115
+2025-09-01 11:45:50,420 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/2C28C55C-C911-4014-8D4C-0813F033AD07/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:45:53,572 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/2C28C55C-C911-4014-8D4C-0813F033AD07/window/size HTTP/1.1" 200 115
+2025-09-01 11:45:53,616 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/2C28C55C-C911-4014-8D4C-0813F033AD07/wda/tap/0 HTTP/1.1" 404 384
+2025-09-01 11:45:53,628 - main_top48.py[line:133] - ERROR: WDARequestError(status=110, value={'error': 'unknown command', 'message': 'Unhandled endpoint: /session/2C28C55C-C911-4014-8D4C-0813F033AD07/wda/tap/0 -- http://localhost:8100/ with parameters {\n    wildcards =     (\n        "session/2C28C55C-C911-4014-8D4C-0813F033AD07/wda/tap/0"\n    );\n}'})
+2025-09-01 11:45:58,652 - iTrace.py[line:49] - INFO: Trace进程未运行！无需停止.
+2025-09-01 11:45:58,740 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /wda/homescreen HTTP/1.1" 200 76
+2025-09-01 11:45:59,980 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/2C28C55C-C911-4014-8D4C-0813F033AD07/window/size HTTP/1.1" 200 115
+2025-09-01 11:46:01,522 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/2C28C55C-C911-4014-8D4C-0813F033AD07/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:46:01,790 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/2C28C55C-C911-4014-8D4C-0813F033AD07/window/size HTTP/1.1" 200 115
+2025-09-01 11:46:02,808 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/2C28C55C-C911-4014-8D4C-0813F033AD07/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:46:05,112 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/2C28C55C-C911-4014-8D4C-0813F033AD07/window/size HTTP/1.1" 200 115
+2025-09-01 11:46:06,118 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/2C28C55C-C911-4014-8D4C-0813F033AD07/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:46:08,413 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/2C28C55C-C911-4014-8D4C-0813F033AD07/window/size HTTP/1.1" 200 115
+2025-09-01 11:46:09,556 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/2C28C55C-C911-4014-8D4C-0813F033AD07/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:46:11,844 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/2C28C55C-C911-4014-8D4C-0813F033AD07/window/size HTTP/1.1" 200 115
+2025-09-01 11:46:12,844 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/2C28C55C-C911-4014-8D4C-0813F033AD07/wda/dragfromtoforduration HTTP/1.1" 200 76
+2025-09-01 11:46:15,245 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/2C28C55C-C911-4014-8D4C-0813F033AD07/elements HTTP/1.1" 200 232
+2025-09-01 11:46:15,601 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "POST /session/2C28C55C-C911-4014-8D4C-0813F033AD07/elements HTTP/1.1" 200 232
+2025-09-01 11:46:15,779 - connectionpool.py[line:546] - DEBUG: http://localhost:8100 "GET /session/2C28C55C-C911-4014-8D4C-0813F033AD07/element/69030000-0000-0000-2400-000000000000/rect HTTP/1.1" 200 142
+2025-09-01 11:46:16,301 - main_top48.py[line:146] - INFO: succ_num - 0
+2025-09-01 11:46:16,319 - main_top48.py[line:147] - INFO: fail_num - 1
