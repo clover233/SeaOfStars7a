@@ -12,40 +12,32 @@ import wda
 from aw import ElementNotFoundError
 
 from case48.PerformanceDynamic_58city_0010 import PerformanceDynamic_58city_0010
-from case48.PerformanceDynamic_Call_0010 import PerformanceDynamic_Call_0010
-from case48.PerformanceDynamic_Call_0020 import PerformanceDynamic_Call_0020
+from case48.PerformanceDynamic_58city_0020 import PerformanceDynamic_58city_0020
+from case48.PerformanceDynamic_Alipay_0010 import PerformanceDynamic_Alipay_0010
+from case48.PerformanceDynamic_Alipay_0020 import PerformanceDynamic_Alipay_0020
+from case48.PerformanceDynamic_Alipay_0070 import PerformanceDynamic_Alipay_0070
+from case48.PerformanceDynamic_Appmarket_0010 import PerformanceDynamic_Appmarket_0010
+from case48.PerformanceDynamic_AttachedScreen_0020 import PerformanceDynamic_AttachedScreen_0020
 from case48.PerformanceDynamic_AutoNavi_0010 import PerformanceDynamic_AutoNavi_0010
 from case48.PerformanceDynamic_AutoNavi_0030 import PerformanceDynamic_AutoNavi_0030
 from case48.PerformanceDynamic_AutoNavi_0040 import PerformanceDynamic_AutoNavi_0040
 from case48.PerformanceDynamic_AutoNavi_0050 import PerformanceDynamic_AutoNavi_0050
 from case48.PerformanceDynamic_AutoNavi_0060 import PerformanceDynamic_AutoNavi_0060
+from case48.PerformanceDynamic_Baidu_0010 import PerformanceDynamic_Baidu_0010
+from case48.PerformanceDynamic_Baidumap_0010 import PerformanceDynamic_Baidumap_0010
+from case48.PerformanceDynamic_Beiwanglu_0010 import PerformanceDynamic_Beiwanglu_0010
+from case48.PerformanceDynamic_Beiwanglu_0020 import PerformanceDynamic_Beiwanglu_0020
+from case48.PerformanceDynamic_Beiwanglu_AI_0040 import PerformanceDynamic_Beiwanglu_AI_0040
 from case48.PerformanceDynamic_Bilibili_0020 import PerformanceDynamic_Bilibili_0020
 from case48.PerformanceDynamic_Bilibili_0030 import PerformanceDynamic_Bilibili_0030
 from case48.PerformanceDynamic_Bilibili_0040 import PerformanceDynamic_Bilibili_0040
 from case48.PerformanceDynamic_Bilibili_0050 import PerformanceDynamic_Bilibili_0050
-from case48.PerformanceDynamic_AttachedScreen_0020 import PerformanceDynamic_AttachedScreen_0020
-from case48.PerformanceDynamic_58city_0010 import PerformanceDynamic_58city_0010
-from case48.PerformanceDynamic_58city_0020 import PerformanceDynamic_58city_0020
-from case48.PerformanceDynamic_Camera_0010 import PerformanceDynamic_Camera_0010
-from case48.PerformanceDynamic_Camera_0020 import PerformanceDynamic_Camera_0020
-from case48.PerformanceDynamic_Camera_0030 import PerformanceDynamic_Camera_0030
-from case48.PerformanceDynamic_Alipay_0010 import PerformanceDynamic_Alipay_0010
-from case48.PerformanceDynamic_Alipay_0020 import PerformanceDynamic_Alipay_0020
-from case48.PerformanceDynamic_Alipay_0070 import PerformanceDynamic_Alipay_0070
-from case48.PerformanceDynamic_Beiwanglu_0010 import PerformanceDynamic_Beiwanglu_0010
-from case48.PerformanceDynamic_Beiwanglu_0020 import PerformanceDynamic_Beiwanglu_0020
-from case48.PerformanceDynamic_Dongchedi_0010 import PerformanceDynamic_Dongchedi_0010
-from case48.PerformanceDynamic_Dongchedi_0020 import PerformanceDynamic_Dongchedi_0020
-from case48.PerformanceDynamic_Dazhongdianping_0010 import PerformanceDynamic_Dazhongdianping_0010
-from case48.PerformanceDynamic_Dazhongdianping_0020 import PerformanceDynamic_Dazhongdianping_0020
-from case48.PerformanceDynamic_CloudFlashPay_0010 import PerformanceDynamic_CloudFlashPay_0010
-from case48.PerformanceDynamic_Dingding_0010 import PerformanceDynamic_Dingding_0010
-from case48.PerformanceDynamic_Dingding_0020 import PerformanceDynamic_Dingding_0020
-from case48.PerformanceDynamic_Didichuxing_0020 import PerformanceDynamic_Didichuxing_0020
-from case48.PerformanceDynamic_Baidu_0010 import PerformanceDynamic_Baidu_0010
-from case48.PerformanceDynamic_Baidumap_0010 import PerformanceDynamic_Baidumap_0010
+from case48.PerformanceDynamic_Browser_0010 import PerformanceDynamic_Browser_0010
+from case48.PerformanceDynamic_Browser_0020 import PerformanceDynamic_Browser_0020
+from case48.PerformanceDynamic_Call_0010 import PerformanceDynamic_Call_0010
+from case48.PerformanceDynamic_Call_0020 import PerformanceDynamic_Call_0020
 from case48.PerformanceDynamic_Call_AI2_0010 import PerformanceDynamic_Call_AI2_0010
-from case48.PerformanceDynamic_Beiwanglu_AI_0040 import PerformanceDynamic_Beiwanglu_AI_0040
+
 
 Result_Dir_Path = os.path.join(os.getcwd(), 'Result', time.strftime("%Y%m%d_%H%M%S", time.localtime()))
 if os.path.exists(Result_Dir_Path):
@@ -69,30 +61,31 @@ logger.addHandler(fh)
 succ_num = 0
 fail_num = 0
 Basic1 = [
+# PerformanceDynamic_58city_0010,
+# PerformanceDynamic_58city_0020,
+# PerformanceDynamic_Alipay_0010,
+# PerformanceDynamic_Alipay_0020,
+# PerformanceDynamic_Alipay_0070,
+# PerformanceDynamic_Appmarket_0010,
+# PerformanceDynamic_AttachedScreen_0020,
 # PerformanceDynamic_AutoNavi_0010,
 # PerformanceDynamic_AutoNavi_0030,
 # PerformanceDynamic_AutoNavi_0040,
 # PerformanceDynamic_AutoNavi_0050,
-# PerformanceDynamic_AutoNavi_0060,
+PerformanceDynamic_AutoNavi_0060,
+# PerformanceDynamic_Baidu_0010,
+# PerformanceDynamic_Baidumap_0010,
+# PerformanceDynamic_Beiwanglu_0010,
+# PerformanceDynamic_Beiwanglu_0020,
+# PerformanceDynamic_Beiwanglu_AI_0040,
 # PerformanceDynamic_Bilibili_0020,
 # PerformanceDynamic_Bilibili_0030,
 # PerformanceDynamic_Bilibili_0040,
 # PerformanceDynamic_Bilibili_0050,
-PerformanceDynamic_58city_0010
-# PerformanceDynamic_58city_0020,
-# PerformanceDynamic_Alipay_0010
-# PerformanceDynamic_Alipay_0020,
-# PerformanceDynamic_Alipay_0070,
-# PerformanceDynamic_Dongchedi_0010,
-# PerformanceDynamic_Dongchedi_0020,
-# PerformanceDynamic_Dazhongdianping_0010,
-# PerformanceDynamic_Dazhongdianping_0020,
-# PerformanceDynamic_CloudFlashPay_0010,
-# PerformanceDynamic_Dingding_0010,
-# PerformanceDynamic_Dingding_0020,
-# PerformanceDynamic_Didichuxing_0020,
-# PerformanceDynamic_Baidu_0010,
-# PerformanceDynamic_Baidumap_0010,
+# PerformanceDynamic_Browser_0010,
+# PerformanceDynamic_Browser_0020,
+# PerformanceDynamic_Call_0010,
+# PerformanceDynamic_Call_0020,
 # PerformanceDynamic_Call_AI2_0010,
 ]
 
@@ -136,8 +129,8 @@ if __name__ == '__main__':
                         SeaOfStarsAW.stop_trace()
                     finally:
                         SeaOfStarsAW.ut_device.home()
-                        SeaOfStarsAW.swipe_to_launcher()
-                        SeaOfStarsAW.go_home()
+                        #SeaOfStarsAW.swipe_to_launcher()
+                        #SeaOfStarsAW.go_home()
                         df = pd.DataFrame(result_dict)
                         df.to_excel(os.path.join(Result_Dir_Path,'result.xlsx'), index=False)
                         pass

@@ -33,14 +33,58 @@ class PerformanceDynamic_Call_0020(Case):
         for test_time in range(0, self.TEST_TIME):
             step = 0
 
-            # 应用启动
+            # 1、进入电话(停留1s)
             logging.info('应用启动')
-            SeaOfStarsAW.ut_device.session().app_activate('com.taobao.taobao4iphone')
+            SeaOfStarsAW.trace_thread.add_log('电话', '应用启动')
+            SeaOfStarsAW.ut_device.session().app_activate('com.apple.mobilephone')
+            time.sleep(1)
 
-            SeaOfStarsAW.ut_device.app_terminate('com.taobao.taobao4iphone')
-            SeaOfStarsAW.swipe_to_launcher()
-            SeaOfStarsAW.go_home()
+            # 2、点击电话，查看所有通话
+            logging.info('点击电话，查看所有通话')
+            SeaOfStarsAW.trace_thread.add_log('电话', '点击电话，查看所有通话')
+            SeaOfStarsAW.ut_device.click(0.398, 0.089, 0.3)
+            time.sleep(2)
 
-            step += 1
+            # 3、输入号码“10086”后，删除键删除号码
+            logging.info('输入号码“10086”后，删除键删除号码')
+            SeaOfStarsAW.trace_thread.add_log('电话', '输入号码“10086”后，删除键删除号码')
+            SeaOfStarsAW.ut_device.click(0.699, 0.924, 0.3)
+            time.sleep(1)
 
-            logging.info('用例执行结束')
+            SeaOfStarsAW.ut_device.click(0.24, 0.357, 0.3)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.501, 0.694, 0.3)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.501, 0.694, 0.3)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.504, 0.583, 0.3)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.762, 0.467, 0.3)
+            time.sleep(1)
+
+            for i in range(5):
+                SeaOfStarsAW.ut_device.click(0.765, 0.807, 0.3)
+                time.sleep(1)
+
+            # 4、点击拨号键盘上方空白处，等待1s
+            logging.info('点击拨号键盘上方空白处')
+            SeaOfStarsAW.trace_thread.add_log('电话', '点击拨号键盘上方空白处')
+            SeaOfStarsAW.ut_device.click(0.498, 0.198, 0.3)
+            time.sleep(1)
+
+            # 5、上滑5次，下滑5次，等待2s
+            logging.info('上滑5次，下滑5次')
+            SeaOfStarsAW.trace_thread.add_log('电话', '上滑5次，下滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
+
+            # 6、上滑返回home界面
+            logging.info('上滑返回home界面')
+            SeaOfStarsAW.trace_thread.add_log('电话', '上滑返回home界面')
+            SeaOfStarsAW.ut_device.home()
+            time.sleep(1)
+        logging.info('用例执行结束')

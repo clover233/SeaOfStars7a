@@ -32,15 +32,83 @@ class PerformanceDynamic_Bilibili_0040(Case):
             time.sleep(2)
         for test_time in range(0, self.TEST_TIME):
             step = 0
+            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+            #                          self.screenshot_dir_path)
 
-            # 应用启动
+            # 启动哔哩哔哩
             logging.info('应用启动')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '应用启动')
             SeaOfStarsAW.ut_device.session().app_activate('tv.danmaku.bilianime')
 
-            SeaOfStarsAW.ut_device.app_terminate('tv.danmaku.bilianime')
-            SeaOfStarsAW.swipe_to_launcher()
-            SeaOfStarsAW.go_home()
+            # 点击搜索框
+            logging.info('')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '')
+            SeaOfStarsAW.ut_device.click(0.307, 0.095, 0.50)
+            time.sleep(1)
 
-            step += 1
+            # 输入"华为终端"后，点击搜索按钮
+            logging.info('')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '')
+            SeaOfStarsAW.ut_device().set_text("华为终端")
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.919, 0.095, 0.50)
+            time.sleep(1)
 
-            logging.info('用例执行结束')
+            # 上滑5次搜索结果页面，间隔1秒
+            logging.info('上滑5次')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '上滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(1)
+
+            # 下滑5次搜索结果页面，间隔1秒
+            logging.info('下滑5次')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '下滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(1)
+
+            # 点击其中一个视频播放
+            logging.info(' 点击其中一个视频播放')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', ' 点击其中一个视频播放')
+            SeaOfStarsAW.ut_device.click(0.491, 0.955, 0.50)
+            time.sleep(1)
+
+            # 观看视频10秒
+            logging.info('观看视频10秒')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '观看视频10秒')
+            time.sleep(10)
+
+            # 点击UP头像进入主页 竖屏：0.465, 0.787
+            logging.info('点击UP头像进入主页')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '点击UP头像进入主页')
+            SeaOfStarsAW.ut_device.click(0.445, 0.467, 0.50)
+            time.sleep(1)
+
+            # 上滑5次UP主页页面，间隔1秒
+            logging.info('上滑5次')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '上滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(1)
+
+            # 下滑5次UP主页页面，间隔1秒
+            logging.info('下滑5次')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '下滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(1)
+
+            # 返回首页
+            logging.info('返回首页')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '返回首页')
+            for i in range(4):
+                SeaOfStarsAW.ut_device.swipe(0.005, 0.585, 0.999, 0.585, 1.0)
+                time.sleep(1)
+
+            # 上滑返回桌面
+            logging.info('返回桌面')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '返回桌面')
+            SeaOfStarsAW.ut_device.home()
+            time.sleep(1)
+        logging.info('用例执行结束')

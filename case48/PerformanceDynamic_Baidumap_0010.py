@@ -33,14 +33,52 @@ class PerformanceDynamic_Baidumap_0010(Case):
         for test_time in range(0, self.TEST_TIME):
             step = 0
 
-            # 应用启动
+            # 启动百度地图，停留2S
+            # 建议停止5s 有广告
             logging.info('应用启动')
+            SeaOfStarsAW.trace_thread.add_log('百度地图', '应用启动')
             SeaOfStarsAW.ut_device.session().app_activate('com.baidu.map')
+            time.sleep(2)
 
-            SeaOfStarsAW.ut_device.app_terminate('com.baidu.map')
-            SeaOfStarsAW.swipe_to_launcher()
-            SeaOfStarsAW.go_home()
+            # 搜索框搜索钟楼，停留2S
+            logging.info('搜索框搜索钟楼')
+            SeaOfStarsAW.trace_thread.add_log('百度地图', '搜索框搜索钟楼')
+            SeaOfStarsAW.ut_device.click(0.241, 0.099, 0.5)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device().set_text("西安钟楼")
+            SeaOfStarsAW.ut_device.click(0.890, 0.10, 0.5)
+            time.sleep(2)
 
-            step += 1
+            # 选择西安钟楼，停留2S
+            logging.info('选择西安钟楼')
+            SeaOfStarsAW.trace_thread.add_log('百度地图', '选择西安钟楼')
+            SeaOfStarsAW.ut_device.click(0.454, 0.174, 0.5)
+            time.sleep(2)
 
-            logging.info('用例执行结束')
+            # 点击到这去，停留2S
+            logging.info('点击到这去')
+            SeaOfStarsAW.trace_thread.add_log('百度地图', '点击到这去')
+            SeaOfStarsAW.ut_device.click(0.827, 0.939, 0.5)
+            time.sleep(2)
+
+            # 点击开始导航，停留2S
+            logging.info('点击开始导航')
+            SeaOfStarsAW.trace_thread.add_log('百度地图', '点击开始导航')
+            SeaOfStarsAW.ut_device.click(0.801, 0.943, 0.5)
+            time.sleep(2)
+
+            # 点击退出导航，停留2S
+            logging.info('点击退出导航')
+            SeaOfStarsAW.trace_thread.add_log('百度地图', '点击退出导航')
+            SeaOfStarsAW.ut_device.click(0.916, 0.933, 0.5)
+            time.sleep(0.5)
+            SeaOfStarsAW.ut_device.click(0.721, 0.941, 0.5)
+            time.sleep(2)
+
+            # 返回桌面
+            logging.info('返回桌面')
+            SeaOfStarsAW.trace_thread.add_log('百度地图', '返回桌面')
+            SeaOfStarsAW.ut_device.home()
+            time.sleep(1)
+
+        logging.info('用例执行结束')

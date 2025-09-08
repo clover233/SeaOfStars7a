@@ -34,13 +34,21 @@ class PerformanceDynamic_Beiwanglu_AI_0040(Case):
             step = 0
 
             # 应用启动
-            logging.info('应用启动')
-            SeaOfStarsAW.ut_device.session().app_activate('com.taobao.taobao4iphone')
+            logging.info('启动备忘录')
+            SeaOfStarsAW.trace_thread.add_log('备忘录', '启动备忘录')
+            SeaOfStarsAW.ut_device.session().app_activate('com.apple.mobilenotes')
 
-            SeaOfStarsAW.ut_device.app_terminate('com.taobao.taobao4iphone')
-            SeaOfStarsAW.swipe_to_launcher()
-            SeaOfStarsAW.go_home()
+            # 备忘录搜索
 
-            step += 1
 
-            logging.info('用例执行结束')
+            # AI识图并翻译
+
+
+            # AI识图并播放
+
+
+            # 退出应用
+
+
+
+        logging.info('用例执行结束')

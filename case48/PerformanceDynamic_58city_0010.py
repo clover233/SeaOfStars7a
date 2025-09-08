@@ -21,7 +21,6 @@ class PerformanceDynamic_58city_0010(Case):
             if per_app not in phone_app_list:
                 return False
 
-
     @SeaOfStarsAW.function_log
     def run_case(self):
         """
@@ -32,37 +31,93 @@ class PerformanceDynamic_58city_0010(Case):
             SeaOfStarsAW.ut_device.unlock()
             time.sleep(2)
 
-        logging.info('应用启动')
-        SeaOfStarsAW.trace_thread.add_log('58同城', '应用启动')
-        SeaOfStarsAW.ut_device.session().app_activate('com.taofang.iphone')
 
-        # for test_time in range(0, self.TEST_TIME):
-        #     step = 0
-        #     SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-        #                              self.screenshot_dir_path)
-        #     # 启动58同城
-        #     logging.info('应用启动')
-        #     SeaOfStarsAW.trace_thread.add_log('58同城', '应用启动')
-        #     SeaOfStarsAW.ut_device.session().app_activate('com.taofang.iphone')
-        #     SeaOfStarsAW.ut_device.swipe_left()
-        #     time.sleep(2)
-        #     SeaOfStarsAW.ut_device.swipe_left()
-        #     time.sleep(2)
-        #     SeaOfStarsAW.ut_device.click(0.611, 0.238)
-        #     time.sleep(2)
+        for test_time in range(0, self.TEST_TIME):
+            # step = 0
+            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+            #                          self.screenshot_dir_path)
 
-            # for i in range(5):
-            #     SeaOfStarsAW.ut_device.swipe(0.500, 0.800, 0.500, 0.200, duration=0.02)
-            #     time.sleep(1)
-            # for i in range(5):
-            #     SeaOfStarsAW.ut_device.swipe(0.500, 0.200, 0.500, 0.800, duration=0.02)
-            #     time.sleep(1)
+            #1.启动58同城
+            logging.info('应用启动')
+            SeaOfStarsAW.trace_thread.add_log('58同城', '应用启动')
+            SeaOfStarsAW.ut_device.session().app_activate('com.taofang.iphone')
 
+            #2.向上抛划5次，浏览首页
+            logging.info('向上抛划5次')
+            SeaOfStarsAW.trace_thread.add_log('58同城', '向上抛划5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(1)
 
-            # step += 1
-            #
-            # SeaOfStarsAW.ut_device.app_terminate('com.taofang.iphone')
-            # SeaOfStarsAW.swipe_to_launcher()
-            # SeaOfStarsAW.go_home()
+            # 3.向下抛划5次，浏览首页
+            logging.info('向下抛划5次')
+            SeaOfStarsAW.trace_thread.add_log('58同城', '向下抛划5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(1)
+
+            # 4.点击"租房"按钮，进入租房页面
+            SeaOfStarsAW.ut_device.click(0.304, 0.211, 1.0)
+            time.sleep(1)
+
+            # 5.向上滑5次
+            logging.info('向上滑5次')
+            SeaOfStarsAW.trace_thread.add_log('58同城', '向上滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(1)
+
+            # 6.向下滑5次
+            logging.info('向下滑5次')
+            SeaOfStarsAW.trace_thread.add_log('58同城', '向下滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(1)
+
+            # 7.点击搜索框
+            logging.info('点击搜索框')
+            SeaOfStarsAW.trace_thread.add_log('58同城', '点击搜索框')
+            SeaOfStarsAW.ut_device.click(0.37, 0.155, 1.0)
+            time.sleep(2)
+
+            # 8.输入西研所，点击搜索
+            logging.info('输入西研所')
+            SeaOfStarsAW.trace_thread.add_log('58同城', '输入西研所')
+
+            SeaOfStarsAW.ut_device().set_text("西研所")
+            time.sleep(2)
+            SeaOfStarsAW.ut_device.click(0.873, 0.084, 1.0)
+            time.sleep(2)
+
+            # 9.点击第一个租房信息
+            logging.info('点击第一个租房信息')
+            SeaOfStarsAW.trace_thread.add_log('58同城', '点击第一个租房信息')
+            SeaOfStarsAW.ut_device.click(0.537, 0.467, 1.0)
+            time.sleep(2)
+
+            #10.向上抛滑5次，浏览详细信息
+            logging.info('向上抛滑5次')
+            SeaOfStarsAW.trace_thread.add_log('58同城', '向上抛滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(1)
+
+            # 11.向下抛滑5次，浏览详细信息
+            logging.info('向下抛滑5次')
+            SeaOfStarsAW.trace_thread.add_log('58同城', '向下抛滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(1)
+
+            # 12.侧滑2次返回主页面
+            logging.info('侧滑2次返回主页面')
+            SeaOfStarsAW.trace_thread.add_log('58同城', '侧滑2次返回主页面')
+            SeaOfStarsAW.ut_device.swipe(0.017, 0.809, 0.933, 0.805, 0.5)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.swipe(0.017, 0.809, 0.933, 0.805, 0.5)
+            time.sleep(1)
+
+            # 13.上滑返回桌面
+            SeaOfStarsAW.ut_device.home()
 
         logging.info('用例执行结束')

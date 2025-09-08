@@ -33,14 +33,201 @@ class PerformanceDynamic_Alipay_0070(Case):
         for test_time in range(0, self.TEST_TIME):
             step = 0
 
-            # 应用启动
+            # 启动支付宝（停留2s) 建议关掉推送悬浮窗、医疗健康在更多服务第一个；蚂蚁森林在更多服务第二个
             logging.info('应用启动')
             SeaOfStarsAW.ut_device.session().app_activate('com.alipay.iphoneclient')
+            time.sleep(2)
 
-            SeaOfStarsAW.ut_device.app_terminate('com.alipay.iphoneclient')
-            SeaOfStarsAW.swipe_to_launcher()
-            SeaOfStarsAW.go_home()
+            # 点击“医疗健康”（停留2s)
+            logging.info('点击“医疗健康”')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '点击“医疗健康”')
+            SeaOfStarsAW.ut_device.click(0.112, 0.26, 0.20)
+            time.sleep(2)
 
-            step += 1
+            # 侧滑返回首页（停留2s)
+            logging.info('侧滑返回首页')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '侧滑返回首页')
+            SeaOfStarsAW.ut_device.swipe(0.010, 0.809, 0.933, 0.805, 0.5)
+            time.sleep(2)
 
-            logging.info('用例执行结束')
+            # 第二次点击“医疗健康”（停留2s)
+            logging.info('第二次点击“医疗健康”')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '第二次点击“医疗健康”')
+            SeaOfStarsAW.ut_device.click(0.112, 0.26, 0.20)
+            time.sleep(2)
+
+            # 上滑1次浏览（停留2s)
+            logging.info('上滑1次浏览')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '上滑1次浏览')
+            SeaOfStarsAW.ut_device.swipe_up()
+            time.sleep(2)
+
+            # 下滑1次浏览（停留2s)
+            logging.info('下滑1次浏览')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '下滑1次浏览')
+            SeaOfStarsAW.ut_device.swipe_down()
+            time.sleep(2)
+
+            # 侧滑返回首页（停留2s)
+            logging.info('侧滑返回首页')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '侧滑返回首页')
+            SeaOfStarsAW.ut_device.swipe(0.010, 0.809, 0.933, 0.805, 0.5)
+            time.sleep(2)
+
+            # 点击“蚂蚁森林”（停留2s)
+            logging.info('点击“蚂蚁森林”')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '点击“蚂蚁森林”')
+            SeaOfStarsAW.ut_device.click(0.304, 0.261, 0.20)
+            time.sleep(2)
+
+            # 上滑1次浏览（停留2s)
+            logging.info('上滑1次浏览')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '上滑1次浏览')
+            SeaOfStarsAW.ut_device.swipe_up()
+            time.sleep(2)
+
+            # 下滑1次浏览（停留2s)
+            logging.info('下滑1次浏览')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '下滑1次浏览')
+            SeaOfStarsAW.ut_device.swipe_down()
+            time.sleep(2)
+
+            # 点击“返回”按钮，返回首页（停留2s)
+            logging.info('返回首页')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '返回首页')
+            SeaOfStarsAW.ut_device.click(0.066, 0.088, 0.20)
+            time.sleep(2)
+
+            # 点击视频（停留2s)
+            logging.info('点击视频')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '点击视频')
+            SeaOfStarsAW.ut_device.click(0.494, 0.918, 0.20)
+            time.sleep(2)
+
+            # 上滑5次，下滑5次观看视频（停留2s)
+            logging.info('上滑5次')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '上滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+
+            logging.info('下滑5次')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '下滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
+
+            # 点击评论（停留2s)
+            logging.info('点击评论')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '点击评论')
+            SeaOfStarsAW.ut_device.click(0.925, 0.661, 0.20)
+            time.sleep(2)
+
+            # 退出评论（停留2s)
+            logging.info('退出评论')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '退出评论')
+            SeaOfStarsAW.ut_device.click(0.477, 0.155, 0.20)
+            time.sleep(2)
+
+            # 点击直播（停留2s)
+            logging.info('点击直播')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '点击直播')
+            SeaOfStarsAW.ut_device.click(0.497, 0.081, 0.20)
+            time.sleep(2)
+
+            # 上滑5次，下滑5次观看视频（停留1s)
+            logging.info('上滑5次')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '上滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(1)
+
+            logging.info('下滑5次')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '下滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(1)
+            time.sleep(1)
+
+            # 进入直播间观看直播10s
+            logging.info('进入直播间观看直播')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '进入直播间观看直播')
+            SeaOfStarsAW.ut_device.click(0.497, 0.721, 0.10)
+            time.sleep(5)
+            time.sleep(5)
+
+            # 退出直播间（停留2s)
+            logging.info('退出直播间')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '退出直播间')
+            SeaOfStarsAW.ut_device.swipe(0.010, 0.809, 0.933, 0.805, 0.2)
+            time.sleep(2)
+
+            # 点击短剧（停留2s)
+            logging.info('点击短剧')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '点击短剧')
+            SeaOfStarsAW.ut_device.click(0.62, 0.08, 0.20)
+            time.sleep(2)
+
+            # 上滑5次，下滑5次浏览短剧页面（停留2s)
+            logging.info('上滑5次')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '上滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+
+            logging.info('下滑5次')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '下滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
+
+            # 点击热播榜（停留2s) 有的视频不会显示热播榜 建议从搜索固定进入
+            logging.info('点击热播榜')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '点击热播榜')
+            SeaOfStarsAW.ut_device.click(0.893, 0.079, 0.20)
+            time.sleep(2)
+
+            # 上滑2次，下滑2次浏览热播榜（停留2s)
+            logging.info('上滑2次，下滑2次浏览热播榜')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '上滑2次，下滑2次浏览热播榜')
+            logging.info('上滑2次')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '上滑2次')
+            for i in range(2):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+
+            logging.info('下滑2次')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '下滑2次')
+            for i in range(2):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
+
+            # 点击播放热播榜第一的短剧观看15s
+            logging.info('点击播放热播榜第一的短剧观看15s')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '点击播放热播榜第一的短剧观看15s')
+            SeaOfStarsAW.ut_device.click(0.252, 0.512, 0.25)
+            time.sleep(5)
+            time.sleep(5)
+            time.sleep(5)
+
+            # 返回视频页（停留2s)
+            logging.info('返回视频页')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '返回视频页')
+            SeaOfStarsAW.ut_device.click(0.051, 0.089, 0.2)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.051, 0.089, 0.2)
+            time.sleep(2)
+
+            # 返回首页（停留2s)
+            logging.info('返回首页')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '返回首页')
+            SeaOfStarsAW.ut_device.click(0.094, 0.928, 0.2)
+            time.sleep(2)
+
+            # 返回home页
+            logging.info('返回home页面(停留1s)')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '返回home页面(停留1s)')
+            SeaOfStarsAW.ut_device.home()
+            time.sleep(1)
+
+        logging.info('用例执行结束')

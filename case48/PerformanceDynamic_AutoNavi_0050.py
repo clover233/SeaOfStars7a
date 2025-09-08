@@ -33,14 +33,52 @@ class PerformanceDynamic_AutoNavi_0050(Case):
         for test_time in range(0, self.TEST_TIME):
             step = 0
 
-            # 应用启动
+            # 启动高德地图（停留7s）
             logging.info('应用启动')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '应用启动')
             SeaOfStarsAW.ut_device.session().app_activate('com.autonavi.amap')
+            time.sleep(7)
+            SeaOfStarsAW.ut_device.click(0.497, 0.243, 0.50)
+            time.sleep(1)
 
-            SeaOfStarsAW.ut_device.app_terminate('com.autonavi.amap')
-            SeaOfStarsAW.swipe_to_launcher()
-            SeaOfStarsAW.go_home()
+            # 地图界面上滑1次浏览（停留3s）
+            logging.info('地图界面上滑1次浏览')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '地图界面上滑1次浏览')
+            SeaOfStarsAW.ut_device.swipe_up()
+            time.sleep(3)
 
-            step += 1
+            # 地图界面下滑1次浏览（停留3s）
+            logging.info('地图界面下滑1次浏览')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '地图界面下滑1次浏览')
+            SeaOfStarsAW.ut_device.swipe_down()
+            time.sleep(3)
 
-            logging.info('用例执行结束')
+            # 地图界面左滑1次浏览（停留3s）
+            logging.info('地图界面左滑1次浏览')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '地图界面左滑1次浏览')
+            SeaOfStarsAW.ut_device.swipe_left()
+            time.sleep(3)
+
+            # 地图界面右滑1次浏览（停留3s）
+            logging.info('地图界面右滑1次浏览')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '地图界面右滑1次浏览')
+            SeaOfStarsAW.ut_device.swipe_right()
+            time.sleep(3)
+
+            # 双指捏合放大/缩小当前位置地图（停留3s）
+            # 目前为双击放大，建议后期换成WDA的二指放大
+            logging.info('双指捏合放大/缩小当前位置地图')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '双指捏合放大/缩小当前位置地图')
+            SeaOfStarsAW.ut_device.double_tap(0.500, 0.500)
+            time.sleep(3)
+
+            # 左滑退出首页（停留1s）
+            logging.info('左滑退出首页')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '左滑退出首页')
+            SeaOfStarsAW.ut_device.swipe(0.010, 0.809, 0.933, 0.805, 0.5)
+
+            # 上滑返回桌面
+            logging.info('上滑返回桌面')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '上滑返回桌面')
+            SeaOfStarsAW.ut_device.home()
+        logging.info('用例执行结束')

@@ -33,14 +33,182 @@ class PerformanceDynamic_AutoNavi_0060(Case):
         for test_time in range(0, self.TEST_TIME):
             step = 0
 
-            # 应用启动
-            logging.info('应用启动')
+            # 启动高德地图，停留3s
+            logging.info('启动高德地图')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '启动高德地图')
             SeaOfStarsAW.ut_device.session().app_activate('com.autonavi.amap')
+            time.sleep(3)
 
-            SeaOfStarsAW.ut_device.app_terminate('com.autonavi.amap')
-            SeaOfStarsAW.swipe_to_launcher()
-            SeaOfStarsAW.go_home()
+            # 点击搜索框，停留2s
+            logging.info('点击搜索框')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '点击搜索框')
+            SeaOfStarsAW.ut_device.click(0.922, 0.475, 0.2)
+            time.sleep(2)
 
-            step += 1
 
-            logging.info('用例执行结束')
+            # 输入“西安北站”并搜索，停留2s
+            logging.info('输入“西安北站”并搜索')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '输入“西安北站”并搜索')
+            SeaOfStarsAW.ut_device.click(0.298, 0.138, 0.2)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device().set_text("西安北站")
+            time.sleep(1)
+
+            # 点击第一个搜索结果的路线 ，停留2s
+            logging.info('点击第一个搜索结果的路线')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '点击第一个搜索结果的路线')
+            SeaOfStarsAW.ut_device.click(0.512, 0.256, 0.2)
+            time.sleep(2)
+
+            # 点击开始导航，停留2s
+            logging.info('点击开始导航')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '点击开始导航')
+            SeaOfStarsAW.ut_device.click(0.699, 0.942, 0.2)
+            time.sleep(2)
+
+            # 上滑，将高德地图放入后台，停留2s
+            logging.info('上滑')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '上滑')
+            SeaOfStarsAW.ut_device.home()
+            time.sleep(2)
+
+            # 启动小红书，停留2s
+            logging.info('启动小红书')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '启动小红书')
+            SeaOfStarsAW.ut_device.session().app_activate('com.xingin.discover')
+            time.sleep(3)
+
+            # 浏览首页，上滑5次，下滑5次，每次停留2s
+            logging.info('向上滑5次')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '向上滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+
+            logging.info('向下滑5次')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '向下滑5次')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
+
+            # 点击消息，停留2s
+            logging.info('点击消息')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '点击消息')
+            SeaOfStarsAW.ut_device.click(0.696, 0.934, 0.2)
+            time.sleep(2)
+
+            # 点击我，停留2s
+            logging.info('点击我')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '点击我')
+            SeaOfStarsAW.ut_device.click(0.896, 0.935, 0.2)
+            time.sleep(2)
+
+            # 点击收藏，停留2s
+            logging.info('点击收藏')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '点击收藏')
+            SeaOfStarsAW.ut_device.click(0.249, 0.488, 0.2)
+            time.sleep(2)
+
+            # 浏览收藏页，上滑2次，下滑2次，每次停留2s
+            logging.info('浏览收藏页')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '浏览收藏页')
+            for i in range(2):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '向下滑5次')
+            for i in range(2):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
+
+            # 返回首页，停留2s
+            logging.info('返回首页')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '返回首页')
+            SeaOfStarsAW.ut_device.click(0.097, 0.934, 0.2)
+            time.sleep(2)
+
+            # 上滑退出小红书，停留2s
+            logging.info('上滑退出小红书')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '上滑退出小红书')
+            SeaOfStarsAW.ut_device.home()
+            time.sleep(2)
+
+            # 打开高德，停留10s
+            logging.info('打开高德')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '打开高德')
+            SeaOfStarsAW.ut_device.session().app_activate('com.autonavi.amap')
+            time.sleep(3)
+
+            # 上滑，将高德地图放入后台，停留2s
+            logging.info('上滑，将高德地图放入后台')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '上滑，将高德地图放入后台')
+            SeaOfStarsAW.ut_device.home()
+            time.sleep(2)
+
+            # 打开抖音，停留3s com.ss.iphone.ugc.Aweme
+            logging.info('打开抖音')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '打开抖音')
+            SeaOfStarsAW.ut_device.session().app_activate('com.ss.iphone.ugc.Aweme')
+            time.sleep(3)
+
+            # 首页观看10s
+            logging.info('首页观看10s')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '首页观看10s')
+            time.sleep(10)
+
+            # 浏览首页，上滑5次，下滑5次，每次停留2s
+            logging.info('浏览首页')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '浏览首页')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
+
+            # 点击顶部热点，停留2s
+            logging.info('点击顶部热点')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '点击顶部热点')
+            SeaOfStarsAW.ut_device.click(0.223, 0.097, 0.2)
+            time.sleep(2)
+            SeaOfStarsAW.ut_device.click(0.263, 0.096, 0.2)
+            time.sleep(2)
+
+            # 浏览热点页面，上滑5次，下滑5次，每次停留2s
+            logging.info('浏览热点页面')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '浏览热点页面')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
+
+            # 点击推荐，停留2s
+            logging.info('点击推荐')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '点击推荐')
+            SeaOfStarsAW.ut_device.click(0.833, 0.096, 0.2)
+            time.sleep(2)
+
+            # 返回桌面，停留2s
+            logging.info('返回桌面')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '返回桌面')
+            SeaOfStarsAW.ut_device.home()
+
+            # 打开高德，停留2s
+            logging.info('打开高德')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '打开高德')
+            SeaOfStarsAW.ut_device.session().app_activate('com.autonavi.amap')
+            time.sleep(2)
+
+            # 返回首页
+            logging.info('返回首页')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '返回首页')
+            time.sleep(2)
+
+            # 上滑返回桌面
+            logging.info('上滑返回桌面')
+            SeaOfStarsAW.trace_thread.add_log('高德地图', '上滑返回桌面')
+            SeaOfStarsAW.ut_device.home()
+
+
+        logging.info('用例执行结束')
