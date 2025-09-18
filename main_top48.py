@@ -36,7 +36,8 @@ from case48.PerformanceDynamic_Browser_0010 import PerformanceDynamic_Browser_00
 from case48.PerformanceDynamic_Browser_0020 import PerformanceDynamic_Browser_0020
 from case48.PerformanceDynamic_Call_0010 import PerformanceDynamic_Call_0010
 from case48.PerformanceDynamic_Call_0020 import PerformanceDynamic_Call_0020
-from case48.PerformanceDynamic_Call_AI2_0010 import PerformanceDynamic_Call_AI2_0010
+from case48.PerformanceDynamic_fanqie_0020 import PerformanceDynamic_fanqie_0020
+
 
 
 Result_Dir_Path = os.path.join(os.getcwd(), 'Result', time.strftime("%Y%m%d_%H%M%S", time.localtime()))
@@ -61,6 +62,7 @@ logger.addHandler(fh)
 succ_num = 0
 fail_num = 0
 Basic1 = [
+# PerformanceDynamic_mangguoTV_0010
 # PerformanceDynamic_58city_0010,
 # PerformanceDynamic_58city_0020,
 # PerformanceDynamic_Alipay_0010,
@@ -72,7 +74,7 @@ Basic1 = [
 # PerformanceDynamic_AutoNavi_0030,
 # PerformanceDynamic_AutoNavi_0040,
 # PerformanceDynamic_AutoNavi_0050,
-PerformanceDynamic_AutoNavi_0060,
+# PerformanceDynamic_AutoNavi_0060,
 # PerformanceDynamic_Baidu_0010,
 # PerformanceDynamic_Baidumap_0010,
 # PerformanceDynamic_Beiwanglu_0010,

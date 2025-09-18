@@ -43,8 +43,8 @@ class PerformanceDynamic_Dongchedi_0020(Case):
             logging.info('打开懂车帝，等待2s')
             SeaOfStarsAW.trace_thread.add_log('懂车帝', '打开懂车帝，点击兴趣圈滑动')
             # todo 微博的坐标地址要改下
-            SeaOfStarsAW.ut_device.click(0.61, 0.368)
-            time.sleep(5)
+            SeaOfStarsAW.ut_device.session().app_activate('com.ss.ios.auto')
+            time.sleep(3)
 
             # 2、点击兴趣圈，停留1s
             SeaOfStarsAW.ut_device(labelContains="车友圈").click()
@@ -88,8 +88,9 @@ class PerformanceDynamic_Dongchedi_0020(Case):
             time.sleep(1)
 
             # 10、返回home界面，停留1s
-            SeaOfStarsAW.ut_device.home()
-            time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate('com.ss.ios.auto')
+            SeaOfStarsAW.swipe_to_launcher()
+            SeaOfStarsAW.go_home()
 
 
 
