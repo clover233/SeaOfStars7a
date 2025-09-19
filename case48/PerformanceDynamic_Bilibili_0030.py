@@ -129,4 +129,5 @@ class PerformanceDynamic_Bilibili_0030(Case):
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.app_terminate('tv.danmaku.bilianime')
             time.sleep(1)
+
         logging.info('用例执行结束')

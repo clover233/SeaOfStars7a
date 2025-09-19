@@ -34,19 +34,19 @@ class PerformanceDynamic_Beiwanglu_0010(Case):
             step = 0
 
             # 1、启动备忘录
-            logging.info('启动备忘录')
+            logging.info('1、启动备忘录')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '启动备忘录')
             SeaOfStarsAW.ut_device.session().app_activate('com.apple.mobilenotes')
             time.sleep(1)
 
             # 2、点击右下角新建图标
-            logging.info('点击右下角新建图标')
+            logging.info('2、点击右下角新建图标')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '点击右下角新建图标')
             SeaOfStarsAW.ut_device.click(0.928, 0.935, 0.3)
             time.sleep(1)
 
             # 3、输入“动态”并点击保存
-            logging.info('输入“动态”并点击保存')
+            logging.info('3、输入“动态”并点击保存')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '输入“动态”并点击保存')
             SeaOfStarsAW.ut_device().set_text("动态")
             time.sleep(1)
@@ -54,13 +54,13 @@ class PerformanceDynamic_Beiwanglu_0010(Case):
             time.sleep(1)
 
             # 4、返回主界面
-            logging.info('返回主界面')
+            logging.info('4、返回主界面')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '返回主界面')
             SeaOfStarsAW.ut_device.click(0.108, 0.088, 0.3)
             time.sleep(1)
 
             # 5、点击屏幕底部待办，切换到待办页
-            logging.info('点击屏幕底部待办，切换到待办页')
+            logging.info('5、点击屏幕底部待办，切换到待办页')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '点击屏幕底部待办，切换到待办页')
             SeaOfStarsAW.ut_device.click(0.928, 0.935, 0.3)
             time.sleep(1)
@@ -68,31 +68,31 @@ class PerformanceDynamic_Beiwanglu_0010(Case):
             time.sleep(1)
 
             # 6、点击新建按钮，拉起小艺输入法
-            logging.info('点击新建按钮，拉起小艺输入法')
+            logging.info('6、点击新建按钮，拉起小艺输入法')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '点击新建按钮，拉起小艺输入法')
             SeaOfStarsAW.ut_device().set_text("test")
             time.sleep(1)
 
             # 7、26键盘输入“test”，点击键盘上的回车按钮
-            logging.info('26键盘输入“test”，点击键盘上的回车按钮')
+            logging.info('7、26键盘输入“test”，点击键盘上的回车按钮')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '26键盘输入“test”，点击键盘上的回车按钮')
             SeaOfStarsAW.ut_device.click(0.876, 0.884, 0.3)
             time.sleep(1)
 
             # 8、点击保存按钮
-            logging.info('点击屏幕底部“笔记”返回主界面')
+            logging.info('8、点击屏幕底部“笔记”返回主界面')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '点击屏幕底部“笔记”返回主界面')
             SeaOfStarsAW.ut_device.click(0.914, 0.089, 0.3)
             time.sleep(1)
 
             # 9、点击屏幕底部“笔记”返回主界面
-            logging.info('点击屏幕底部“笔记”返回主界面')
+            logging.info('9、点击屏幕底部“笔记”返回主界面')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '点击屏幕底部“笔记”返回主界面')
             SeaOfStarsAW.ut_device.swipe(0.010, 0.809, 0.933, 0.805, 0.5)
             time.sleep(2)
 
             # 10、上滑返回桌面
-            logging.info('上滑返回桌面')
+            logging.info('10、上滑返回桌面')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '上滑返回桌面')
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.app_terminate('com.apple.mobilenotes')

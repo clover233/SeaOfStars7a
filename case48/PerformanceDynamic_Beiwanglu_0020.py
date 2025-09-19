@@ -34,13 +34,13 @@ class PerformanceDynamic_Beiwanglu_0020(Case):
             step = 0
 
             # 1、启动备忘录
-            logging.info('启动备忘录')
+            logging.info('1、启动备忘录')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '启动备忘录')
             SeaOfStarsAW.ut_device.session().app_activate('com.apple.mobilenotes')
             time.sleep(1)
 
             # 2、上滑2次，下滑3次，查看备忘录列表
-            logging.info('上滑2次，下滑3次，查看备忘录列表')
+            logging.info('2、上滑2次，下滑3次，查看备忘录列表')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '上滑2次，下滑3次，查看备忘录列表')
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -51,19 +51,19 @@ class PerformanceDynamic_Beiwanglu_0020(Case):
 
 
             # 3、点击第一条备忘录查看内容
-            logging.info('点击第一条备忘录查看内容')
+            logging.info('3、点击第一条备忘录查看内容')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '点击第一条备忘录查看内容')
             SeaOfStarsAW.ut_device.click(0.478, 0.322, 0.3)
             time.sleep(1)
 
             # 4、返回主界面
-            logging.info('返回主界面')
+            logging.info('4、返回主界面')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '返回主界面')
             SeaOfStarsAW.ut_device.swipe(0.010, 0.809, 0.933, 0.805, 0.5)
             time.sleep(1)
 
             # 5、上滑返回桌面
-            logging.info('上滑返回桌面')
+            logging.info('5、上滑返回桌面')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '上滑返回桌面')
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.app_terminate('com.apple.mobilenotes')

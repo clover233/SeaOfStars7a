@@ -35,18 +35,18 @@ class PerformanceDynamic_Browser_0010(Case):
 
             # 1、打开华为浏览器(启动3s，停留2s)
             # iOS暂无华为浏览器，定为Safari
-            logging.info('应用启动')
+            logging.info('1、应用启动')
             SeaOfStarsAW.trace_thread.add_log('浏览器', '应用启动')
             SeaOfStarsAW.ut_device.session().app_activate('com.apple.mobilesafari')
 
             # 2、进入首页（停留1s），单框架（点击首页后点击百度），双框架（点击屏幕底部首页图标即可）
-            logging.info('进入首页')
+            logging.info('2、进入首页')
             SeaOfStarsAW.trace_thread.add_log('浏览器', '进入首页')
             SeaOfStarsAW.ut_device.click(0.375, 0.216, 0.3)
             time.sleep(1)
 
             # 3、上滑5次，下滑5次，停留2s
-            logging.info('进入首页')
+            logging.info('3、进入首页')
             SeaOfStarsAW.trace_thread.add_log('浏览器', '进入首页')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -56,19 +56,19 @@ class PerformanceDynamic_Browser_0010(Case):
                 time.sleep(2)
 
             # 4、点击第一条新闻，浏览新闻（上下滑动5次，每次停顿2s）
-            logging.info('点击第一条新闻，浏览新闻')
+            logging.info('4、点击第一条新闻，浏览新闻')
             SeaOfStarsAW.trace_thread.add_log('浏览器', '点击第一条新闻，浏览新闻')
             SeaOfStarsAW.ut_device.click(0.441, 0.496, 0.3)
             time.sleep(2)
 
             # 5、返回首页（停留1s）单框架（点击屏幕底部首页图标），双框架（左滑返回首页）
-            logging.info('返回首页')
+            logging.info('5、返回首页')
             SeaOfStarsAW.trace_thread.add_log('浏览器', '返回首页')
             SeaOfStarsAW.ut_device.swipe(0.008, 0.586, 0.979, 0.586, 0.3)
             time.sleep(1)
 
             # 6、上滑返回home页面（停留1s）
-            logging.info('上滑返回home页面')
+            logging.info('6、上滑返回home页面')
             SeaOfStarsAW.trace_thread.add_log('浏览器', '上滑返回home页面')
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.app_terminate('com.apple.mobilesafari')

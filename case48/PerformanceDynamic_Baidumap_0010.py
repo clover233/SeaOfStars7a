@@ -35,13 +35,13 @@ class PerformanceDynamic_Baidumap_0010(Case):
 
             # 启动百度地图，停留2S
             # 建议停止5s 有广告
-            logging.info('应用启动')
+            logging.info('1、应用启动')
             SeaOfStarsAW.trace_thread.add_log('百度地图', '应用启动')
             SeaOfStarsAW.ut_device.session().app_activate('com.baidu.map')
             time.sleep(2)
 
             # 搜索框搜索钟楼，停留2S
-            logging.info('搜索框搜索钟楼')
+            logging.info('2、搜索框搜索钟楼')
             SeaOfStarsAW.trace_thread.add_log('百度地图', '搜索框搜索钟楼')
             SeaOfStarsAW.ut_device.click(0.241, 0.099, 0.5)
             time.sleep(1)
@@ -50,25 +50,25 @@ class PerformanceDynamic_Baidumap_0010(Case):
             time.sleep(2)
 
             # 选择西安钟楼，停留2S
-            logging.info('选择西安钟楼')
+            logging.info('3、选择西安钟楼')
             SeaOfStarsAW.trace_thread.add_log('百度地图', '选择西安钟楼')
             SeaOfStarsAW.ut_device.click(0.454, 0.174, 0.5)
             time.sleep(2)
 
             # 点击到这去，停留2S
-            logging.info('点击到这去')
+            logging.info('4、点击到这去')
             SeaOfStarsAW.trace_thread.add_log('百度地图', '点击到这去')
             SeaOfStarsAW.ut_device.click(0.827, 0.939, 0.5)
             time.sleep(2)
 
             # 点击开始导航，停留2S
-            logging.info('点击开始导航')
+            logging.info('5、点击开始导航')
             SeaOfStarsAW.trace_thread.add_log('百度地图', '点击开始导航')
             SeaOfStarsAW.ut_device.click(0.801, 0.943, 0.5)
             time.sleep(2)
 
             # 点击退出导航，停留2S
-            logging.info('点击退出导航')
+            logging.info('6、点击退出导航')
             SeaOfStarsAW.trace_thread.add_log('百度地图', '点击退出导航')
             SeaOfStarsAW.ut_device.click(0.916, 0.933, 0.5)
             time.sleep(0.5)
@@ -76,7 +76,7 @@ class PerformanceDynamic_Baidumap_0010(Case):
             time.sleep(2)
 
             # 返回桌面
-            logging.info('返回桌面')
+            logging.info('7、返回桌面')
             SeaOfStarsAW.trace_thread.add_log('百度地图', '返回桌面')
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.app_terminate('com.baidu.map')

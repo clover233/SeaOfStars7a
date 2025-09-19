@@ -34,19 +34,19 @@ class PerformanceDynamic_Call_0020(Case):
             step = 0
 
             # 1、进入电话(停留1s)
-            logging.info('应用启动')
+            logging.info('1、应用启动')
             SeaOfStarsAW.trace_thread.add_log('电话', '应用启动')
             SeaOfStarsAW.ut_device.session().app_activate('com.apple.mobilephone')
             time.sleep(1)
 
             # 2、点击电话，查看所有通话
-            logging.info('点击电话，查看所有通话')
+            logging.info('2、点击电话，查看所有通话')
             SeaOfStarsAW.trace_thread.add_log('电话', '点击电话，查看所有通话')
             SeaOfStarsAW.ut_device.click(0.398, 0.089, 0.3)
             time.sleep(2)
 
             # 3、输入号码“10086”后，删除键删除号码
-            logging.info('输入号码“10086”后，删除键删除号码')
+            logging.info('3、输入号码“10086”后，删除键删除号码')
             SeaOfStarsAW.trace_thread.add_log('电话', '输入号码“10086”后，删除键删除号码')
             SeaOfStarsAW.ut_device.click(0.699, 0.924, 0.3)
             time.sleep(1)
@@ -67,13 +67,13 @@ class PerformanceDynamic_Call_0020(Case):
                 time.sleep(1)
 
             # 4、点击拨号键盘上方空白处，等待1s
-            logging.info('点击拨号键盘上方空白处')
+            logging.info('4、点击拨号键盘上方空白处')
             SeaOfStarsAW.trace_thread.add_log('电话', '点击拨号键盘上方空白处')
             SeaOfStarsAW.ut_device.click(0.498, 0.198, 0.3)
             time.sleep(1)
 
             # 5、上滑5次，下滑5次，等待2s
-            logging.info('上滑5次，下滑5次')
+            logging.info('5、上滑5次，下滑5次')
             SeaOfStarsAW.trace_thread.add_log('电话', '上滑5次，下滑5次')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -83,7 +83,7 @@ class PerformanceDynamic_Call_0020(Case):
                 time.sleep(2)
 
             # 6、上滑返回home界面
-            logging.info('上滑返回home界面')
+            logging.info('6、上滑返回home界面')
             SeaOfStarsAW.trace_thread.add_log('电话', '上滑返回home界面')
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.app_terminate('com.apple.mobilephone')
