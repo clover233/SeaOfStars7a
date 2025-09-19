@@ -43,7 +43,7 @@ class PerformanceDynamic_hanglvzongheng_0010(Case):
             logging.info('启动航旅纵横，启动3s')
             SeaOfStarsAW.trace_thread.add_log('航旅纵横', '启动航旅纵横，查看机票')
             SeaOfStarsAW.ut_device.session().app_activate('com.travelsky.umetrip')
-            time.sleep(3)
+            time.sleep(5)
             # 2、点击“订机票 送福利”，停留3s
             SeaOfStarsAW.ut_device(labelContains="机票").click()
             time.sleep(1)
@@ -66,7 +66,7 @@ class PerformanceDynamic_hanglvzongheng_0010(Case):
 
             # 6、返回首页，停留2s
             for i in range(3):
-                SeaOfStarsAW.ut_device.swipe_right()
+                SeaOfStarsAW.ut_device.click(0.051, 0.094)
             time.sleep(2)
 
             # 7、点击火车票，停留1s
@@ -96,7 +96,7 @@ class PerformanceDynamic_hanglvzongheng_0010(Case):
 
             # 13、返回首页，停留2s
             for i in range(3):
-                SeaOfStarsAW.ut_device.swipe_right()
+                SeaOfStarsAW.ut_device.click(0.051, 0.094)
             time.sleep(2)
             # 14、上滑返回桌面，停留2s
             SeaOfStarsAW.trace_thread.add_log('航旅纵横', '返回桌面')

@@ -34,93 +34,93 @@ class PerformanceDynamic_Alipay_0020(Case):
             step = 0
 
             # 应用启动
-            logging.info('应用启动')
+            logging.info('1、应用启动')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '应用启动')
             SeaOfStarsAW.ut_device.session().app_activate('com.alipay.iphoneclient')
             time.sleep(2)
             time.sleep(1)
 
-            logging.info('切换理财')
+            logging.info('2、切换理财')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '切换理财')
             SeaOfStarsAW.ut_device.click(0.298, 0.923, 0.10)
             time.sleep(1)
 
-            logging.info('向上2次')
+            logging.info('3、向上2次')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '向上2次')
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
-            logging.info('向下2次')
+            logging.info('4、向下2次')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '向下2次')
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
 
-            logging.info('稳健理财')
+            logging.info('5、稳健理财')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '稳健理财')
             SeaOfStarsAW.ut_device.click(0.298, 0.302, 0.10)
             time.sleep(1)
 
-            logging.info('向上2次')
+            logging.info('6、向上2次')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '向上2次')
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
-            logging.info('向下2次')
+            logging.info('7、向下2次')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '向下2次')
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
 
-            logging.info('点击稳健理财热销第一个理财产品')
+            logging.info('8、点击稳健理财热销第一个理财产品')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击稳健理财热销第一个理财产品')
             SeaOfStarsAW.ut_device.click(0.229, 0.739, 0.10)
             time.sleep(2) # 后面加载快可以注释掉为1
 
-            logging.info('向上2次')
+            logging.info('9、向上2次')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '向上2次')
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
-            logging.info('向下2次')
+            logging.info('10、向下2次')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '向下2次')
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
 
-            logging.info('返回理财页')
+            logging.info('11、返回理财页')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '返回理财页')
             for i in range(2):
                 SeaOfStarsAW.ut_device.click(0.054, 0.087, 0.10)
                 time.sleep(1)
             time.sleep(2)
 
-            logging.info('切换消息')
+            logging.info('12、切换消息')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '切换消息')
             SeaOfStarsAW.ut_device.click(0.692, 0.919, 0.10)
             time.sleep(2)
 
-            logging.info('点击测试账号进入聊天对话框')
+            logging.info('13、点击测试账号进入聊天对话框')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击测试账号进入聊天对话框')
             SeaOfStarsAW.ut_device.click(0.494, 0.401, 0.10)    # 测试账号排布随机，需要调整位置
             time.sleep(2)
 
-            logging.info('上滑5次')
+            logging.info('14、上滑5次')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '上滑5次')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
-            logging.info('下滑5次')
+            logging.info('15、下滑5次')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '下滑5次')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
 
-            logging.info('点击输入框输入动态性能测试')
+            logging.info('16、点击输入框输入动态性能测试')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击输入框输入动态性能测试')
             SeaOfStarsAW.ut_device.click(0.353, 0.857, 0.50)
             time.sleep(1)
@@ -129,14 +129,14 @@ class PerformanceDynamic_Alipay_0020(Case):
             SeaOfStarsAW.ut_device.click(0.879, 0.887, 0.20)
             time.sleep(2)
 
-            logging.info('点击图片')
+            logging.info('17、点击图片')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击图片')
             SeaOfStarsAW.ut_device.click(0.939, 0.57, 0.20)
             time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.16, 0.752, 0.20)
             time.sleep(1)
 
-            logging.info('选择5张图片，点击完成')
+            logging.info('18、选择5张图片，点击完成')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '选择5张图片，点击完成')
             SeaOfStarsAW.ut_device.click(0.215, 0.355, 0.20)
             time.sleep(1)
@@ -151,44 +151,46 @@ class PerformanceDynamic_Alipay_0020(Case):
 
             SeaOfStarsAW.ut_device.click(0.925, 0.932, 0.20)
             time.sleep(1)
-            logging.info('返回消息页')
+
+
+            logging.info('19、返回消息页')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '返回消息页')
             SeaOfStarsAW.ut_device.click(0.054, 0.084, 0.20)
             time.sleep(1)
 
-            logging.info('点击右上角“+”号')
+            logging.info('20、点击右上角“+”号')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击右上角“+”号')
             SeaOfStarsAW.ut_device.click(0.936, 0.088, 0.20)
             time.sleep(1)
 
-            logging.info('点击扫一扫（停留2s)')
+            logging.info('21、点击扫一扫（停留2s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击扫一扫（停留2s)')
             SeaOfStarsAW.ut_device.click(0.833, 0.27, 0.20)
             time.sleep(2)
 
-            logging.info('点击相册（停留2s)')
+            logging.info('22、点击相册（停留2s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击相册（停留2s)')
             SeaOfStarsAW.ut_device.click(0.876, 0.808, 0.20)
             time.sleep(2)
 
-            logging.info('返回消息页（停留2s)')
+            logging.info('23、返回消息页（停留2s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '返回消息页（停留2s)')
             SeaOfStarsAW.ut_device.click(0.071, 0.093, 0.20)
             time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.071, 0.093, 0.20)
             time.sleep(2)
 
-            logging.info('点击我的（停留2s)')
+            logging.info('24、点击我的（停留2s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击我的（停留2s)')
             SeaOfStarsAW.ut_device.click(0.896, 0.923, 0.20)
             time.sleep(2)
 
-            logging.info('点击支付宝会员（停留2s)')
+            logging.info('25、点击支付宝会员（停留2s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击支付宝会员（停留2s)')
             SeaOfStarsAW.ut_device.click(0.502, 0.249, 0.20)
             time.sleep(2)
 
-            logging.info('上滑5次，下滑5次查看会员页（停留2s)')
+            logging.info('26、上滑5次，下滑5次查看会员页（停留2s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '上滑5次，下滑5次查看会员页（停留2s)')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -199,65 +201,67 @@ class PerformanceDynamic_Alipay_0020(Case):
                 time.sleep(2)
 
 
-            logging.info('返回“我的”页（停留2s)')
+            logging.info('27、返回“我的”页（停留2s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '返回“我的”页（停留2s)')
             SeaOfStarsAW.ut_device.click(0.063, 0.091, 0.20)
             time.sleep(2)
 
-            logging.info('点击账单(停留1s)')
+            logging.info('28、点击账单(停留1s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击账单(停留1s)')
             SeaOfStarsAW.ut_device.click(0.485, 0.311, 0.20)
             time.sleep(1)
 
-            logging.info('返回我的页(停留1s)')
+            logging.info('29、返回我的页(停留1s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '返回我的页(停留1s)')
             SeaOfStarsAW.ut_device.click(0.051, 0.091, 0.20)
             time.sleep(1)
 
-            logging.info('点击余额(停留1s)')
+            logging.info('30、点击余额(停留1s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击余额(停留1s)')
             SeaOfStarsAW.ut_device.click(0.485, 0.43, 0.20)
             time.sleep(1)
 
-            logging.info('返回我的页(停留1s)')
+            logging.info('31、返回我的页(停留1s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '返回我的页(停留1s)')
             SeaOfStarsAW.ut_device.click(0.063, 0.089, 0.20)
             time.sleep(1)
 
-            logging.info('点击设置(停留1s)')
+            logging.info('32、点击设置(停留1s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击设置(停留1s)')
             SeaOfStarsAW.ut_device.click(0.931, 0.087, 0.20)
             time.sleep(1)
 
-            logging.info('点击新消息通知(停留1s)')
+            logging.info('33、点击新消息通知(停留1s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击新消息通知(停留1s)')
             SeaOfStarsAW.ut_device.click(0.477, 0.405, 0.20)
             time.sleep(1)
 
-            logging.info('返回设置页(停留1s)')
+            logging.info('34、返回设置页(停留1s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '返回设置页(停留1s)')
             SeaOfStarsAW.ut_device.click(0.057, 0.091, 0.20)
             time.sleep(1)
 
-            logging.info('点击通用(停留1s)')
+            logging.info('35、点击通用(停留1s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击通用(停留1s)')
             SeaOfStarsAW.ut_device.click(0.514, 0.642, 0.20)
             time.sleep(1)
 
-            logging.info('返回我的页(停留1s)')
+            logging.info('36、返回我的页(停留1s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '返回我的页(停留1s)')
             SeaOfStarsAW.ut_device.click(0.057, 0.087, 0.20)
             time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.057, 0.087, 0.20)
             time.sleep(1)
 
-            logging.info('点击首页(停留1s)')
+            logging.info('37、点击首页(停留1s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '点击首页(停留1s)')
             SeaOfStarsAW.ut_device.click(0.091, 0.926, 0.20)
             time.sleep(1)
 
-            logging.info('返回home页面(停留1s)')
+            logging.info('38、返回home页面(停留1s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '返回home页面(停留1s)')
             SeaOfStarsAW.ut_device.home()
             time.sleep(1)
+            SeaOfStarsAW.ut_device.app_terminate('com.alipay.iphoneclient')
+
         logging.info('用例执行结束')

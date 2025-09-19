@@ -1,6 +1,5 @@
 import logging
 import time
-import openpyxl
 from threading import Timer
 from aw import SeaOfStarsAW
 from cases.CaseBase import Case
@@ -21,7 +20,6 @@ class PerformanceDynamic_fanqie_0010(Case):
         for per_app in self.all_app_package_list:
             if per_app not in phone_app_list:
                 return False
-    #     清空后台
 
     @SeaOfStarsAW.function_log
     def run_case(self):
@@ -29,16 +27,11 @@ class PerformanceDynamic_fanqie_0010(Case):
         测试用例执行
         """
         logging.info("用例开始执行")
-        if SeaOfStarsAW.ut_device.locked():
-            SeaOfStarsAW.ut_device.unlock()
-            time.sleep(2)
-
+        # if SeaOfStarsAW.ut_device.locked():
+        #     SeaOfStarsAW.ut_device.unlock()
+        #     time.sleep(2)
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
-
             # 1、启动番茄免费小说，启动3s
             logging.info('启动番茄免费小说，启动3s')
             SeaOfStarsAW.trace_thread.add_log('番茄小说', '启动番茄小说，浏览主页')
@@ -65,7 +58,7 @@ class PerformanceDynamic_fanqie_0010(Case):
                     SeaOfStarsAW.ut_device.swipe_left()
                 time.sleep(3)
                 for i in range(5):
-                    SeaOfStarsAW.ut_device.swipe_right()
+                    SeaOfStarsAW.ut_device.swipe(0.329, 0.504, 0.699, 0.504, duration=0.3)
                 time.sleep(3)
 
             # 6、重复操作4、5步骤两次

@@ -110,5 +110,6 @@ class PerformanceDynamic_Bilibili_0040(Case):
             logging.info('返回桌面')
             SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '返回桌面')
             SeaOfStarsAW.ut_device.home()
+            SeaOfStarsAW.ut_device.app_terminate('tv.danmaku.bilianime')
             time.sleep(1)
         logging.info('用例执行结束')

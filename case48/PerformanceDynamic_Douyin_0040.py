@@ -60,7 +60,7 @@ class PerformanceDynamic_Douyin_0040(Case):
             SeaOfStarsAW.trace_thread.add_log('抖音', '搜索胡锡进')
             SeaOfStarsAW.ut_device.click(0.936, 0.086)
             time.sleep(1)
-            SeaOfStarsAW.ut_device().set_text("胡锡进")
+            SeaOfStarsAW.ut_device().send_keys("胡锡进")
             time.sleep(2)
             SeaOfStarsAW.ut_device(labelContains="搜索").click()
             time.sleep(2)

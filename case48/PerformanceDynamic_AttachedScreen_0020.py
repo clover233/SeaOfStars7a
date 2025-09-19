@@ -34,7 +34,7 @@ class PerformanceDynamic_AttachedScreen_0020(Case):
             step = 0
 
             # 1、进入负一屏（停留2s）
-            logging.info('进入负一屏')
+            logging.info('1、进入负一屏')
             SeaOfStarsAW.trace_thread.add_log('负一屏', '进入负一屏')
             SeaOfStarsAW.ut_device.home()
             time.sleep(1)
@@ -42,7 +42,7 @@ class PerformanceDynamic_AttachedScreen_0020(Case):
             time.sleep(2)
 
             # 2、点击搜索框输入“优惠加油”
-            logging.info('点击搜索框输入“优惠加油”')
+            logging.info('2、点击搜索框输入“优惠加油”')
             SeaOfStarsAW.trace_thread.add_log('负一屏', '点击搜索框输入“优惠加油”')
             SeaOfStarsAW.ut_device.swipe_down()
             time.sleep(1)
@@ -50,13 +50,13 @@ class PerformanceDynamic_AttachedScreen_0020(Case):
             time.sleep(1)
 
             # 3、点击优惠加油
-            logging.info('点击优惠加油')
+            logging.info('3、点击优惠加油')
             SeaOfStarsAW.trace_thread.add_log('负一屏', '点击优惠加油')
             SeaOfStarsAW.ut_device.click(0.495, 0.151, 0.3)
             time.sleep(2)
 
             # 4、上滑3次，下滑3次
-            logging.info('上滑3次，下滑3次')
+            logging.info('4、上滑3次，下滑3次')
             SeaOfStarsAW.trace_thread.add_log('负一屏', '上滑3次，下滑3次')
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_down()
@@ -66,13 +66,13 @@ class PerformanceDynamic_AttachedScreen_0020(Case):
                 time.sleep(2)
 
             # 5、返回负一屏主页
-            logging.info('返回负一屏主页')
+            logging.info('5、返回负一屏主页')
             SeaOfStarsAW.trace_thread.add_log('负一屏', '返回负一屏主页')
             SeaOfStarsAW.ut_device.home()
             time.sleep(1)
 
             # 6、点击搜索框输入“手机充值”点击手机充值
-            logging.info('点击搜索框输入“手机充值”点击手机充值')
+            logging.info('6、点击搜索框输入“手机充值”点击手机充值')
             SeaOfStarsAW.trace_thread.add_log('负一屏', '点击搜索框输入“手机充值”点击手机充值')
             SeaOfStarsAW.ut_device.swipe_down()
             time.sleep(1)
@@ -82,7 +82,7 @@ class PerformanceDynamic_AttachedScreen_0020(Case):
             time.sleep(2)
 
             # 7、上滑1次，下滑一次，返回上一层（重复3次）
-            logging.info('上滑1次，下滑一次，返回上一层')
+            logging.info('7、上滑1次，下滑一次，返回上一层')
             SeaOfStarsAW.trace_thread.add_log('负一屏', '上滑1次，下滑一次，返回上一层')
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -91,13 +91,13 @@ class PerformanceDynamic_AttachedScreen_0020(Case):
                 time.sleep(1)
 
             # 8、返回负一屏主页
-            logging.info('返回负一屏主页')
+            logging.info('8、返回负一屏主页')
             SeaOfStarsAW.trace_thread.add_log('负一屏', '返回负一屏主页')
             SeaOfStarsAW.ut_device.home()
             time.sleep(1)
 
             # 9、返回home界面，等待2s
-            logging.info('返回home界面')
+            logging.info('9、返回home界面')
             SeaOfStarsAW.trace_thread.add_log('负一屏', '返回home界面')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)

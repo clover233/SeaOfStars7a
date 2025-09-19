@@ -27,7 +27,6 @@ from case48.PerformanceDynamic_Baidu_0010 import PerformanceDynamic_Baidu_0010
 from case48.PerformanceDynamic_Baidumap_0010 import PerformanceDynamic_Baidumap_0010
 from case48.PerformanceDynamic_Beiwanglu_0010 import PerformanceDynamic_Beiwanglu_0010
 from case48.PerformanceDynamic_Beiwanglu_0020 import PerformanceDynamic_Beiwanglu_0020
-from case48.PerformanceDynamic_Beiwanglu_AI_0040 import PerformanceDynamic_Beiwanglu_AI_0040
 from case48.PerformanceDynamic_Bilibili_0020 import PerformanceDynamic_Bilibili_0020
 from case48.PerformanceDynamic_Bilibili_0030 import PerformanceDynamic_Bilibili_0030
 from case48.PerformanceDynamic_Bilibili_0040 import PerformanceDynamic_Bilibili_0040
@@ -36,8 +35,26 @@ from case48.PerformanceDynamic_Browser_0010 import PerformanceDynamic_Browser_00
 from case48.PerformanceDynamic_Browser_0020 import PerformanceDynamic_Browser_0020
 from case48.PerformanceDynamic_Call_0010 import PerformanceDynamic_Call_0010
 from case48.PerformanceDynamic_Call_0020 import PerformanceDynamic_Call_0020
+from case48.PerformanceDynamic_Dongchedi_0020 import PerformanceDynamic_Dongchedi_0020
+from case48.PerformanceDynamic_Douyin_0010 import PerformanceDynamic_Douyin_0010
+from case48.PerformanceDynamic_Douyin_0030 import PerformanceDynamic_Douyin_0030
+from case48.PerformanceDynamic_Douyin_0040 import PerformanceDynamic_Douyin_0040
+from case48.PerformanceDynamic_Douyin_0050 import PerformanceDynamic_Douyin_0050
+from case48.PerformanceDynamic_fanqie_0010 import PerformanceDynamic_fanqie_0010
 from case48.PerformanceDynamic_fanqie_0020 import PerformanceDynamic_fanqie_0020
-
+from case48.PerformanceDynamic_hanglvzongheng_0010 import PerformanceDynamic_hanglvzongheng_0010
+from case48.PerformanceDynamic_hanglvzongheng_0020 import PerformanceDynamic_hanglvzongheng_0020
+from case48.PerformanceDynamic_HappyAnimal_0010 import PerformanceDynamic_HappyAnimal_0010
+from case48.PerformanceDynamic_hepingjingying_0030 import PerformanceDynamic_hepingjingying_0030
+from case48.PerformanceDynamic_jrtt_0010 import PerformanceDynamic_jrtt_0010
+from case48.PerformanceDynamic_jrtt_0020 import PerformanceDynamic_jrtt_0020
+from case48.PerformanceDynamic_kiwi_0010 import PerformanceDynamic_kiwi_0010
+from case48.PerformanceDynamic_kiwi_0020 import PerformanceDynamic_kiwi_0020
+from case48.PerformanceDynamic_kiwi_0030 import PerformanceDynamic_kiwi_0030
+from case48.PerformanceDynamic_Kuaishou_0010 import PerformanceDynamic_Kuaishou_0010
+from case48.PerformanceDynamic_Kuaishou_0020 import PerformanceDynamic_Kuaishou_0020
+from case48.PerformanceDynamic_mangguoTV_0010 import PerformanceDynamic_mangguoTV_0010
+from case48.PerformanceDynamic_meituan_0010 import PerformanceDynamic_meituan_0010
 
 
 Result_Dir_Path = os.path.join(os.getcwd(), 'Result', time.strftime("%Y%m%d_%H%M%S", time.localtime()))
@@ -62,7 +79,6 @@ logger.addHandler(fh)
 succ_num = 0
 fail_num = 0
 Basic1 = [
-# PerformanceDynamic_mangguoTV_0010
 # PerformanceDynamic_58city_0010,
 # PerformanceDynamic_58city_0020,
 # PerformanceDynamic_Alipay_0010,
@@ -79,8 +95,7 @@ Basic1 = [
 # PerformanceDynamic_Baidumap_0010,
 # PerformanceDynamic_Beiwanglu_0010,
 # PerformanceDynamic_Beiwanglu_0020,
-# PerformanceDynamic_Beiwanglu_AI_0040,
-# PerformanceDynamic_Bilibili_0020,
+PerformanceDynamic_Bilibili_0020,
 # PerformanceDynamic_Bilibili_0030,
 # PerformanceDynamic_Bilibili_0040,
 # PerformanceDynamic_Bilibili_0050,
@@ -88,7 +103,26 @@ Basic1 = [
 # PerformanceDynamic_Browser_0020,
 # PerformanceDynamic_Call_0010,
 # PerformanceDynamic_Call_0020,
-# PerformanceDynamic_Call_AI2_0010,
+# PerformanceDynamic_Dongchedi_0020,
+# PerformanceDynamic_Douyin_0010,
+# PerformanceDynamic_Douyin_0030,
+# PerformanceDynamic_Douyin_0040,
+# PerformanceDynamic_Douyin_0050,
+# PerformanceDynamic_fanqie_0010,
+# PerformanceDynamic_fanqie_0020,
+# PerformanceDynamic_hanglvzongheng_0010,
+# PerformanceDynamic_hanglvzongheng_0020,
+# PerformanceDynamic_HappyAnimal_0010,
+# PerformanceDynamic_hepingjingying_0030,
+# PerformanceDynamic_jrtt_0010,
+# PerformanceDynamic_jrtt_0020,
+# PerformanceDynamic_kiwi_0010,
+# PerformanceDynamic_kiwi_0020,
+# PerformanceDynamic_kiwi_0030,
+# PerformanceDynamic_Kuaishou_0010,
+# PerformanceDynamic_Kuaishou_0020,
+# PerformanceDynamic_mangguoTV_0010,
+# PerformanceDynamic_meituan_0010,
 ]
 
 Basics=[Basic1]

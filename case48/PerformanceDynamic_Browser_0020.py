@@ -74,6 +74,7 @@ class PerformanceDynamic_Browser_0020(Case):
             logging.info('返回首页')
             SeaOfStarsAW.trace_thread.add_log('浏览器', '返回首页')
             SeaOfStarsAW.ut_device.swipe(0.008, 0.586, 0.979, 0.586, 0.3)
+            SeaOfStarsAW.ut_device.app_terminate('com.apple.mobilesafari')
             time.sleep(1)
 
         logging.info('用例执行结束')

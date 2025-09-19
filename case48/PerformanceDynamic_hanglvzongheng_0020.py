@@ -43,7 +43,7 @@ class PerformanceDynamic_hanglvzongheng_0020(Case):
             logging.info('启动航旅纵横，启动3s')
             SeaOfStarsAW.trace_thread.add_log('航旅纵横', '启动航旅纵横，浏览航旅纵横首页')
             SeaOfStarsAW.ut_device.session().app_activate('com.travelsky.umetrip')
-            time.sleep(3)
+            time.sleep(5)
             # 2、首页上滑1次，下滑2次，停留2s
             for i in range(1):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -62,19 +62,19 @@ class PerformanceDynamic_hanglvzongheng_0020(Case):
             time.sleep(4)
 
             # 7、输入1234，停留2s
-            SeaOfStarsAW.ut_device.set_text("1234")
+            SeaOfStarsAW.ut_device.send_keys("1234")
             time.sleep(2)
 
             # 8、点击航班查询，停留2s
             SeaOfStarsAW.ut_device.click(0.511, 0.43)
-            time.sleep(4)
+            time.sleep(2)
 
             # 9、点击AA1234，停留3s
             SeaOfStarsAW.ut_device.click(0.17, 0.386)
-            time.sleep(4)
+            time.sleep(3)
 
             # 10、侧滑返回上一页，停留2s
-            SeaOfStarsAW.ut_device.swipe_right()
+            SeaOfStarsAW.ut_device.click(0.047, 0.097)
             time.sleep(2)
 
             # 11、点击“按起降地”，停留1s
@@ -99,7 +99,8 @@ class PerformanceDynamic_hanglvzongheng_0020(Case):
 
             # 15、返回首页，停留2s
             for i in range(2):
-                SeaOfStarsAW.ut_device.swipe_right()
+                SeaOfStarsAW.ut_device.click(0.047, 0.097)
+                time.sleep(2)
             time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.096, 0.923)
             time.sleep(2)

@@ -6,7 +6,7 @@ from aw import SeaOfStarsAW
 from cases.CaseBase import Case
 
 
-class PerformanceDynamic_jrtt_0010(Case):
+class PerformanceDynamic_jrtt_0020(Case):
     all_app_package_list = ['']
     TEST_TIME = 1
 
@@ -47,10 +47,12 @@ class PerformanceDynamic_jrtt_0010(Case):
             # 2、搜索“图片”，停留2s
             SeaOfStarsAW.ut_device.click(0.324, 0.093)
             time.sleep(1)
-            SeaOfStarsAW.ut_device.set_text("图片")
+            SeaOfStarsAW.ut_device.send_keys("图片")
             time.sleep(1)
             SeaOfStarsAW.ut_device(labelContains="搜索").click()
             time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.528, 0.147)
+            time.sleep(2)
 
             # 3、点击搜索结果第一条图片进行预览，停留2s
             SeaOfStarsAW.trace_thread.add_log('今日头条', '浏览搜索结果')
@@ -62,26 +64,28 @@ class PerformanceDynamic_jrtt_0010(Case):
                 SeaOfStarsAW.ut_device.swipe_left()
             time.sleep(2)
             for i in range(5):
-                SeaOfStarsAW.ut_device.swipe_right()
+                SeaOfStarsAW.ut_device.swipe(0.329, 0.504, 0.699, 0.504, duration=0.3)
             time.sleep(2)
 
             # 5、侧滑3次，返回到首页
-            for i in range(3):
-                SeaOfStarsAW.ut_device.swipe_right()
+            SeaOfStarsAW.ut_device.click(0.121, 0.934)
             time.sleep(2)
+            for i in range(2):
+                SeaOfStarsAW.ut_device(labelContains="返回").click()
+            time.sleep(1)
 
             # 6、点击视频
             SeaOfStarsAW.trace_thread.add_log('今日头条', '浏览视频')
-            SeaOfStarsAW.ut_device(labelContains="视频").click()
-            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.372, 0.926)
+            time.sleep(2)
 
             # 7、滑动浏览视频，上滑5次，下滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 8、点击评论按钮
             SeaOfStarsAW.trace_thread.add_log('今日头条', '浏览评论')
@@ -97,8 +101,8 @@ class PerformanceDynamic_jrtt_0010(Case):
             time.sleep(2)
 
             # 10、返回首页，停留1s
-            SeaOfStarsAW.ut_device.swipe_right()
-            time.sleep(2)
+            SeaOfStarsAW.ut_device.click(0.926, 0.333)
+            time.sleep(1)
             SeaOfStarsAW.ut_device(labelContains="首页").click()
             time.sleep(1)
 

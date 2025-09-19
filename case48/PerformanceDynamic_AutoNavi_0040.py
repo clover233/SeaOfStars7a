@@ -33,69 +33,72 @@ class PerformanceDynamic_AutoNavi_0040(Case):
         for test_time in range(0, self.TEST_TIME):
             step = 0
 
-            # 启动高德地图（停留7s）
-            logging.info('应用启动')
+            # 1、启动高德地图（停留7s）
+            logging.info('1、应用启动')
             SeaOfStarsAW.ut_device.session().app_activate('com.autonavi.amap')
             time.sleep(7)
 
-            # 点击搜索框（停留5s）
-            logging.info('点击搜索框')
+            # 2、点击搜索框（停留5s）
+            logging.info('2、点击搜索框')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '点击搜索框')
             SeaOfStarsAW.ut_device.click(0.238, 0.557, 0.20)
             time.sleep(5)
 
-            # 点击美食，等待3秒
-            logging.info('点击美食')
+            # 3、点击美食，等待3秒
+            logging.info('3、点击美食')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '点击美食')
             SeaOfStarsAW.ut_device.click(0.109, 0.162, 0.20)
             time.sleep(3)
 
-            # 上滑3次浏览美食，每次间隔1秒
-            logging.info('上滑3次浏览美食')
+            # 4、上滑3次浏览美食，每次间隔1秒
+            logging.info('4、上滑3次浏览美食')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '上滑3次浏览美食')
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(1)
 
-            # 下滑3次浏览美食，每次间隔1秒
-            logging.info('下滑3次浏览美食')
+            # 5、下滑3次浏览美食，每次间隔1秒
+            logging.info('5、下滑3次浏览美食')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '下滑3次浏览美食')
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(1)
 
-            # 点击第一条搜索结果（停留7s）
-            logging.info('点击第一条搜索结果')
+            # 6、点击第一条搜索结果（停留7s）
+            logging.info('6、点击第一条搜索结果')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '点击第一条搜索结果')
             SeaOfStarsAW.ut_device.click(0.554, 0.376, 0.20)
             time.sleep(7)
 
-            # 点击路线（停留5s）
-            logging.info('点击路线')
+            # 7、点击路线（停留5s）
+            logging.info('7、点击路线')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '点击路线')
             SeaOfStarsAW.ut_device.click(0.853, 0.928, 0.20)
             time.sleep(5)
 
-            # 点击开始导航（停留7s）
-            logging.info('点击开始导航')
+            # 8、点击开始导航（停留7s）
+            logging.info('8、点击开始导航')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '点击开始导航')
             SeaOfStarsAW.ut_device.click(0.632, 0.943, 0.20)
             time.sleep(7)
 
-            # 向右滑动（停留3s）
-            logging.info('向右滑动')
+            # 9、向右滑动（停留3s）
+            logging.info('9、向右滑动')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '向右滑动')
             SeaOfStarsAW.ut_device.swipe_left()
             time.sleep(3)
 
-            # 点击退出导航（停留3s）
-            logging.info('点击退出导航')
+            # 10、点击退出导航（停留3s）
+            logging.info('10、点击退出导航')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '点击退出导航')
             SeaOfStarsAW.ut_device.click(0.103, 0.923, 0.20)
             time.sleep(0.2)
             SeaOfStarsAW.ut_device.click(0.258, 0.927, 0.20)
             time.sleep(3)
 
-            # 上滑返回桌面（停留1s）
+            # 11、上滑返回桌面（停留1s）
+            logging.info('11、上滑返回桌面')
             SeaOfStarsAW.ut_device.home()
+            SeaOfStarsAW.ut_device.app_terminate('com.autonavi.amap')
+
         logging.info('用例执行结束')

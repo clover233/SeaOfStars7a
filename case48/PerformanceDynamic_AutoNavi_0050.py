@@ -81,4 +81,5 @@ class PerformanceDynamic_AutoNavi_0050(Case):
             logging.info('上滑返回桌面')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '上滑返回桌面')
             SeaOfStarsAW.ut_device.home()
+            SeaOfStarsAW.ut_device.app_terminate('com.autonavi.amap')
         logging.info('用例执行结束')

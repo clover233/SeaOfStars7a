@@ -107,8 +107,11 @@ class PerformanceDynamic_fanqie_0020(Case):
             time.sleep(2)
 
             # 12、返回推荐榜，停留1s
-            SeaOfStarsAW.ut_device(labelContains="推荐榜").click()
+            SeaOfStarsAW.ut_device(labelContains="完本榜").click()
             time.sleep(1)
+            SeaOfStarsAW.ut_device(labelContains="推荐榜").click()
+            time.sleep(2)
+
             # 13、返回home界面，停留1s
             SeaOfStarsAW.ut_device.app_terminate('com.dragon.read')
             SeaOfStarsAW.swipe_to_launcher()

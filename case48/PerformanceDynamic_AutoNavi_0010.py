@@ -36,23 +36,23 @@ class PerformanceDynamic_AutoNavi_0010(Case):
             # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
             #                          self.screenshot_dir_path)
 
-            # 打开高德地图 (启动5s，可能有广告，停留2s)
-            logging.info('打开高德地图')
+            # 1、打开高德地图 (启动5s，可能有广告，停留2s)
+            logging.info('1、打开高德地图')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '打开高德地图')
             SeaOfStarsAW.ut_device.app_activate("com.autonavi.amap")
             time.sleep(5)
             time.sleep(2)
 
-            # 点击搜索框，点击“西安北站(北进站口)”记录(停留1s) 所以要之前搜索过西安北站(北进站口)，且该记录在第一名
-            logging.info('点击搜索框，点击“西安北站(北进站口)”记录')
+            # 2、点击搜索框，点击“西安北站(北进站口)”记录(停留1s) 所以要之前搜索过西安北站(北进站口)，且该记录在第一名
+            logging.info('2、点击搜索框，点击“西安北站(北进站口)”记录')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '点击搜索框，点击“西安北站(北进站口)”记录')
             SeaOfStarsAW.ut_device.click(0.261, 0.557, 0.20)
             time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.29, 0.408, 0.20)
             time.sleep(1)
 
-            # 点击路线，点击驾车，点击开始导航（10s）
-            logging.info('点击路线，点击驾车，点击开始导航')
+            # 3、点击路线，点击驾车，点击开始导航（10s）
+            logging.info('3、点击路线，点击驾车，点击开始导航')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '点击路线，点击驾车，点击开始导航')
             SeaOfStarsAW.ut_device.click(0.847, 0.926, 0.5)
             time.sleep(1)
@@ -61,27 +61,27 @@ class PerformanceDynamic_AutoNavi_0010(Case):
             # time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.701, 0.94, 0.20)
 
-            # 停留10s
-            logging.info('停留10s')
+            # 4、停留10s
+            logging.info('4、停留10s')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '停留10s')
             time.sleep(10)
 
-            # 右滑退出（停留1s）
-            logging.info('右滑退出')
+            # 5、右滑退出（停留1s）
+            logging.info('5、右滑退出')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '右滑退出')
             SeaOfStarsAW.ut_device.swipe(0.010, 0.809, 0.933, 0.805, 0.5)
             time.sleep(1)
 
-            # 点击退出导航（停留1s）
-            logging.info('点击退出导航')
+            # 6、点击退出导航（停留1s）
+            logging.info('6、点击退出导航')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '点击退出导航')
             SeaOfStarsAW.ut_device.click(0.109, 0.922, 0.20)
             time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.255, 0.926, 0.20)
             time.sleep(1)
 
-            # 返回高德首页面(停留1s)
-            logging.info('返回高德首页面')
+            # 7、返回高德首页面(停留1s)
+            logging.info('7、返回高德首页面')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '返回高德首页面')
             SeaOfStarsAW.ut_device.click(0.054, 0.099, 0.20)
             time.sleep(1)
@@ -90,9 +90,10 @@ class PerformanceDynamic_AutoNavi_0010(Case):
             SeaOfStarsAW.ut_device.click(0.054, 0.099, 0.20)
             time.sleep(1)
 
-            # 返回home页面(停留1s)
-            logging.info('返回home页面(停留1s)')
+            # 8、返回home页面(停留1s)
+            logging.info('8、返回home页面(停留1s)')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '返回home页面(停留1s)')
             SeaOfStarsAW.ut_device.home()
+            SeaOfStarsAW.ut_device.app_terminate('com.autonavi.amap')
             time.sleep(1)
         logging.info('用例执行结束')

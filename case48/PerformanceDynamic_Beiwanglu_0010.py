@@ -95,6 +95,7 @@ class PerformanceDynamic_Beiwanglu_0010(Case):
             logging.info('上滑返回桌面')
             SeaOfStarsAW.trace_thread.add_log('备忘录', '上滑返回桌面')
             SeaOfStarsAW.ut_device.home()
+            SeaOfStarsAW.ut_device.app_terminate('com.apple.mobilenotes')
             time.sleep(2)
 
         logging.info('用例执行结束')

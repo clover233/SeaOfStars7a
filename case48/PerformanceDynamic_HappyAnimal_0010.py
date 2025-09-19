@@ -1,11 +1,12 @@
 import logging
 import time
+import openpyxl
 from threading import Timer
 from aw import SeaOfStarsAW
 from cases.CaseBase import Case
 
 
-class PerformanceDynamic_Beiwanglu_AI_0040(Case):
+class PerformanceDynamic_HappyAnimal_0010(Case):
     all_app_package_list = ['']
     TEST_TIME = 1
 
@@ -20,6 +21,7 @@ class PerformanceDynamic_Beiwanglu_AI_0040(Case):
         for per_app in self.all_app_package_list:
             if per_app not in phone_app_list:
                 return False
+    #     清空后台
 
     @SeaOfStarsAW.function_log
     def run_case(self):
@@ -30,24 +32,23 @@ class PerformanceDynamic_Beiwanglu_AI_0040(Case):
         if SeaOfStarsAW.ut_device.locked():
             SeaOfStarsAW.ut_device.unlock()
             time.sleep(2)
+
         for test_time in range(0, self.TEST_TIME):
             step = 0
+            # todo 后续放开log
+            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+            #                          self.screenshot_dir_path)
 
-            # 应用启动
-            logging.info('启动备忘录')
-            SeaOfStarsAW.trace_thread.add_log('备忘录', '启动备忘录')
-            SeaOfStarsAW.ut_device.session().app_activate('com.apple.mobilenotes')
+            # 1、启动开心消消乐到主界面
+            logging.info('启动开心消消乐，等待10s')
+            SeaOfStarsAW.trace_thread.add_log('开心消消乐', '启动开心消消乐')
+            SeaOfStarsAW.ut_device.session().app_activate('com.happyelements.1OSAnimal')
+            time.sleep(10)
 
-            # 备忘录搜索
-
-
-            # AI识图并翻译
-
-
-            # AI识图并播放
-
-
-            # 退出应用
+            # 2、返回home界面，停留1s
+            SeaOfStarsAW.ut_device.app_terminate('com.happyelements.1OSAnimal')
+            SeaOfStarsAW.swipe_to_launcher()
+            SeaOfStarsAW.go_home()
 
 
 

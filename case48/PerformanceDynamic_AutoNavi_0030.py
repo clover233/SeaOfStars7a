@@ -33,14 +33,14 @@ class PerformanceDynamic_AutoNavi_0030(Case):
         for test_time in range(0, self.TEST_TIME):
             step = 0
 
-            # 点击高德地图(温启2s，停留2s)
-            logging.info('点击高德地图')
+            # 1、点击高德地图(温启2s，停留2s)
+            logging.info('1、点击高德地图')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '点击高德地图')
             SeaOfStarsAW.ut_device.session().app_activate('com.autonavi.amap')
             time.sleep(2)
 
-            # 搜索“西安北站”(停留1s)
-            logging.info('搜索西安北站')
+            # 2、搜索“西安北站”(停留1s)
+            logging.info('2、搜索西安北站')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '搜索西安北站')
             SeaOfStarsAW.ut_device.click(0.922, 0.475, 0.2)
             time.sleep(1)
@@ -49,27 +49,27 @@ class PerformanceDynamic_AutoNavi_0030(Case):
             SeaOfStarsAW.ut_device().set_text("西安北站")
             time.sleep(1)
 
-            # 切换到“公交地铁”（1s）
-            logging.info('切换到“公交地铁”')
+            # 3、切换到“公交地铁”（1s）
+            logging.info('3、切换到“公交地铁”')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '切换到“公交地铁”')
             SeaOfStarsAW.ut_device.click(0.465, 0.293, 0.10)
             time.sleep(1)
 
-
-            # 上滑3次，下滑4次，等待2秒
-            logging.info('向上滑3次')
+            # 4、上滑3次，下滑4次，等待2秒
+            logging.info('4、向上滑3次')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '向上滑3次')
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
-            logging.info('向下滑4次')
+            logging.info('4、向下滑4次')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '向下滑4次')
             for i in range(4):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
-            # 点击第一条路线，上滑1次，下滑1次
-            logging.info('点击第一条路线，上滑1次，下滑1次')
+
+            # 5、点击第一条路线，上滑1次，下滑1次
+            logging.info('5、点击第一条路线，上滑1次，下滑1次')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '点击第一条路线，上滑1次，下滑1次')
             SeaOfStarsAW.ut_device.click(0.488, 0.389, 0.10)
             time.sleep(1)
@@ -78,13 +78,16 @@ class PerformanceDynamic_AutoNavi_0030(Case):
             SeaOfStarsAW.ut_device.swipe_down()
             time.sleep(1)
 
-            # 返回首页
-            logging.info('返回首页')
+            # 6、返回首页
+            logging.info('6、返回首页')
             SeaOfStarsAW.trace_thread.add_log('高德地图', '返回首页')
             for i in range(2):
                 SeaOfStarsAW.ut_device.click(0.071, 0.103, 0.10)
                 time.sleep(1)
 
-            # 上滑返回桌面
+            # 7、上滑返回桌面
+            logging.info('7、上滑返回桌面')
             SeaOfStarsAW.ut_device.home()
+            SeaOfStarsAW.ut_device.app_terminate('com.autonavi.amap')
+
         logging.info('用例执行结束')
