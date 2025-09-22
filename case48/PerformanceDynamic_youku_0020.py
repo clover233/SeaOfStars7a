@@ -125,5 +125,6 @@ class PerformanceDynamic_youku_0020(Case):
             SeaOfStarsAW.ut_device.swipe_right()
             SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate("com.youku.YouKu")
 
         logging.info('用例执行结束')

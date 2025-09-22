@@ -105,6 +105,7 @@ class PerformanceDynamic_xhs_0020(Case):
             step10 = "10、返回home页面"
             SeaOfStarsAW.trace_thread.add_log('小红书', step10)
             SeaOfStarsAW.ut_device.home()
+            SeaOfStarsAW.ut_device.app_terminate("com.xingin.discover")
             SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(1)
 

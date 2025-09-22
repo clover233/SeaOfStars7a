@@ -160,5 +160,6 @@ class PerformanceDynamic_qqm_0030(Case):
             logging.info('上滑返回桌面')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate("com.tencent.QQMusic")
 
         logging.info('用例执行结束')

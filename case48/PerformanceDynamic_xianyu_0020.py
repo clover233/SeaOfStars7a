@@ -41,14 +41,14 @@ class PerformanceDynamic_xianyu_0020(Case):
 
             app_name ="闲鱼"
 
-            step1 = "打开闲鱼,等待10s"
+            step1 = "1、打开闲鱼,等待10s"
             logging.info('启动闲鱼')
             SeaOfStarsAW.trace_thread.add_log(app_name, step1)
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.37, 0.713)
             time.sleep(10)
 
-            step2 = "切换到新发 上滑3次 下滑3次 每次停留2s"
+            step2 = "2、切换到新发 上滑3次 下滑3次 每次停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step2)
             SeaOfStarsAW.ut_device.click(0.288, 0.134)
             for i in range(3):
@@ -59,7 +59,7 @@ class PerformanceDynamic_xianyu_0020(Case):
                 time.sleep(2)
 
 
-            step3 = "切换到服饰 上滑3次 下滑3次 每次停留2s"
+            step3 = "3、切换到服饰 上滑3次 下滑3次 每次停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step3)
             SeaOfStarsAW.ut_device.click(0.713, 0.13)
             for i in range(3):
@@ -70,11 +70,12 @@ class PerformanceDynamic_xianyu_0020(Case):
                 time.sleep(2)
 
 
-            step4 = "返回闲鱼首页 返回home页面 停留2s"
+            step4 = "4、返回闲鱼首页 返回home页面 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step4)
             SeaOfStarsAW.ut_device.click(0.054, 0.089)
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
             SeaOfStarsAW.ut_device.swipe_right()
+            SeaOfStarsAW.ut_device.app_terminate("com.taobao.fleamarket")
 
         logging.info('用例执行结束')

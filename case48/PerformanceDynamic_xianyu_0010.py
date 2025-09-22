@@ -41,14 +41,14 @@ class PerformanceDynamic_xianyu_0010(Case):
 
             app_name ="闲鱼"
 
-            step1 = "打开闲鱼,等待10s"
+            step1 = "1、打开闲鱼,等待10s"
             logging.info('启动闲鱼')
             SeaOfStarsAW.trace_thread.add_log(app_name, step1)
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.37, 0.713)
             time.sleep(10)
 
-            step2 = "首页推荐上滑5次 下滑5次 每次停留2s"
+            step2 = "2、首页推荐上滑5次 下滑5次 每次停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -58,7 +58,7 @@ class PerformanceDynamic_xianyu_0010(Case):
                 time.sleep(2)
 
 
-            step3 = "搜索华为mate60 停留2s"
+            step3 = "3、搜索华为mate60 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step3)
             SeaOfStarsAW.ut_device.click(0.469, 0.078)
             SeaOfStarsAW.ut_device().set_text("华为mate60")
@@ -66,7 +66,7 @@ class PerformanceDynamic_xianyu_0010(Case):
             time.sleep(2)
 
 
-            step4 = "点击第一个商品 上滑5次 下滑5次 每次停留2s"
+            step4 = "4、点击第一个商品 上滑5次 下滑5次 每次停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step4)
             SeaOfStarsAW.ut_device.click(0.293, 0.77)
             for i in range(5):
@@ -76,17 +76,18 @@ class PerformanceDynamic_xianyu_0010(Case):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
 
-            step5 = "点击分享，等待4s后返回"
+            step5 = "5、点击分享，等待4s后返回"
             SeaOfStarsAW.trace_thread.add_log(app_name, step5)
             SeaOfStarsAW.ut_device.click(0.842, 0.084)
             time.sleep(4)
             SeaOfStarsAW.ut_device.click(0.497, 0.191)
 
-            step6 = "返回闲鱼首页 返回home页面 停留2s"
+            step6 = "6、返回闲鱼首页 返回home页面 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step6)
             SeaOfStarsAW.ut_device.click(0.054, 0.089)
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate("com.taobao.fleamarket")
 
         logging.info('用例执行结束')

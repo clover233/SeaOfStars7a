@@ -55,7 +55,6 @@ from case48.PerformanceDynamic_Kuaishou_0010 import PerformanceDynamic_Kuaishou_
 from case48.PerformanceDynamic_Kuaishou_0020 import PerformanceDynamic_Kuaishou_0020
 from case48.PerformanceDynamic_mangguoTV_0010 import PerformanceDynamic_mangguoTV_0010
 from case48.PerformanceDynamic_meituan_0010 import PerformanceDynamic_meituan_0010
-
 from case48.PerformanceDynamic_pinduoduo_0010 import PerformanceDynamic_pinduoduo_0010
 from case48.PerformanceDynamic_qimao_0010 import PerformanceDynamic_qimao_0010
 from case48.PerformanceDynamic_qimao_0020 import PerformanceDynamic_qimao_0020
@@ -64,7 +63,6 @@ from case48.PerformanceDynamic_qiyi_0020 import PerformanceDynamic_qiyi_0020
 from case48.PerformanceDynamic_qiyi_0030 import PerformanceDynamic_qiyi_0030
 from case48.PerformanceDynamic_qiyi_0060 import PerformanceDynamic_qiyi_0060
 from case48.PerformanceDynamic_qiyi_0070 import PerformanceDynamic_qiyi_0070
-
 from case48.PerformanceDynamic_Weibo_0010 import PerformanceDynamic_Weibo_0010
 from case48.PerformanceDynamic_Weibo_0020 import PerformanceDynamic_Weibo_0020
 from case48.PerformanceDynamic_Weibo_0030 import PerformanceDynamic_Weibo_0030
@@ -93,7 +91,6 @@ from case48.PerformanceDynamic_zhongzai_0010 import PerformanceDynamic_zhongzai_
 from case48.PerformanceDynamic_zhongzai_0020 import PerformanceDynamic_zhongzai_0020
 from case48.PerformanceDynamic_zuoyebang_0010 import PerformanceDynamic_zuoyebang_0010
 from case48.PerformanceDynamic_zuoyebang_0020 import PerformanceDynamic_zuoyebang_0020
-
 
 
 
@@ -236,7 +233,14 @@ if __name__ == '__main__':
                         time.sleep(5)
                         SeaOfStarsAW.stop_trace()
                     finally:
+                        # 初始化
                         SeaOfStarsAW.ut_device.home()
+                        for i in range(5):
+                            SeaOfStarsAW.ut_device.swipe_rigth()
+                        for i in range(2):
+                            SeaOfStarsAW.ut_device.swipe_left()
+
+
                         #SeaOfStarsAW.swipe_to_launcher()
                         #SeaOfStarsAW.go_home()
                         df = pd.DataFrame(result_dict)

@@ -120,5 +120,6 @@ class PerformanceDynamic_zuoyebang_0010(Case):
             SeaOfStarsAW.ut_device.swipe_right()
             SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(1)
+            SeaOfStarsAW.ut_device.app_terminate("com.baidu.homework")
 
         logging.info('用例执行结束')

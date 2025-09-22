@@ -94,5 +94,6 @@ class PerformanceDynamic_wpsoffice_0020(Case):
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(1)
+            SeaOfStarsAW.ut_device.app_terminate("com.kingsoft.www.office.wpsoffice")
 
         logging.info('用例执行结束')
