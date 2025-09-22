@@ -60,10 +60,10 @@ class PerformanceDynamic_Kuaishou_0020(Case):
             # 4、上滑3次，下滑3次，停留2s
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 5、返回搜索页
             SeaOfStarsAW.ut_device.swipe_right()
@@ -85,7 +85,7 @@ class PerformanceDynamic_Kuaishou_0020(Case):
             # 9、左滑3次返回首页
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_right()
-            time.sleep(2)
+                time.sleep(2)
 
             # 10、上滑返回桌面
             SeaOfStarsAW.ut_device.app_terminate('com.jiangjia.gif')

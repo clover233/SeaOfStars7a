@@ -62,17 +62,17 @@ class PerformanceDynamic_jrtt_0020(Case):
             # 4、滑动浏览，左滑5次，右滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_left()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe(0.329, 0.504, 0.699, 0.504, duration=0.3)
-            time.sleep(2)
+                time.sleep(2)
 
             # 5、侧滑3次，返回到首页
             SeaOfStarsAW.ut_device.click(0.121, 0.934)
             time.sleep(2)
             for i in range(2):
                 SeaOfStarsAW.ut_device(labelContains="返回").click()
-            time.sleep(1)
+                time.sleep(1)
 
             # 6、点击视频
             SeaOfStarsAW.trace_thread.add_log('今日头条', '浏览视频')
@@ -95,10 +95,10 @@ class PerformanceDynamic_jrtt_0020(Case):
             # 9、滑动浏览评论，上滑5次，下滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 10、返回首页，停留1s
             SeaOfStarsAW.ut_device.click(0.926, 0.333)

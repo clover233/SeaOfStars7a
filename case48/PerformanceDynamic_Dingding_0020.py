@@ -74,7 +74,7 @@ class PerformanceDynamic_Dingding_0020(Case):
 
             step7 = "7、打开今日头条 3s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step7)
-            SeaOfStarsAW.ut_device.click(0.856, 0.601)
+            SeaOfStarsAW.ut_device.click(0.383, 0.606, 0.3)
             time.sleep(6)
 
             step8 = "8、主页浏览 上下各滑动5次 每次停留2s"
@@ -102,7 +102,7 @@ class PerformanceDynamic_Dingding_0020(Case):
 
             step11 = "11、打开第一条 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step11)
-            SeaOfStarsAW.ut_device.click(0.422, 0.278)
+            SeaOfStarsAW.ut_device.click(0.422, 0.278, 0.3)
             time.sleep(2)
 
             step12 = "12、上下各滑动5次 每次停留2s"
@@ -116,7 +116,7 @@ class PerformanceDynamic_Dingding_0020(Case):
 
             step13 = "13、返回 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step13)
-            SeaOfStarsAW.ut_device.click(0.056, 0.104)
+            SeaOfStarsAW.ut_device.click(0.056, 0.104, 0.3)
             time.sleep(1)
 
             step14 = "14、点击 发现 1s"
@@ -135,7 +135,7 @@ class PerformanceDynamic_Dingding_0020(Case):
 
             step16 = "16、返回推荐页面 点击第一条 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step16)
-            SeaOfStarsAW.ut_device.click(0.422, 0.278)
+            SeaOfStarsAW.ut_device.click(0.422, 0.278, 0.3)
             time.sleep(1)
 
             step17 = "17、上下各滑动5次 每次停留2s"

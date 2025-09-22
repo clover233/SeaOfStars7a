@@ -72,10 +72,10 @@ class PerformanceDynamic_meituan_0010(Case):
             SeaOfStarsAW.trace_thread.add_log('美团', '浏览美食')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 8、点击第一家店铺，停留1s
             SeaOfStarsAW.trace_thread.add_log('美团', '加入购物车')
@@ -85,20 +85,20 @@ class PerformanceDynamic_meituan_0010(Case):
             # 9、上下各滑动1次浏览店家，停留1s
             for i in range(1):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(1):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 10、点击评价，上次各滑动2次，浏览评价
             SeaOfStarsAW.ut_device.click(0.286, 0.148)
             time.sleep(1)
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 11、返回进入点菜界面，停留1s
             SeaOfStarsAW.ut_device.click(0.074, 0.146)
@@ -115,10 +115,10 @@ class PerformanceDynamic_meituan_0010(Case):
             # 14、再次点击加入购物车，停留1s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 15、点击购物车图标，停留1s
             # 16、侧滑返回美食界面，停留1s
@@ -133,7 +133,5 @@ class PerformanceDynamic_meituan_0010(Case):
             SeaOfStarsAW.ut_device.app_terminate('com.meituan.imeituan')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
-
-
 
         logging.info('用例执行结束')

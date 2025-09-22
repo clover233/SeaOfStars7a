@@ -70,10 +70,10 @@ class PerformanceDynamic_kiwi_0020(Case):
             # 6、浏览搜索结果，上滑2次，下滑2次，每次停留2s
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 7、点击直播，等待2s
             SeaOfStarsAW.ut_device.click(0.193, 0.143)
@@ -83,10 +83,10 @@ class PerformanceDynamic_kiwi_0020(Case):
             SeaOfStarsAW.trace_thread.add_log('虎牙直播', '查看搜索到的直播间')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 9、点击进入第一个直播间，等待5s
             SeaOfStarsAW.ut_device.click(0.224, 0.326)
@@ -95,15 +95,15 @@ class PerformanceDynamic_kiwi_0020(Case):
             # 10、上下滑动切换直播间，下滑5次，上滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 11、返回首页推荐页，等待2s
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_right()
-            time.sleep(2)
+                time.sleep(2)
 
             # 12、返回home页面，等待2s
             SeaOfStarsAW.trace_thread.add_log('虎牙直播', '退出应用')
@@ -113,6 +113,5 @@ class PerformanceDynamic_kiwi_0020(Case):
             SeaOfStarsAW.ut_device.app_terminate('com.yy.kiwi')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
-
 
         logging.info('用例执行结束')

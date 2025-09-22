@@ -48,11 +48,12 @@ class PerformanceDynamic_Dingding_0010(Case):
 
             step2 = "2、点击 左下角 消息图标"
             SeaOfStarsAW.trace_thread.add_log(app_name, step2)
-            SeaOfStarsAW.ut_device(label="消息").click()
+            SeaOfStarsAW.ut_device(labelContains="消息").click()
+            time.sleep(1)
 
             step3 = "3、点击 欢迎试用钉钉群"
             SeaOfStarsAW.trace_thread.add_log(app_name, step3)
-            SeaOfStarsAW.ut_device(label="新手体验群").click()
+            SeaOfStarsAW.ut_device(labelContains="新手体验群").click()
             time.sleep(1)
 
             step4 = "4、上滑2次 下滑2次 停留2s"

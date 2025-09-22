@@ -43,8 +43,14 @@ class PerformanceDynamic_jingdong_0010(Case):
             logging.info('启动京东')
             SeaOfStarsAW.trace_thread.add_log('京东', '启动京东，等待3s')
             # todo 微博的坐标地址要改下
-            SeaOfStarsAW.ut_device.click(0.847, 0.246)
+            # for _ in range(4):
+            #     SeaOfStarsAW.swipe_left()
+            #     time.sleep(2)
+            # SeaOfStarsAW.ut_device.click(0.847, 0.246)
+            # time.sleep(3)
+            SeaOfStarsAW.ut_device.session().app_activate('com.360buy.jdmobile')
             time.sleep(3)
+            time.sleep(2)
 
             # 2、首页浏览，上滑5次，下滑5次，每次停留2s
             SeaOfStarsAW.trace_thread.add_log('京东', '首页浏览，上滑5次，下滑5次，每次停留2s')
@@ -107,8 +113,10 @@ class PerformanceDynamic_jingdong_0010(Case):
             time.sleep(2)
             # 12、返回home页，等待2s
             SeaOfStarsAW.ut_device.home()
+            SeaOfStarsAW.ut_device.app_terminate('com.360buy.jdmobile')
             time.sleep(2)
-
-
+            SeaOfStarsAW.stop_trace()
+            SeaOfStarsAW.swipe_to_launcher()
+            SeaOfStarsAW.go_home()
 
         logging.info('用例执行结束')
