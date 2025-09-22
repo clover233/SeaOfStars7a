@@ -43,7 +43,9 @@ class PerformanceDynamic_Douyin_0050(Case):
             logging.info('点击进入抖音，等待3s')
             SeaOfStarsAW.trace_thread.add_log('抖音', '启动抖音，进入聊天界面，发送华为手机')
             # todo 微博的坐标地址要改下
-            SeaOfStarsAW.ut_device.session().app_activate('com.ss.iphone.ugc.Aweme')
+            for i in range(4):
+                SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.click(0.148, 0.709)
             time.sleep(5)
 
             # 2、点击顶部经验，停留1s
@@ -165,9 +167,8 @@ class PerformanceDynamic_Douyin_0050(Case):
             SeaOfStarsAW.ut_device(labelContains="首页").click()
             # 28、退出抖音
 
-            SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.ugc.Aweme')
-            SeaOfStarsAW.swipe_to_launcher()
-            SeaOfStarsAW.go_home()
+            SeaOfStarsAW.ut_device.home()
+            time.sleep(2)
 
 
 
