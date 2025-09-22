@@ -35,14 +35,14 @@ class PerformanceDynamic_Baidu_0010(Case):
 
             # 启动百度，停留2S
             # 建议停留3s 跳过3秒广告
-            logging.info('启动百度')
+            logging.info('1、启动百度')
             SeaOfStarsAW.trace_thread.add_log('百度', '启动百度')
             SeaOfStarsAW.ut_device.session().app_activate('com.baidu.BaiduMobile')
             time.sleep(2)
 
             # 输入“华为手机”并搜索，停留2S
             # 不建议ai模式搜索
-            logging.info('输入“华为手机”并搜索')
+            logging.info('2、输入“华为手机”并搜索')
             SeaOfStarsAW.trace_thread.add_log('百度', '输入“华为手机”并搜索')
             SeaOfStarsAW.ut_device.click(0.172, 0.099, 0.2)
             time.sleep(1)
@@ -52,27 +52,27 @@ class PerformanceDynamic_Baidu_0010(Case):
             time.sleep(1)
 
             # 向下滑动6次，停留2S
-            logging.info('向下滑动6次')
+            logging.info('3、向下滑动6次')
             SeaOfStarsAW.trace_thread.add_log('百度', '向下滑动6次')
             for i in range(6):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
 
             # 向上滑动6次至底部，停留2S
-            logging.info('向上滑动6次')
+            logging.info('4、向上滑动6次')
             SeaOfStarsAW.trace_thread.add_log('百度', '向上滑动6次')
             for i in range(6):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
             # 侧滑返回首页，停留2S
-            logging.info('侧滑返回首页')
+            logging.info('5、侧滑返回首页')
             SeaOfStarsAW.trace_thread.add_log('百度', '侧滑返回首页')
             SeaOfStarsAW.ut_device.swipe(0.010, 0.809, 0.933, 0.805, 0.5)
             time.sleep(2)
 
             # 返回桌面
-            logging.info('返回桌面')
+            logging.info('6、返回桌面')
             SeaOfStarsAW.trace_thread.add_log('百度', '返回桌面')
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.app_terminate('com.baidu.BaiduMobile')

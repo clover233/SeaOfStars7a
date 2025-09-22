@@ -35,52 +35,52 @@ class PerformanceDynamic_Bilibili_0050(Case):
             # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
             #                          self.screenshot_dir_path)
 
-            # 启动哔哩哔哩
-            logging.info('应用启动')
+            # 1、启动哔哩哔哩
+            logging.info('1、应用启动')
             SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '应用启动')
             SeaOfStarsAW.ut_device.session().app_activate('tv.danmaku.bilianime')
 
-            # 点击底部Tab动态
-            logging.info('点击底部Tab动态')
+            # 2、点击底部Tab动态
+            logging.info('2、点击底部Tab动态')
             SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '点击底部Tab动态')
             SeaOfStarsAW.ut_device.click(0.307, 0.927, 0.50)
             time.sleep(1)
 
-            # 上滑5次浏览动态页
-            logging.info('上滑5次浏览动态页')
+            # 3、上滑5次浏览动态页
+            logging.info('3、上滑5次浏览动态页')
             SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '上滑5次浏览动态页')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(1)
 
-            # 下滑5次浏览动态页
-            logging.info('下滑5次浏览动态页')
+            # 4、下滑5次浏览动态页
+            logging.info('4、下滑5次浏览动态页')
             SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '下滑5次浏览动态页')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(1)
 
-            # 点击屏幕一条视频播放
-            logging.info('点击屏幕一条视频播放')
+            # 5、点击屏幕一条视频播放
+            logging.info('5、点击屏幕一条视频播放')
             SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '点击屏幕一条视频播放')
             SeaOfStarsAW.ut_device.click(0.477, 0.535, 0.50)
             time.sleep(1)
 
-            # 观看视频10秒
-            logging.info('观看视频10秒')
+            # 6、观看视频10秒
+            logging.info('6、观看视频10秒')
             SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '观看视频10秒')
             time.sleep(10)
 
-            # 返回首页
-            logging.info('返回首页')
+            # 7、返回首页
+            logging.info('7、返回首页')
             SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '返回首页')
             SeaOfStarsAW.ut_device.swipe(0.005, 0.585, 0.999, 0.585, 1.0)
             time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.114, 0.928, 0.50)
             time.sleep(1)
 
-            # 上滑返回桌面
-            logging.info('返回桌面')
+            # 8、上滑返回桌面
+            logging.info('8、返回桌面')
             SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '返回桌面')
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.app_terminate('tv.danmaku.bilianime')
