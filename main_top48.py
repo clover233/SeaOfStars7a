@@ -55,9 +55,48 @@ from case48.PerformanceDynamic_Kuaishou_0010 import PerformanceDynamic_Kuaishou_
 from case48.PerformanceDynamic_Kuaishou_0020 import PerformanceDynamic_Kuaishou_0020
 from case48.PerformanceDynamic_mangguoTV_0010 import PerformanceDynamic_mangguoTV_0010
 from case48.PerformanceDynamic_meituan_0010 import PerformanceDynamic_meituan_0010
-from case48.PerformanceDynamic_meituan_0080 import PerformanceDynamic_meituan_0080
-from case48.PerformanceDynamic_meituan_0090 import PerformanceDynamic_meituan_0090
-from case48.PerformanceDynamic_meituxiuxiu_0010 import PerformanceDynamic_meituxiuxiu_0010
+
+from case48.PerformanceDynamic_pinduoduo_0010 import PerformanceDynamic_pinduoduo_0010
+from case48.PerformanceDynamic_qimao_0010 import PerformanceDynamic_qimao_0010
+from case48.PerformanceDynamic_qimao_0020 import PerformanceDynamic_qimao_0020
+from case48.PerformanceDynamic_qiyi_0010 import PerformanceDynamic_qiyi_0010
+from case48.PerformanceDynamic_qiyi_0020 import PerformanceDynamic_qiyi_0020
+from case48.PerformanceDynamic_qiyi_0030 import PerformanceDynamic_qiyi_0030
+from case48.PerformanceDynamic_qiyi_0060 import PerformanceDynamic_qiyi_0060
+from case48.PerformanceDynamic_qiyi_0070 import PerformanceDynamic_qiyi_0070
+
+from case48.PerformanceDynamic_Weibo_0010 import PerformanceDynamic_Weibo_0010
+from case48.PerformanceDynamic_Weibo_0020 import PerformanceDynamic_Weibo_0020
+from case48.PerformanceDynamic_Weibo_0030 import PerformanceDynamic_Weibo_0030
+from case48.PerformanceDynamic_Weibo_0040 import PerformanceDynamic_Weibo_0040
+from case48.PerformanceDynamic_weipinhui_0010 import PerformanceDynamic_weipinhui_0010
+from case48.PerformanceDynamic_weipinhui_0020 import PerformanceDynamic_weipinhui_0020
+from case48.PerformanceDynamic_weipinhui_0030 import PerformanceDynamic_weipinhui_0030
+from case48.PerformanceDynamic_wpsoffice_0010 import PerformanceDynamic_wpsoffice_0010
+from case48.PerformanceDynamic_wpsoffice_0020 import PerformanceDynamic_wpsoffice_0020
+from case48.PerformanceDynamic_xhs_0010 import PerformanceDynamic_xhs_0010
+from case48.PerformanceDynamic_xhs_0020 import PerformanceDynamic_xhs_0020
+from case48.PerformanceDynamic_xhs_0030 import PerformanceDynamic_xhs_0030
+from case48.PerformanceDynamic_xhs_0040 import PerformanceDynamic_xhs_0040
+from case48.PerformanceDynamic_xianyu_0010 import PerformanceDynamic_xianyu_0010
+from case48.PerformanceDynamic_xianyu_0020 import PerformanceDynamic_xianyu_0020
+from case48.PerformanceDynamic_xiechengTrip_0010 import PerformanceDynamic_xiechengTrip_0010
+from case48.PerformanceDynamic_xiechengTrip_0020 import PerformanceDynamic_xiechengTrip_0020
+from case48.PerformanceDynamic_ximalaya_0010 import PerformanceDynamic_ximalaya_0010
+from case48.PerformanceDynamic_ximalaya_0020 import PerformanceDynamic_ximalaya_0020
+from case48.PerformanceDynamic_xuexiqiangguo_0010 import PerformanceDynamic_xuexiqiangguo_0010
+from case48.PerformanceDynamic_xuexiqiangguo_0020 import PerformanceDynamic_xuexiqiangguo_0020
+from case48.PerformanceDynamic_youku_0010 import PerformanceDynamic_youku_0010
+from case48.PerformanceDynamic_youku_0020 import PerformanceDynamic_youku_0020
+from case48.PerformanceDynamic_zhihu_0030 import PerformanceDynamic_zhihu_0030
+from case48.PerformanceDynamic_zhongzai_0010 import PerformanceDynamic_zhongzai_0010
+from case48.PerformanceDynamic_zhongzai_0020 import PerformanceDynamic_zhongzai_0020
+from case48.PerformanceDynamic_zuoyebang_0010 import PerformanceDynamic_zuoyebang_0010
+from case48.PerformanceDynamic_zuoyebang_0020 import PerformanceDynamic_zuoyebang_0020
+
+
+
+
 
 
 Result_Dir_Path = os.path.join(os.getcwd(), 'Result', time.strftime("%Y%m%d_%H%M%S", time.localtime()))
@@ -87,10 +126,8 @@ Basic1 = [
 # PerformanceDynamic_Alipay_0010,
 # PerformanceDynamic_Alipay_0020,
 # PerformanceDynamic_Alipay_0070,
-
 # PerformanceDynamic_Appmarket_0010,
 # PerformanceDynamic_AttachedScreen_0020,
-
 # PerformanceDynamic_AutoNavi_0010,
 # PerformanceDynamic_AutoNavi_0030,
 # PerformanceDynamic_AutoNavi_0040,
@@ -98,20 +135,16 @@ Basic1 = [
 # PerformanceDynamic_AutoNavi_0060,
 # PerformanceDynamic_Baidu_0010,
 # PerformanceDynamic_Baidumap_0010,
-
 # PerformanceDynamic_Beiwanglu_0010,
 # PerformanceDynamic_Beiwanglu_0020,
-
 # PerformanceDynamic_Bilibili_0020,
 # PerformanceDynamic_Bilibili_0030,
 # PerformanceDynamic_Bilibili_0040,
 # PerformanceDynamic_Bilibili_0050,
-
 # PerformanceDynamic_Browser_0010,
 # PerformanceDynamic_Browser_0020,
 # PerformanceDynamic_Call_0010,
 # PerformanceDynamic_Call_0020,
-
 # PerformanceDynamic_Dongchedi_0020,
 # PerformanceDynamic_Douyin_0010,
 # PerformanceDynamic_Douyin_0030,
@@ -132,12 +165,39 @@ Basic1 = [
 # PerformanceDynamic_Kuaishou_0020,
 # PerformanceDynamic_mangguoTV_0010,
 # PerformanceDynamic_meituan_0010,
-PerformanceDynamic_meituan_0080,
-# PerformanceDynamic_meituan_0090,
-# PerformanceDynamic_meituxiuxiu_0010,
+]
+Basic_fbh =[
+    # PerformanceDynamic_Weibo_0010,
+    # PerformanceDynamic_Weibo_0020,
+    # PerformanceDynamic_Weibo_0030,
+    # PerformanceDynamic_Weibo_0040,
+    # PerformanceDynamic_weipinhui_0010,
+    # PerformanceDynamic_weipinhui_0020,
+    # PerformanceDynamic_weipinhui_0030,
+    # PerformanceDynamic_wpsoffice_0010,
+    # PerformanceDynamic_wpsoffice_0020,
+    PerformanceDynamic_xhs_0010,
+    PerformanceDynamic_xhs_0020,
+    PerformanceDynamic_xhs_0030,
+    PerformanceDynamic_xhs_0040,
+    PerformanceDynamic_xianyu_0010,
+    PerformanceDynamic_xianyu_0020,
+    PerformanceDynamic_xiechengTrip_0010,
+    PerformanceDynamic_xiechengTrip_0020,
+    PerformanceDynamic_ximalaya_0010,
+    PerformanceDynamic_ximalaya_0020,
+    PerformanceDynamic_xuexiqiangguo_0010,
+    PerformanceDynamic_xuexiqiangguo_0020,
+    PerformanceDynamic_youku_0010,
+    PerformanceDynamic_youku_0020,
+    PerformanceDynamic_zhihu_0030,
+    PerformanceDynamic_zhongzai_0010,
+    PerformanceDynamic_zhongzai_0020,
+    PerformanceDynamic_zuoyebang_0010,
+    PerformanceDynamic_zuoyebang_0020,
 ]
 
-Basics=[Basic1]
+Basics=[Basic1,Basic_fbh]
 
 # 按装订区域中的绿色按钮以运行脚本。
 if __name__ == '__main__':
@@ -153,7 +213,7 @@ if __name__ == '__main__':
                         result_dict['case_name'].append(case)
                         case.set_up()
                         case.run_case()
-                        time.sleep(8)
+                        time.sleep(3)
 
                         succ_num += 1
                         result_dict['success'].append('1')
