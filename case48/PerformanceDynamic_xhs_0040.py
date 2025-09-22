@@ -39,47 +39,48 @@ class PerformanceDynamic_xhs_0040(Case):
             # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
             #                          self.screenshot_dir_path)
 
-            step1 = "'打开小红书,等待10s'"
+            step1 = "'1、打开小红书,等待10s'"
             logging.info('启动小红书')
             SeaOfStarsAW.trace_thread.add_log('小红书', step1)
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.149, 0.714)
             time.sleep(10)
 
-            step2 = "点击我"
+            step2 = "2、点击我"
             SeaOfStarsAW.trace_thread.add_log('小红书', step2)
             SeaOfStarsAW.ut_device.click(0.904, 0.936)
 
 
-            step3 = "点击收藏"
+            step3 = "3、点击收藏"
             SeaOfStarsAW.trace_thread.add_log('小红书', step3)
             SeaOfStarsAW.ut_device(labelContains="收藏").click()
             time.sleep(1)
 
-            step4 = "上滑浏览1次 "
+            step4 = "4、上滑浏览1次 "
             SeaOfStarsAW.trace_thread.add_log('小红书', step4)
             SeaOfStarsAW.ut_device.swipe_up()
 
-            step5 = "下滑浏览1次"
+            step5 = "5、下滑浏览1次"
             SeaOfStarsAW.trace_thread.add_log('小红书', step5)
             SeaOfStarsAW.ut_device.swipe_down()
 
-            step6 = "点击赞"
+            step6 = "6、点击赞"
             SeaOfStarsAW.trace_thread.add_log('小红书', step6)
             SeaOfStarsAW.ut_device(labelContains="赞").click()
 
-            step7 = "上滑浏览1次"
+            step7 = "7、上滑浏览1次"
             SeaOfStarsAW.trace_thread.add_log('小红书', step7)
             SeaOfStarsAW.ut_device.swipe_up()
             time.sleep(1)
 
-            step8 = "下滑浏览1次"
+            step8 = "8、下滑浏览1次"
             SeaOfStarsAW.trace_thread.add_log('小红书', step8)
             SeaOfStarsAW.ut_device.swipe_down()
 
-            step9 = "返回home页面"
+            step9 = "9、返回home页面"
             SeaOfStarsAW.trace_thread.add_log('小红书', step9)
             SeaOfStarsAW.ut_device.home()
+            SeaOfStarsAW.ut_device.app_terminate("com.xingin.discover")
             SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(1)
 

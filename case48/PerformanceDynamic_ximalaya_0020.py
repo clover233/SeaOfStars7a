@@ -41,31 +41,32 @@ class PerformanceDynamic_ximalaya_0020(Case):
 
             app_name ="喜马拉雅"
 
-            step1 = "打开喜马拉雅,等待10s"
+            step1 = "1、打开喜马拉雅,等待10s"
             logging.info('启动喜马拉雅')
             SeaOfStarsAW.trace_thread.add_log(app_name, step1)
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.865, 0.699)
             time.sleep(10)
 
-            step2 = "点击全局播放器"
+            step2 = "2、点击全局播放器"
             SeaOfStarsAW.trace_thread.add_log(app_name, step2)
             SeaOfStarsAW.ut_device(labelContains="全局播放器").click()
 
-            step3 = "点击暂停"
+            step3 = "3、点击暂停"
             SeaOfStarsAW.trace_thread.add_log(app_name, step3)
             SeaOfStarsAW.ut_device.click(0.414, 0.366)
 
 
-            step4 = "返回首页 1s"
+            step4 = "4、返回首页 1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step4)
             SeaOfStarsAW.ut_device(label="返回").click()
             time.sleep(1)
 
-            step5 = "返回主界面"
+            step5 = "5、返回主界面"
             SeaOfStarsAW.trace_thread.add_log(app_name, step5)
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.swipe_right()
+            SeaOfStarsAW.ut_device.app_terminate("com.gemd.iting")
 
 
         logging.info('用例执行结束')

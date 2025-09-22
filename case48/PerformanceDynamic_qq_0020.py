@@ -67,5 +67,6 @@ class PerformanceDynamic_qq_0010(Case):
             logging.info('上滑退出')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate("com.tencent.mqq")
 
         logging.info('用例执行结束')

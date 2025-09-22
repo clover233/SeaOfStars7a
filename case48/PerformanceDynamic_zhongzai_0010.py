@@ -211,6 +211,10 @@ class PerformanceDynamic_zhongzai_0010(Case):
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(1)
+            SeaOfStarsAW.ut_device.app_terminate("com.autonavi.amap")
+            SeaOfStarsAW.ut_device.app_terminate("com.tencent.QQMusic")
+            SeaOfStarsAW.ut_device.app_terminate("com.qiyi.iphone")
+            SeaOfStarsAW.ut_device.app_terminate("com.youku.YouKu")
 
 
         logging.info('用例执行结束')

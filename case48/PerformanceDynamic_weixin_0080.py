@@ -95,6 +95,7 @@ class PerformanceDynamic_weixin_0080(Case):
             logging.info('返回桌面')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate("com.tencent.xin")
 
 
 

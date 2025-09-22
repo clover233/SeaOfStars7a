@@ -127,6 +127,7 @@ class PerformanceDynamic_Weibo_0010(Case):
             SeaOfStarsAW.trace_thread.add_log('微博', '16、上滑返回到home 等待2s')
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.swipe_right()
+            SeaOfStarsAW.ut_device.app_terminate("com.sina.weibo")
             time.sleep(2)
 
         logging.info('用例执行结束')

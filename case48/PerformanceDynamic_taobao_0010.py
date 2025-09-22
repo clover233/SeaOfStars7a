@@ -132,5 +132,6 @@ class PerformanceDynamic_taobao_0010(Case):
             logging.info('返回桌面')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate("com.taobao.taobao4iphone")
 
         logging.info('用例执行结束')

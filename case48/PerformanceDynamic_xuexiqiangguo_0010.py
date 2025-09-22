@@ -118,14 +118,14 @@ class PerformanceDynamic_xuexiqiangguo_0010(Case):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
-            step12 = "右滑5次  每次间隔2s"
+            step12 = "12、右滑5次  每次间隔2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step12)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_right()
                 time.sleep(2)
 
 
-            step13 = "上滑5次 下滑5次 停留2s"
+            step13 = "13、上滑5次 下滑5次 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step13)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
@@ -134,7 +134,7 @@ class PerformanceDynamic_xuexiqiangguo_0010(Case):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
-            step14 = "点击看党史 第一个视频播放 1s"
+            step14 = "14、点击看党史 第一个视频播放 1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step14)
             SeaOfStarsAW.ut_device(label="STFeedsChannelEditBtn").click()
             SeaOfStarsAW.ut_device(label="看党史").click()
@@ -142,21 +142,22 @@ class PerformanceDynamic_xuexiqiangguo_0010(Case):
             SeaOfStarsAW.ut_device.click(0.876, 0.342)
             time.sleep(1)
 
-            step15 = "返回首页 停留1s"
+            step15 = "15、返回首页 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step15)
             SeaOfStarsAW.ut_device(label="(null),").click()
             time.sleep(1)
 
-            step16 = "点击百灵 点击首页 1s"
+            step16 = "16、点击百灵 点击首页 1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step16)
             SeaOfStarsAW.ut_device(label="百灵,").click()
             time.sleep(1)
 
-            step17 = "返回home"
+            step17 = "17、返回home"
             SeaOfStarsAW.trace_thread.add_log(app_name, step17)
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.swipe_right()
             SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(1)
+            SeaOfStarsAW.ut_device.app_terminate("cn.xuexi.qg")
 
         logging.info('用例执行结束')

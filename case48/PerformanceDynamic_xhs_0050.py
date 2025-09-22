@@ -39,45 +39,46 @@ class PerformanceDynamic_xhs_0050(Case):
             # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
             #                          self.screenshot_dir_path)
 
-            step1 = "'打开小红书,等待10s'"
+            step1 = "'1、打开小红书,等待10s'"
             logging.info('启动小红书')
             SeaOfStarsAW.trace_thread.add_log('小红书', step1)
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.149, 0.714)
             time.sleep(10)
 
-            step2 = "点击右上角搜索"
+            step2 = "2、点击右上角搜索"
             SeaOfStarsAW.trace_thread.add_log('小红书', step2)
             SeaOfStarsAW.ut_device.click(0.943, 0.091)
             time.sleep(1)
 
-            step3 = "输入 图片"
+            step3 = "3、输入 图片"
             SeaOfStarsAW.trace_thread.add_log('小红书', step3)
             SeaOfStarsAW.ut_device().set_text("图片")
 
-            step4 = "点击搜索"
+            step4 = "4、点击搜索"
             SeaOfStarsAW.trace_thread.add_log('小红书', step4)
             SeaOfStarsAW.ut_device(labelContains="搜索").click()
 
-            step5 = "点击第一条内容"
+            step5 = "5、点击第一条内容"
             SeaOfStarsAW.trace_thread.add_log('小红书', step5)
             SeaOfStarsAW.ut_device.click(0.247,0.347)
 
-            step6 = "双指捏合放大"
+            step6 = "6、双指捏合放大"
             SeaOfStarsAW.trace_thread.add_log('小红书', step6)
 
 
-            step7 = "双指捏合缩小"
+            step7 = "7、双指捏合缩小"
             SeaOfStarsAW.trace_thread.add_log('小红书', step7)
 
 
-            step8 = "6、7步骤重复2遍"
+            step8 = "8、6、7步骤重复2遍"
             SeaOfStarsAW.trace_thread.add_log('小红书', step8)
 
 
-            step9 = "返回home页面"
+            step9 = "9、返回home页面"
             SeaOfStarsAW.trace_thread.add_log('小红书', step9)
             SeaOfStarsAW.ut_device.home()
+            SeaOfStarsAW.ut_device.app_terminate("com.xingin.discover")
             SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(1)
 
