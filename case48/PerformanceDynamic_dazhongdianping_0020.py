@@ -43,20 +43,70 @@ class PerformanceDynamic_dazhongdianping_0020(Case):
             time.sleep(3)
 
             # 2、主页浏览（上滑5次，下滑5次，每次停留2s）
+            logging.info('2、主页浏览')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '2、主页浏览')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
 
             # 3、点击推荐旁边的美食（停留1s）
+            logging.info('3、点击推荐旁边的美食')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '3、点击推荐旁边的美食')
+            SeaOfStarsAW.ut_device.click(0.343, 0.44, 0.3)
+            time.sleep(1)
 
             # 4、滑动浏览美食（上滑5次，下滑5次，每次停留2s）
+            logging.info('4、滑动浏览美食')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '4、滑动浏览美食')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
+            SeaOfStarsAW.ut_device.swipe_down()
 
             # 5、点击推荐旁边的旅行（停留1s）
+            logging.info('5、点击推荐旁边的旅行')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '5、点击推荐旁边的旅行')
+            SeaOfStarsAW.ut_device.click(0.624, 0.441, 0.3)
+            time.sleep(1)
 
             # 6、滑动浏览旅行（上滑5次，下滑5次，每次停留2s）
+            logging.info('6、滑动浏览旅行')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '6、滑动浏览旅行')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
+            SeaOfStarsAW.ut_device.swipe_down()
 
             # 7、点击推荐旁边的玩乐（停留1s）
+            logging.info('7、点击推荐旁边的玩乐')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '7、点击推荐旁边的玩乐')
+            SeaOfStarsAW.ut_device.click(0.776, 0.44, 0.3)
+            time.sleep(1)
 
             # 8、滑动浏览玩乐（上滑5次，下滑5次，每次停留2s）
+            logging.info('8、滑动浏览玩乐')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '8、滑动浏览玩乐')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
 
             # 9、返回大众点评首页（停留1s）
+            logging.info('9、返回大众点评首页')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '9、返回大众点评首页')
+            SeaOfStarsAW.ut_device.swipe_down()
+            time.sleep(1)
 
             # 10、返回home界面（停留1s）
             logging.info('10、返回home界面')
