@@ -48,10 +48,10 @@ class PerformanceDynamic_mangguoTV_0010(Case):
             # 2、首页浏览，上滑5次，下滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 3、点击综艺，停留1s
             SeaOfStarsAW.trace_thread.add_log('芒果tv', '浏览综艺')
@@ -61,10 +61,10 @@ class PerformanceDynamic_mangguoTV_0010(Case):
             # 4、浏览综艺，上滑5次，下滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 5、点击上方tab栏“电视剧”，切换至电视剧界面，停留1s
             SeaOfStarsAW.trace_thread.add_log('芒果tv', '浏览电视剧')
@@ -74,7 +74,7 @@ class PerformanceDynamic_mangguoTV_0010(Case):
             # 6、电视剧界面上滑5次，下滑至顶部
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
 
             # 7、点击搜素框，停留1s
             SeaOfStarsAW.trace_thread.add_log('芒果tv', '搜索电视剧')
@@ -111,21 +111,19 @@ class PerformanceDynamic_mangguoTV_0010(Case):
             # 14、查看评论，上滑5次，下滑5，停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 15、返回首页，停留1s
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_right()
-            time.sleep(2)
+                time.sleep(2)
 
             # 16、上滑返回桌面
             SeaOfStarsAW.ut_device.app_terminate('com.hunantv.imgotv')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
-
-
 
         logging.info('用例执行结束')

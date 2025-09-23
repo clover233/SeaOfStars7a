@@ -43,7 +43,7 @@ class PerformanceDynamic_Baidumap_0010(Case):
             # 搜索框搜索钟楼，停留2S
             logging.info('2、搜索框搜索钟楼')
             SeaOfStarsAW.trace_thread.add_log('百度地图', '搜索框搜索钟楼')
-            SeaOfStarsAW.ut_device.click(0.241, 0.099, 0.5)
+            SeaOfStarsAW.ut_device.click(0.241, 0.099, 0.3)
             time.sleep(1)
             SeaOfStarsAW.ut_device().set_text("西安钟楼")
             SeaOfStarsAW.ut_device.click(0.890, 0.10, 0.5)

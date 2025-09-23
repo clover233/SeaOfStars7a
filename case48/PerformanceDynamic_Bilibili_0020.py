@@ -72,6 +72,7 @@ class PerformanceDynamic_Bilibili_0020(Case):
             # 6、点击视频的up主（1s，停留1s）
             logging.info('6、点击视频的up主')
             SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '点击视频的up主')
+            SeaOfStarsAW.ut_device.click(0.469, 0.476, 0.3)
             SeaOfStarsAW.ut_device.click(0.474, 0.406, 0.5)
             time.sleep(3)
 

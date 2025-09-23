@@ -43,8 +43,15 @@ class PerformanceDynamic_jingdong_0020(Case):
             logging.info('启动京东')
             SeaOfStarsAW.trace_thread.add_log('京东', '启动京东，等待3s')
             # todo 微博的坐标地址要改下
-            SeaOfStarsAW.ut_device.click(0.847, 0.246)
+            # for _ in range(4):
+            #     SeaOfStarsAW.swipe_left()
+            #     time.sleep(2)
+            #
+            # SeaOfStarsAW.ut_device.click(0.847, 0.246)
+            # time.sleep(3)
+            SeaOfStarsAW.ut_device.session().app_activate('com.360buy.jdmobile')
             time.sleep(3)
+            time.sleep(2)
 
             # 2、点击上方京东超市，等待2s
             logging.info('首页浏览，上滑5次，下滑5次，每次停留2s')
@@ -81,7 +88,7 @@ class PerformanceDynamic_jingdong_0020(Case):
             time.sleep(2)
             # 6、点击结算，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '点击结算，停留2s')
-            SeaOfStarsAW.ut_device.click(0.712, 0.938)
+            SeaOfStarsAW.ut_device.click(0.219, 0.946)
             time.sleep(2)
             SeaOfStarsAW.ut_device(labelContains="去结算").click()
             time.sleep(2)
@@ -97,12 +104,12 @@ class PerformanceDynamic_jingdong_0020(Case):
                 SeaOfStarsAW.ut_device.swipe_right()
             SeaOfStarsAW.ut_device(labelContains="pd recommend pop close").click()
             time.sleep(2)
-            for i in range(3):
+            for i in range(7):
                 SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(2)
             # 9、点击购物车，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '点击购物车，等待2s')
-            SeaOfStarsAW.ut_device(labelContains="购物车").click()
+            SeaOfStarsAW.ut_device.click(0.219, 0.946)
             time.sleep(2)
             # 10、点击去结算，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '点击去结算，停留2s')
@@ -117,9 +124,11 @@ class PerformanceDynamic_jingdong_0020(Case):
 
             # 12、返回home页，等待2s
             SeaOfStarsAW.ut_device.home()
-            time.sleep(2)
             SeaOfStarsAW.ut_device.app_terminate('com.360buy.jdmobile')
-
+            time.sleep(2)
+            SeaOfStarsAW.stop_trace()
+            SeaOfStarsAW.swipe_to_launcher()
+            SeaOfStarsAW.go_home()
 
 
         logging.info('用例执行结束')
