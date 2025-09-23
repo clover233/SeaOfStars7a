@@ -74,5 +74,6 @@ class PerformanceDynamic_ths_0050(Case):
             # SeaOfStarsAW.trace_thread.add_log('同花顺', '上滑退出')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate("cn.com.10jqka.IHexin")
 
         logging.info('用例执行结束')

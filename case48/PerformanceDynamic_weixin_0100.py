@@ -40,7 +40,9 @@ class PerformanceDynamic_weixin_0100(Case):
 
             logging.info('启动微信')
             SeaOfStarsAW.trace_thread.add_log('微信', '微信启动')
-            SeaOfStarsAW.ut_device.click(0.606, 0.585)
+            SeaOfStarsAW.ut_device.swipe_left()
+            time.sleep(2)
+            SeaOfStarsAW.ut_device.click(0.598, 0.598)
             logging.info('等待5s')
             time.sleep(5)
             SeaOfStarsAW.trace_thread.add_log('微信', '打开视频号')

@@ -79,10 +79,12 @@ class PerformanceDynamic_fanqie_0010(Case):
             time.sleep(1)
             SeaOfStarsAW.ut_device(labelContains="书城").click()
             time.sleep(1)
+            
             # 11、返回home界面，停留1s
             SeaOfStarsAW.ut_device.app_terminate('com.dragon.read')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
+
 
 
 

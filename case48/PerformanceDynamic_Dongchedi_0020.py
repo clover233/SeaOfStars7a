@@ -92,4 +92,5 @@ class PerformanceDynamic_Dongchedi_0020(Case):
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
 
+
         logging.info('用例执行结束')

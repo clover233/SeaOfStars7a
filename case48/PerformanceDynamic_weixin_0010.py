@@ -33,8 +33,10 @@ class PerformanceDynamic_weixin_0010(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-                                     self.screenshot_dir_path)
+            # todo 后续放开log
+            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+            #                          self.screenshot_dir_path)
+
             # 启动相机
             logging.info('启动微信')
             # SeaOfStarsAW.ut_device.session().app_activate('com.tencent.mqq')
@@ -48,9 +50,7 @@ class PerformanceDynamic_weixin_0010(Case):
             # time.sleep(2)
             SeaOfStarsAW.ut_device.swipe_left()
             time.sleep(2)
-            SeaOfStarsAW.ut_device.swipe_left()
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.671, 0.332)
+            SeaOfStarsAW.ut_device.click(0.598, 0.598)
             time.sleep(2)
 
             SeaOfStarsAW.trace_thread.add_log('微信', '进入群聊')
@@ -218,5 +218,6 @@ class PerformanceDynamic_weixin_0010(Case):
             SeaOfStarsAW.stop_trace()
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
+            SeaOfStarsAW.ut_device.app_terminate("com.tencent.xin")
 
         logging.info('用例执行结束')

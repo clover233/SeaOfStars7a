@@ -75,5 +75,6 @@ class PerformanceDynamic_sodamusic_0010(Case):
             # SeaOfStarsAW.trace_thread.add_log('汽水音乐', '上滑退出')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate("com.soda.music")
 
         logging.info('用例执行结束')

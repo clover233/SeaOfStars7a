@@ -48,9 +48,7 @@ class PerformanceDynamic_weixin_0050(Case):
             # time.sleep(2)
             SeaOfStarsAW.ut_device.swipe_left()
             time.sleep(2)
-            SeaOfStarsAW.ut_device.swipe_left()
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.671, 0.332)
+            SeaOfStarsAW.ut_device.click(0.598, 0.598)
             time.sleep(2)
             #
             SeaOfStarsAW.trace_thread.add_log('微信', '点击朋友圈相机预览')
@@ -105,5 +103,6 @@ class PerformanceDynamic_weixin_0050(Case):
             SeaOfStarsAW.stop_trace()
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
+            SeaOfStarsAW.ut_device.app_terminate("com.tencent.xin")
 
         logging.info('用例执行结束')

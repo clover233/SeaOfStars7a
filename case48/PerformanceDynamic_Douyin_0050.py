@@ -164,7 +164,6 @@ class PerformanceDynamic_Douyin_0050(Case):
             time.sleep(1)
             SeaOfStarsAW.ut_device(labelContains="首页").click()
             # 28、退出抖音
-
             SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.ugc.Aweme')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()

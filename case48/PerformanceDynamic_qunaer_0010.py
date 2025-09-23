@@ -133,5 +133,6 @@ class PerformanceDynamic_qunaer_0010(Case):
             # SeaOfStarsAW.trace_thread.add_log('去哪儿旅行', '上滑退出')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate("com.qunar.iphoneclient8")
 
         logging.info('用例执行结束')
