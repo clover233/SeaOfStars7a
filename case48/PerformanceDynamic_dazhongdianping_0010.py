@@ -43,28 +43,96 @@ class PerformanceDynamic_dazhongdianping_0010(Case):
             time.sleep(3)
 
             # 2、点击美食（停留1s）
+            logging.info('2、点击美食')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '2、点击美食')
+            SeaOfStarsAW.ut_device.click(0.117, 0.163, 0.3)
+            time.sleep(1)
 
             # 3、点击搜索框，输入“烧烤”（停留1s）
+            logging.info('3、点击搜索框，输入“烧烤”')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '3、点击搜索框，输入“烧烤”')
+            SeaOfStarsAW.ut_device.click(0.154, 0.143, 0.2)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device().set_text('烧烤')
+            time.sleep(1)
+            time.sleep(1)
 
             # 4、点击搜索（停留1s）
+            logging.info('4、点击搜索')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '4、点击搜索')
+            SeaOfStarsAW.ut_device.click(0.931, 0.097, 0.3)
+            time.sleep(1)
 
             # 5、滑动浏览烧烤搜索结果（上滑5次，下滑5次，每次停留2s）
+            logging.info('5、滑动浏览烧烤搜索结果')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '5、滑动浏览烧烤搜索结果')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
 
             # 6、点击进入第一家商铺（停留1s）
+            logging.info('6、点击进入第一家商铺')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '6、点击进入第一家商铺')
+            SeaOfStarsAW.ut_device.click(0.137, 0.329, 0.3)
+            time.sleep(1)
 
             # 7、滑动浏览商铺（上滑5次，下滑5次，每次停留2s）
+            logging.info('7、滑动浏览商铺')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '7、滑动浏览商铺')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
 
             # 8、点击评价（停留1s）
+            logging.info('8、点击评价')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '8、点击评价')
+            SeaOfStarsAW.ut_device.click(0.578, 0.706, 0.3)
+            time.sleep(1)
 
             # 9、点击查看全部（停留1s）
+            logging.info('9、点击查看全部')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '9、点击查看全部')
+            SeaOfStarsAW.ut_device.click(0.882, 0.194, 0.3)
+            time.sleep(1)
 
             # 10、滑动浏览评论（上滑5次，下滑5次，每次停留2s）
+            logging.info('10、滑动浏览评论')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '10、滑动浏览评论')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
 
             # 11、返回美食页面（停留1s）
+            logging.info('11、返回美食页面')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '11、返回美食页面')
+            for i in range(3):
+                SeaOfStarsAW.ut_device.swipe(0.005, 0.585, 0.999, 0.585, 1.0)
+                time.sleep(1)
 
             # 12、滑动美食页面（上滑5次，下滑5次，每次停留2s）
+            logging.info('12、滑动美食页面')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '12、滑动美食页面')
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
+            for i in range(5):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
 
             # 13、返回大众点评首页（停留1s）
+            logging.info('13、返回大众点评首页')
+            SeaOfStarsAW.trace_thread.add_log('大众点评', '13、返回大众点评首页')
+            SeaOfStarsAW.ut_device.swipe(0.005, 0.585, 0.999, 0.585, 1.0)
+            time.sleep(1)
 
             # 14、返回home界面（停留1s）
             logging.info('14、返回home界面')
