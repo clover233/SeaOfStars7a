@@ -41,7 +41,9 @@ class PerformanceDynamic_TencentVideo_0010(Case):
 
             logging.info('启动腾讯视频')
             # SeaOfStarsAW.trace_thread.add_log('微信', '启动微信')
-            SeaOfStarsAW.ut_device.click(0.84, 0.474)
+            SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.clickd(0.87, 0.37)
+
             logging.info('等待8s')
             time.sleep(8)
             # SeaOfStarsAW.trace_thread.add_log('腾讯视频', '主页浏览，上滑5次，下滑2次')

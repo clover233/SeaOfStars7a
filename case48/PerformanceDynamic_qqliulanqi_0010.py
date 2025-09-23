@@ -40,7 +40,9 @@ class PerformanceDynamic_qqliulanqi_0010(Case):
 
             logging.info('启动QQ浏览器')
             # SeaOfStarsAW.trace_thread.add_log('QQ浏览器', '启动QQ浏览器')
-            SeaOfStarsAW.ut_device.click(0.613, 0.701)
+            SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.click(0.4, 0.251)
+
             time.sleep(8)
             # SeaOfStarsAW.trace_thread.add_log('QQ浏览器', '浏览放映厅')
             logging.info('点击搜索框')
