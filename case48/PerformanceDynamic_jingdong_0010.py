@@ -108,6 +108,7 @@ class PerformanceDynamic_jingdong_0010(Case):
             # 12、返回home页，等待2s
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate('com.360buy.jdmobile')
 
 
 

@@ -174,12 +174,15 @@ class PerformanceDynamic_Douyin_0040(Case):
             # 26、向左滑动，依次切换顶部tab页（长视频-关注-商城-推荐），循环3次
             for i in range(3):
                 SeaOfStarsAW.ut_device(labelContains="团购").click()
+                time.sleep(2)
                 SeaOfStarsAW.ut_device(labelContains="关注").click()
+                time.sleep(2)
                 SeaOfStarsAW.ut_device(labelContains="推荐").click()
                 time.sleep(2)
             # 27、返回home页，等待2s
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.ugc.Aweme')
 
 
 

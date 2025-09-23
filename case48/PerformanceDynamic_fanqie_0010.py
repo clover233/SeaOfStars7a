@@ -174,6 +174,7 @@ class PerformanceDynamic_fanqie_0010(Case):
 
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate('com.dragon.read')
 
 
 

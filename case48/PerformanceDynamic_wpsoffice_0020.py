@@ -45,7 +45,7 @@ class PerformanceDynamic_wpsoffice_0020(Case):
             SeaOfStarsAW.trace_thread.add_log(app_name, step1)
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.856, 0.591)
-            time.sleep(10)
+            time.sleep(6)
 
             step2 = "2、点击底部找模版 "
             SeaOfStarsAW.trace_thread.add_log(app_name, step2)

@@ -38,7 +38,7 @@ class PerformanceDynamic_qimao_0010(Case):
             # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
             #                          self.screenshot_dir_path)
 
-            logging.info('启动爱奇艺')
+            logging.info('七猫')
             # SeaOfStarsAW.trace_thread.add_log('七猫', '启动七猫')
             SeaOfStarsAW.ut_device.click(0.163, 0.125)
             time.sleep(8)
@@ -69,5 +69,6 @@ class PerformanceDynamic_qimao_0010(Case):
             logging.info('上滑退出')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate('com.yueyou.cyreader')
 
         logging.info('用例执行结束')

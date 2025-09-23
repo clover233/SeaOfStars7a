@@ -90,7 +90,7 @@ class PerformanceDynamic_Dongchedi_0020(Case):
             # 10、返回home界面，停留1s
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
-
+            SeaOfStarsAW.ut_device.app_terminate('com.ss.ios.auto')
 
 
         logging.info('用例执行结束')

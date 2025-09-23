@@ -169,6 +169,7 @@ class PerformanceDynamic_Douyin_0050(Case):
 
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.ugc.Aweme')
 
 
 

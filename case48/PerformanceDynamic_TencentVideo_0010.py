@@ -121,5 +121,6 @@ class PerformanceDynamic_TencentVideo_0010(Case):
             # SeaOfStarsAW.trace_thread.add_log('微信', '上滑退出微信')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate("com.tencent.live4iphone")
 
         logging.info('用例执行结束')

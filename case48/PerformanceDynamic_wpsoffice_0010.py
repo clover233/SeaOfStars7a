@@ -45,7 +45,7 @@ class PerformanceDynamic_wpsoffice_0010(Case):
             SeaOfStarsAW.trace_thread.add_log(app_name, step1)
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.856, 0.591)
-            time.sleep(10)
+            time.sleep(6)
 
             step2 = "2、首页 左右各滑动1次 重复5次 每次间隔1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step2)
@@ -59,7 +59,7 @@ class PerformanceDynamic_wpsoffice_0010(Case):
             step3 = "3、点击底部 云文档icon 点击首页 icon 重复5次 每次间隔1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step3)
             for i in range(5):
-                SeaOfStarsAW.ut_device(label="文档").click()
+                SeaOfStarsAW.ut_device.click(0.298, 0.917)
                 time.sleep(1)
             for i in range(5):
                 SeaOfStarsAW.ut_device(label="首页").click()
@@ -71,15 +71,13 @@ class PerformanceDynamic_wpsoffice_0010(Case):
 
             step5 = "5、点击设置 1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step5)
-
-            SeaOfStarsAW.ut_device.swipe_down()
+            SeaOfStarsAW.ut_device.swipe_up()
             SeaOfStarsAW.ut_device(label="设置").click()
             time.sleep(1)
 
-
-            step6 = "6、侧滑一次 返回 我 停留1s"
+            step6 = "6、返回 我 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step6)
-            SeaOfStarsAW.ut_device.swipe(0.025, 0.5, 0.925, 0.5)
+            SeaOfStarsAW.ut_device.click(0.064, 0.093)
             time.sleep(1)
 
             # step7 = "点击超级会员  进入支付界面 停留2s"
@@ -92,22 +90,22 @@ class PerformanceDynamic_wpsoffice_0010(Case):
             # SeaOfStarsAW.ut_device(label="购买按钮").click()
             # time.sleep(2)
 
-            step9 = "点击 首页 停留1s"
+            step9 = "7、点击 首页 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step9)
             # SeaOfStarsAW.ut_device(label="去购物车").click()
             SeaOfStarsAW.ut_device(label="首页").click()
             time.sleep(2)
 
-            step10 = "点击 文档 停留1s"
+            step10 = "8、点击 服务 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step10)
-            SeaOfStarsAW.ut_device(label="文档").click()
+            SeaOfStarsAW.ut_device.click(0.494, 0.922)
             time.sleep(2)
 
-            # step11 = "上下滑动文档 重复5次 每次间隔1s"
-            # SeaOfStarsAW.trace_thread.add_log(app_name, step11)
-            # SeaOfStarsAW.ut_device(label="返回按钮").click()
-            # SeaOfStarsAW.ut_device.click(0.371, 0.586)
-            # time.sleep(2)
+            step11 = "9、上下滑动文档 重复5次 每次间隔1s"
+            SeaOfStarsAW.trace_thread.add_log(app_name, step11)
+            SeaOfStarsAW.ut_device(label="返回按钮").click()
+            SeaOfStarsAW.ut_device.click(0.371, 0.586)
+            time.sleep(2)
             #
             # step12 = "侧滑返回首页"
             # SeaOfStarsAW.trace_thread.add_log(app_name, step12)
@@ -115,7 +113,7 @@ class PerformanceDynamic_wpsoffice_0010(Case):
             # time.sleep(1)
 
 
-            step13 = "返回home"
+            step13 = "10、返回home"
             SeaOfStarsAW.trace_thread.add_log(app_name, step13)
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.swipe_right()

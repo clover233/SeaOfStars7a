@@ -46,5 +46,6 @@ class PerformanceDynamic_wangzherongyao_0030(Case):
             # SeaOfStarsAW.trace_thread.add_log('王者荣耀, '上滑退出')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.ut_device.app_terminate("com.tencent.smoba")
 
         logging.info('用例执行结束')
