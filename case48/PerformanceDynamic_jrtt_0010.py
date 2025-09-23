@@ -47,10 +47,10 @@ class PerformanceDynamic_jrtt_0010(Case):
             # 2、主页浏览，上滑5次，下滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            # time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            # time.sleep(2)
+                time.sleep(2)
 
 
             SeaOfStarsAW.trace_thread.add_log('今日头条', '浏览热榜')
@@ -61,10 +61,10 @@ class PerformanceDynamic_jrtt_0010(Case):
             # 4、滑动浏览，上滑5次，下滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             SeaOfStarsAW.trace_thread.add_log('今日头条', '浏览发现页')
             # 5、点击热榜第一条，停留3s
@@ -74,10 +74,10 @@ class PerformanceDynamic_jrtt_0010(Case):
             # 6、滑动浏览，上滑5次，下滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 7、侧滑一次，返回上一级，停留2s
             SeaOfStarsAW.ut_device(labelContains="返回").click()
@@ -90,10 +90,10 @@ class PerformanceDynamic_jrtt_0010(Case):
             # 9、滑动浏览，上滑5次，下滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             SeaOfStarsAW.trace_thread.add_log('今日头条', '浏览第一条文章')
             # 10、返回推荐页，点击第一条文章，停留1s
@@ -105,10 +105,10 @@ class PerformanceDynamic_jrtt_0010(Case):
             # 11、滑动浏览，上滑5次，下滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 12、返回首页，停留1s
             SeaOfStarsAW.ut_device(labelContains="返回").click()
@@ -121,7 +121,5 @@ class PerformanceDynamic_jrtt_0010(Case):
             SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.article.News')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
-
-
 
         logging.info('用例执行结束')

@@ -48,7 +48,7 @@ class PerformanceDynamic_Kuaishou_0010(Case):
             # 2、浏览并向下滑切换视频，视频浏览10s，下滑切换下一个，浏览三个
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(10)
+                time.sleep(10)
 
             # 3、点击评论
             SeaOfStarsAW.trace_thread.add_log('快手', '评论视频')
@@ -58,10 +58,10 @@ class PerformanceDynamic_Kuaishou_0010(Case):
             # 4、上滑2次，下滑2次
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
             SeaOfStarsAW.ut_device(labelContains="关闭评论区").click()
             time.sleep(2)
 
@@ -110,7 +110,5 @@ class PerformanceDynamic_Kuaishou_0010(Case):
             SeaOfStarsAW.ut_device.app_terminate('com.jiangjia.gif')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
-
-
 
         logging.info('用例执行结束')

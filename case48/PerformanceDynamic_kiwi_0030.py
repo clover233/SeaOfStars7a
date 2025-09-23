@@ -63,10 +63,10 @@ class PerformanceDynamic_kiwi_0030(Case):
             # 4、下滑切换直播间，下滑5次，上滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
 
             # 5、返回推荐页，停留2s
@@ -80,7 +80,5 @@ class PerformanceDynamic_kiwi_0030(Case):
             SeaOfStarsAW.ut_device.app_terminate('com.yy.kiwi')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
-
-
 
         logging.info('用例执行结束')

@@ -49,20 +49,21 @@ class PerformanceDynamic_Baidu_0010(Case):
             SeaOfStarsAW.ut_device().set_text("华为手机")
             time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.87, 0.099, 0.2)
+            SeaOfStarsAW.ut_device.click(0.845, 0.14, 0.2)
             time.sleep(1)
 
             # 向下滑动6次，停留2S
             logging.info('3、向下滑动6次')
             SeaOfStarsAW.trace_thread.add_log('百度', '向下滑动6次')
             for i in range(6):
-                SeaOfStarsAW.ut_device.swipe_down()
+                SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
             # 向上滑动6次至底部，停留2S
             logging.info('4、向上滑动6次')
             SeaOfStarsAW.trace_thread.add_log('百度', '向上滑动6次')
             for i in range(6):
-                SeaOfStarsAW.ut_device.swipe_up()
+                SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
 
             # 侧滑返回首页，停留2S
