@@ -40,7 +40,9 @@ class PerformanceDynamic_qqm_0010(Case):
 
             logging.info('启动QQ音乐')
             # SeaOfStarsAW.trace_thread.add_log('QQ音乐', '启动QQ音乐')
-            SeaOfStarsAW.ut_device.click(0.38, 0.58)
+            SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.clickd(0.847, 0.135)
+
             time.sleep(8)
             logging.info('点击我的')
             SeaOfStarsAW.ut_device(label='我的').click()

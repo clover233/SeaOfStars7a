@@ -40,7 +40,9 @@ class PerformanceDynamic_qimao_0020(Case):
 
             logging.info('启动七猫')
             # SeaOfStarsAW.trace_thread.add_log('七猫', '启动七猫')
-            SeaOfStarsAW.ut_device.click(0.163, 0.125)
+            SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.click(0.628, 0.138)
+
             time.sleep(8)
             # SeaOfStarsAW.trace_thread.add_log('七猫', '主页浏览')
             logging.info('上滑3次，下滑3次')

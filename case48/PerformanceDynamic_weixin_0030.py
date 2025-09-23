@@ -33,8 +33,8 @@ class PerformanceDynamic_weixin_0030(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-                                     self.screenshot_dir_path)
+            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+            #                          self.screenshot_dir_path)
             # 启动相机
             logging.info('启动微信')
             # SeaOfStarsAW.ut_device.session().app_activate('com.tencent.mqq')
@@ -57,28 +57,35 @@ class PerformanceDynamic_weixin_0030(Case):
             for _ in range(3):
                 SeaOfStarsAW.ut_device.swipe(0.5, 0.7, 0.5, 0.2)
                 time.sleep(2)
-            for _ in range(3):
+            for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe(0.5, 0.2, 0.5, 0.7)
                 time.sleep(2)
             SeaOfStarsAW.ut_device.swipe(0.5, 0.7, 0.5, 0.2)
             time.sleep(2)
-            SeaOfStarsAW.ut_device(label="测试用例40&38").click()
+
+            SeaOfStarsAW.trace_thread.add_log('微信', '进入好友界面')
+            SeaOfStarsAW.ut_device(label="测试 ,").click()
             time.sleep(2)
 
+            SeaOfStarsAW.trace_thread.add_log('微信', '进入好友 朋友圈')
             SeaOfStarsAW.ut_device(label="朋友圈").click()
             time.sleep(2)
 
-            SeaOfStarsAW.ut_device.click(0.282, 0.643)
+            SeaOfStarsAW.trace_thread.add_log('微信', '点击朋友圈图片')
+            SeaOfStarsAW.ut_device.click(0.284, 0.67)
             time.sleep(2)
+
             for _ in range(6):
                 SeaOfStarsAW.ut_device.swipe_left()
                 time.sleep(2)
+
             SeaOfStarsAW.ut_device(label="返回").click()
             time.sleep(2)
             SeaOfStarsAW.ut_device(label="返回").click()
             time.sleep(2)
             SeaOfStarsAW.ut_device(label="返回").click()
             time.sleep(2)
+
             SeaOfStarsAW.ut_device.click(0.121, 0.944)
             time.sleep(2)
             SeaOfStarsAW.ut_device(label="快捷操作").click()

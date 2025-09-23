@@ -40,7 +40,8 @@ class PerformanceDynamic_pinduoduo_0010(Case):
 
             logging.info('启动拼多多')
             # SeaOfStarsAW.trace_thread.add_log('拼多多', '拼多多')
-            SeaOfStarsAW.ut_device.click(0.613, 0.692)
+            SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.click(0.39, 0.137)
             time.sleep(2)
             # SeaOfStarsAW.trace_thread.add_log('拼多多', '拼多多首页浏览')
             logging.info('上滑3次')

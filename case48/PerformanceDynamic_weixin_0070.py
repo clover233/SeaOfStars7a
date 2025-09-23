@@ -112,7 +112,7 @@ class PerformanceDynamic_weixin_0070(Case):
             SeaOfStarsAW.ut_device.swipe(0.5, 0.2, 0.5, 0.8, 1)
             time.sleep(2)
             logging.info('点击美团小程序')
-            SeaOfStarsAW.ut_device(label='美团丨外卖团购特价美食酒店电影').click()
+            SeaOfStarsAW.ut_device(label='美团外卖丨外卖美食奶茶咖啡水果').click()
             time.sleep(5)
             logging.info('上滑3次，下滑3次')
             # SeaOfStarsAW.trace_thread.add_log('微信小程序', '商品详情浏览，上滑3次，下滑3次')
