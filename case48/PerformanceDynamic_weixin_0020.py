@@ -4,7 +4,7 @@ from threading import Timer
 from aw import SeaOfStarsAW
 from cases.CaseBase import Case
 
-class PerformanceDynamic_weixin_0060(Case):
+class   PerformanceDynamic_weixin_0020(Case):
     all_app_package_list = ['']
     TEST_TIME = 1
 
@@ -52,51 +52,40 @@ class PerformanceDynamic_weixin_0060(Case):
             time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.671, 0.332)
             time.sleep(2)
-            #
-            SeaOfStarsAW.trace_thread.add_log('微信', '点击朋友圈相机预览')
-            SeaOfStarsAW.ut_device.click(0.61, 0.929)
-            time.sleep(2)
 
+            SeaOfStarsAW.trace_thread.add_log('微信', '浏览朋友圈')
+            # SeaOfStarsAW.check_status(label='测试群聊')
+            SeaOfStarsAW.ut_device(label="快捷操作").click()
+            time.sleep(2)
+            SeaOfStarsAW.ut_device(label="添加朋友").click()
+            time.sleep(2)
+            SeaOfStarsAW.ut_device.click(0.479, 0.143)
+            time.sleep(2)
+            SeaOfStarsAW.ut_device.xpath('//Window[1]/Other[1]/Other[1]/Other[1]/Other[1]/Other[1]/Other[1]/Other[1]/Other[1]/Other[1]/Other[1]/Other[1]/Other[1]/Other[1]/SearchField[1]').set_text('13201559739')
+            time.sleep(2)
+            SeaOfStarsAW.ut_device(label="搜索").click()
+            time.sleep(2)
+            SeaOfStarsAW.ut_device(label="返回").click()
+            time.sleep(2)
+            SeaOfStarsAW.ut_device(label="取消").click()
+            time.sleep(2)
+            SeaOfStarsAW.ut_device(label="返回").click()
+            time.sleep(2)
+            SeaOfStarsAW.ut_device.click(0.623, 0.925)
+            time.sleep(2)
             SeaOfStarsAW.ut_device(label="朋友圈").click()
             time.sleep(2)
             SeaOfStarsAW.ut_device(label="拍照").click()
             time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.494, 0.78)
+
+            SeaOfStarsAW.ut_device.click(0.497, 0.777)
             time.sleep(2)
             SeaOfStarsAW.ut_device(label="关闭").click()
             time.sleep(2)
-            SeaOfStarsAW.ut_device(label="拍照").click()
-            time.sleep(2)
-            SeaOfStarsAW.ut_device(label="从手机相册选择").click()
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.45, 0.46)
-            time.sleep(2)
-
-            SeaOfStarsAW.ut_device.swipe(0.5, 0.2, 0.5, 0.7)
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.196, 0.181)
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.swipe(0.5, 0.7, 0.5, 0.2)
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.696, 0.463)
-            time.sleep(2)
-            SeaOfStarsAW.ut_device(label="预览").click()
-            time.sleep(2)
-            SeaOfStarsAW.swipe_left()
-            time.sleep(2)
-            SeaOfStarsAW.swipe_left()
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.866, 0.932)
-            time.sleep(2)
-            SeaOfStarsAW.ut_device(label="取消").click()
-            time.sleep(2)
-            SeaOfStarsAW.ut_device(label="不保留").click()
-            time.sleep(2)
             SeaOfStarsAW.ut_device(label="返回").click()
             time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.121, 0.944)
+            SeaOfStarsAW.ut_device.click(0.113, 0.932)
             time.sleep(2)
-
             # 返回home
             SeaOfStarsAW.trace_thread.add_log('微信', '返回home')
             logging.info('返回home')

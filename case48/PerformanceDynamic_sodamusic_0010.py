@@ -6,7 +6,7 @@ from aw import SeaOfStarsAW
 from cases.CaseBase import Case
 
 
-class PerformanceDynamic_soudamusic_0010(Case):
+class PerformanceDynamic_sodamusic_0010(Case):
     all_app_package_list = ['']
     TEST_TIME = 1
 
