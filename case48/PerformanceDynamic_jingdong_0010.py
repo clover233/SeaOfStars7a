@@ -36,8 +36,8 @@ class PerformanceDynamic_jingdong_0010(Case):
         for test_time in range(0, self.TEST_TIME):
             step = 0
             # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
 
             # 1、启动京东，等待3s
             logging.info('启动京东')
@@ -114,5 +114,6 @@ class PerformanceDynamic_jingdong_0010(Case):
             SeaOfStarsAW.stop_trace()
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')
