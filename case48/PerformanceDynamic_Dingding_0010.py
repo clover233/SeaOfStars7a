@@ -98,5 +98,7 @@ class PerformanceDynamic_Dingding_0010(Case):
             time.sleep(1)
             SeaOfStarsAW.ut_device.app_terminate('com.laiwang.DingTalk')
 
+            SeaOfStarsAW.stop_trace()
+
 
         logging.info('用例执行结束')

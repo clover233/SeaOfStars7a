@@ -48,6 +48,7 @@ class PerformanceDynamic_hepingjingying_0030(Case):
             SeaOfStarsAW.ut_device.app_terminate('com.tencent.tmgp.pubgmhd')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
+            SeaOfStarsAW.stop_trace()
 
 
 

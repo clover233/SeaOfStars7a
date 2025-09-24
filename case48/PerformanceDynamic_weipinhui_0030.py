@@ -86,4 +86,6 @@ class PerformanceDynamic_weipinhui_0030(Case):
             time.sleep(1)
             SeaOfStarsAW.ut_device.app_terminate("com.vipshop.iphone")
 
+            SeaOfStarsAW.stop_trace()
+
         logging.info('用例执行结束')

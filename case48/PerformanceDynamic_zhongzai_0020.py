@@ -347,5 +347,6 @@ class PerformanceDynamic_zhongzai_0020(Case):
             SeaOfStarsAW.ut_device.app_terminate("com.youku.YouKu")
             SeaOfStarsAW.ut_device.app_terminate("com.tencent.xin")
             SeaOfStarsAW.ut_device.app_terminate("com.alipay.iphoneclient")
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')

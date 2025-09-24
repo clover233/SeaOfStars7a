@@ -265,5 +265,6 @@ class PerformanceDynamic_Alipay_0020(Case):
             SeaOfStarsAW.ut_device.home()
             time.sleep(1)
             SeaOfStarsAW.ut_device.app_terminate('com.alipay.iphoneclient')
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')

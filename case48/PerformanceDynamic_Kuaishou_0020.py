@@ -90,6 +90,7 @@ class PerformanceDynamic_Kuaishou_0020(Case):
             SeaOfStarsAW.ut_device.app_terminate('com.jiangjia.gif')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
+            SeaOfStarsAW.stop_trace()
 
 
 

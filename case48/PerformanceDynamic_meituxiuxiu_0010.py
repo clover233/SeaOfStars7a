@@ -106,5 +106,6 @@ class PerformanceDynamic_meituxiuxiu_0010(Case):
             SeaOfStarsAW.swipe_to_launcher()
             time.sleep(1)
             SeaOfStarsAW.ut_device.app_terminate('com.meitu.mtxx')
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')

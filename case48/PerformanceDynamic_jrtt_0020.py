@@ -109,6 +109,7 @@ class PerformanceDynamic_jrtt_0020(Case):
             SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.article.News')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
+            SeaOfStarsAW.stop_trace()
 
 
         logging.info('用例执行结束')

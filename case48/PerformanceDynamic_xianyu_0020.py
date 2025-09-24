@@ -77,5 +77,6 @@ class PerformanceDynamic_xianyu_0020(Case):
             time.sleep(2)
             SeaOfStarsAW.ut_device.swipe_right()
             SeaOfStarsAW.ut_device.app_terminate("com.taobao.fleamarket")
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')

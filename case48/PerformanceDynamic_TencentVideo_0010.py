@@ -125,5 +125,6 @@ class PerformanceDynamic_TencentVideo_0010(Case):
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
             SeaOfStarsAW.ut_device.app_terminate("com.tencent.live4iphone")
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')

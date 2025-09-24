@@ -120,5 +120,6 @@ class PerformanceDynamic_Weibo_0030(Case):
             SeaOfStarsAW.ut_device.swipe_right()
             SeaOfStarsAW.ut_device.app_terminate("com.sina.weibo")
 
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')
