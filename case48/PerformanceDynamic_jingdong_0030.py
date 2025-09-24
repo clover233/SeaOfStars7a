@@ -35,6 +35,7 @@ class PerformanceDynamic_jingdong_0030(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
+            # todo 后续放开log
             SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
                                      self.screenshot_dir_path)
 
@@ -162,7 +163,7 @@ class PerformanceDynamic_jingdong_0030(Case):
             SeaOfStarsAW.ut_device.click(0.936, 0.102)
             time.sleep(2)
             for i in range(4):
-                SeaOfStarsAW.ut_device.swipe_right()
+                SeaOfStarsAW.ut_device.swipe(0.005, 0.585, 0.999, 0.585, 1.0)
             time.sleep(2)
             # 23、返回home页，等待2s
             SeaOfStarsAW.ut_device.home()
@@ -171,7 +172,6 @@ class PerformanceDynamic_jingdong_0030(Case):
             SeaOfStarsAW.stop_trace()
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
-            SeaOfStarsAW.stop_trace()
 
 
 
