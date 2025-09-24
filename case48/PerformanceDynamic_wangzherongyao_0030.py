@@ -41,7 +41,7 @@ class PerformanceDynamic_wangzherongyao_0030(Case):
             logging.info('启动王者荣耀')  # 需预置登录
             # SeaOfStarsAW.trace_thread.add_log('UC浏览器', '启动UC浏览器')
             SeaOfStarsAW.ut_device.swipe_left()
-            SeaOfStarsAW.ut_device.clickd(0.834, 0.484)
+            SeaOfStarsAW.ut_device.click(0.834, 0.484)
             logging.info('等待20s')
             time.sleep(20)
             # SeaOfStarsAW.trace_thread.add_log('王者荣耀, '上滑退出')

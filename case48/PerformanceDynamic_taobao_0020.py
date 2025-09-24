@@ -42,7 +42,7 @@ class PerformanceDynamic_taobao_0020(Case):
             logging.info('启动淘宝')
             # # SeaOfStarsAW.trace_thread.add_log('QQ', '应用启动')
             SeaOfStarsAW.ut_device.swipe_left()
-            SeaOfStarsAW.ut_device.clickd(0.362, 0.363)
+            SeaOfStarsAW.ut_device.click(0.362, 0.363)
             logging.info('等待5s')
             time.sleep(5)
             logging.info('进入第三个tab页')

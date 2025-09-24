@@ -41,7 +41,7 @@ class PerformanceDynamic_UC_0010(Case):
             logging.info('启动UC浏览器')
             # SeaOfStarsAW.trace_thread.add_log('UC浏览器', '启动UC浏览器')
             SeaOfStarsAW.ut_device.swipe_left()
-            SeaOfStarsAW.ut_device.clickd(0.614, 0.491)
+            SeaOfStarsAW.ut_device.click(0.614, 0.491)
 
             logging.info('等待2s')
             time.sleep(2)
