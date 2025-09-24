@@ -40,7 +40,8 @@ class PerformanceDynamic_qiyi_0030(Case):
 
             logging.info('启动爱奇艺')
             # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '启动爱奇艺')
-            SeaOfStarsAW.ut_device.click(0.843, 0.701)
+            # SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.click(0.85, 0.145)
             time.sleep(5)
             # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '首页浏览')
             logging.info('上滑5次，下滑5次')
@@ -62,7 +63,7 @@ class PerformanceDynamic_qiyi_0030(Case):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(1)
             logging.info('返回首页')
-            SeaOfStarsAW.ut_device(label='pread mini back iphone').click()
+            SeaOfStarsAW.ut_device.swipe(0.005, 0.585, 0.999, 0.585, 1.0)
             time.sleep(2)
             logging.info('上滑退出')
             # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '上滑退出')

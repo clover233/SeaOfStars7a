@@ -40,14 +40,16 @@ class PerformanceDynamic_qiyi_0020(Case):
 
             logging.info('启动爱奇艺')
             # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '启动爱奇艺')
-            SeaOfStarsAW.ut_device.click(0.843, 0.701)
+            # SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.click(0.85, 0.145)
+
             time.sleep(5)
             # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '首页浏览')
             logging.info('上滑5次，下滑6次')
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
-            for _ in range(6):
+            for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
             logging.info('点击热点')
@@ -66,7 +68,7 @@ class PerformanceDynamic_qiyi_0020(Case):
             time.sleep(2)
             logging.info('点击电视剧')
             # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '电视剧页面浏览')
-            SeaOfStarsAW.ut_device.click(0.876, 0.254)
+            SeaOfStarsAW.ut_device(label='电视剧').click()
             time.sleep(2)
             logging.info('上滑1次，下滑2次')
             for _ in range(1):
@@ -93,9 +95,9 @@ class PerformanceDynamic_qiyi_0020(Case):
             logging.info('点击开通会员')
             SeaOfStarsAW.ut_device(label='开通会员').click()
             time.sleep(2)
-            logging.info('点击开通前请阅读')
-            SeaOfStarsAW.ut_device(label='开通前请阅读').click()
-            time.sleep(2)
+            # logging.info('点击开通前请阅读')
+            # SeaOfStarsAW.ut_device(label='开通前请阅读').click()
+            # time.sleep(2)
             # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '返回会员中心页面')
             logging.info('返回')  # 右滑无法切换tab
             SeaOfStarsAW.ut_device.click(0.053, 0.072)

@@ -40,7 +40,9 @@ class PerformanceDynamic_qiyi_0010(Case):
 
             logging.info('启动爱奇艺')
             # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '启动爱奇艺')
-            SeaOfStarsAW.ut_device.click(0.843, 0.701)
+            # SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.click(0.85, 0.145)
+
             time.sleep(5)
             logging.info('点击搜索')
             SeaOfStarsAW.ut_device(label='搜索框').click()

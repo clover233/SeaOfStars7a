@@ -40,7 +40,9 @@ class PerformanceDynamic_qqm_0030(Case):
 
             logging.info('启动QQ音乐')
             # SeaOfStarsAW.trace_thread.add_log('QQ音乐', '启动QQ音乐')
-            SeaOfStarsAW.ut_device.click(0.38, 0.58)
+            # SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.click(0.621, 0.252)
+
             time.sleep(8)
             logging.info('上滑2次，下滑2次')
             for _ in range(2):
@@ -60,7 +62,7 @@ class PerformanceDynamic_qqm_0030(Case):
             time.sleep(2)
             logging.info('启动微博')
             # SeaOfStarsAW.trace_thread.add_log('微博', '启动微博')
-            SeaOfStarsAW.ut_device.click(0.846, 0.125)
+            SeaOfStarsAW.ut_device.app_activate("com.sina.weibo")
             time.sleep(8)
             logging.info('上滑5次，下滑5次')
             for _ in range(5):
@@ -114,7 +116,7 @@ class PerformanceDynamic_qqm_0030(Case):
             time.sleep(2)
             logging.info('启动京东')
             # SeaOfStarsAW.trace_thread.add_log('京东', '启动京东')
-            SeaOfStarsAW.ut_device.click(0.156, 0.244)
+            SeaOfStarsAW.ut_device.app_activate('com.360buy.jdmobile')
             time.sleep(5)
             logging.info('上滑5次，下滑5次')
             for _ in range(5):

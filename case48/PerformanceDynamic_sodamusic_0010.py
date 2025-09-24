@@ -40,7 +40,8 @@ class PerformanceDynamic_sodamusic_0010(Case):
 
             logging.info('启动汽水音乐')
             # SeaOfStarsAW.trace_thread.add_log('汽水音乐', '启动汽水音乐')
-            SeaOfStarsAW.ut_device.click(0.386, 0.701)
+            # SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.click(0.16, 0.372)
             # SeaOfStarsAW.trace_thread.add_log('汽水音乐', '搜索国歌页面浏览')
             logging.info('点击搜索标志')
             SeaOfStarsAW.ut_device.click(0.92, 0.072)
