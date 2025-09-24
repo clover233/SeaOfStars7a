@@ -67,8 +67,8 @@ class iTraceThread(threading.Thread):
                 #            '--all-processes', '--output', temptrace_path, "--time-limit", '410s']
                 # command = ['xctrace', 'record', '--device-name', 'iPhone15qin (17.5.1)', '--template', 'UX-HitchAndMetal',
                 #            '--all-processes', '--output', temptrace_path, "--time-limit", '410s']
-                command = ['xctrace', 'record', '--device-name', 'iPhone17pro (26.0)', '--template',
-                           'MyTemplate','--all-processes', '--output', temptrace_path, "--time-limit", '410s']
+                command = ['xctrace', 'record', '--device-name', "iPhone17pro (26.0)", '--template',
+                           '/Users/xiaoziming/PycharmProjects/SeaOfStars/TraceTool/Templates/MyTemplate0924.tracetemplate','--all-processes', '--output', temptrace_path, "--time-limit", '300s']
                 self.process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 while self.process.poll() is None:
                     line = self.process.stdout.readline().strip().decode("utf8")

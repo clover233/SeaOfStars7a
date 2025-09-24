@@ -29,15 +29,14 @@ class PerformanceDynamic_weipinhui_0020(Case):
         测试用例执行
         """
         logging.info("用例开始执行")
-        # if SeaOfStarsAW.ut_device.locked():
-        #     SeaOfStarsAW.ut_device.unlock()
-        #     time.sleep(2)
+        if SeaOfStarsAW.ut_device.locked():
+            SeaOfStarsAW.ut_device.unlock()
+            time.sleep(2)
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
             app_name ="唯品会"
 
             step1 = "'1、打开唯品会,等待10s'"
@@ -49,15 +48,15 @@ class PerformanceDynamic_weipinhui_0020(Case):
 
             step2 = "2、点击右上角的 =  进入分类拓展界面"
             SeaOfStarsAW.trace_thread.add_log(app_name, step2)
-            SeaOfStarsAW.ut_device(label="数码").click()
+            SeaOfStarsAW.ut_device.click(0.15, 0.233)
 
             step3 = "3、浏览结果 上滑2次 下滑3次 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step3)
             for i in range(2):
-                SeaOfStarsAW.scroll_up()
+                SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
             for i in range(2):
-                SeaOfStarsAW.scroll_down()
+                SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
             step4 = "4、返回上一级界面"
@@ -71,17 +70,20 @@ class PerformanceDynamic_weipinhui_0020(Case):
             step6 = "6、查看待付款 返回个人中心界面"
             SeaOfStarsAW.trace_thread.add_log(app_name, step6)
             SeaOfStarsAW.ut_device(label="待付款").click()
+            time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.08, 0.09)
 
 
             step7 = "7、查看待收货 返回个人中心界面"
             SeaOfStarsAW.trace_thread.add_log(app_name, step7)
             SeaOfStarsAW.ut_device(label="待收货").click()
+            time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.08, 0.09)
 
             step8 = "8、查看待评价 返回个人中心界面"
             SeaOfStarsAW.trace_thread.add_log(app_name, step8)
             SeaOfStarsAW.ut_device(label="待评价").click()
+            time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.08, 0.09)
 
             step9 = "9、返回首页"

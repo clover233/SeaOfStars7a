@@ -34,9 +34,9 @@ class PerformanceDynamic_ths_0040(Case):
             time.sleep(2)
 
         for test_time in range(0, self.TEST_TIME):
-            # step = 0
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            step = 0
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
 
             logging.info('启动同花顺')
             # SeaOfStarsAW.trace_thread.add_log('同花顺', '启动同花顺')

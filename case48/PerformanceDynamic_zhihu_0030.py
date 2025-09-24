@@ -35,9 +35,8 @@ class PerformanceDynamic_zhihu_0030(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
             app_name ="知乎"
 
             step1 = "'1、打开知乎,等待10s'"
@@ -92,7 +91,7 @@ class PerformanceDynamic_zhihu_0030(Case):
 
             step8 = "8、点击 第一条文章 查看信息 1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step8)
-            SeaOfStarsAW.ut_device.click(0.582, 0.546)
+            SeaOfStarsAW.ut_device.click(0.486, 0.846)
             time.sleep(1)
 
             step9 = "9、浏览 上滑2次 下滑动3次 停留2s"
@@ -104,10 +103,9 @@ class PerformanceDynamic_zhihu_0030(Case):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
 
-
             step10 = "10、点击右下角评论 停留1"
             SeaOfStarsAW.trace_thread.add_log(app_name, step10)
-            SeaOfStarsAW.ut_device(label="评论").click()
+            SeaOfStarsAW.ut_device.click(0.822, 0.931)
             time.sleep(1)
 
             step11 = "11、浏览 上滑2次 下滑动3次 停留2s"
@@ -121,21 +119,27 @@ class PerformanceDynamic_zhihu_0030(Case):
 
             step12 = "12、返回推荐界面 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step12)
-            SeaOfStarsAW.ut_device(label="返回").click()
-            SeaOfStarsAW.ut_device(label="返回").click()
-            SeaOfStarsAW.ut_device(label="推荐").click()
+            SeaOfStarsAW.ut_device.click(0.93, 0.096)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.07, 0.095)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.07, 0.095)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.07, 0.095)
             time.sleep(2)
 
             step13 = "13、搜索一组桌面壁纸 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step13)
             SeaOfStarsAW.ut_device.click(0.562, 0.082)
+            time.sleep(1)
             SeaOfStarsAW.ut_device().set_text("桌面壁纸")
+            time.sleep(1)
             SeaOfStarsAW.ut_device(label="搜索").click()
             time.sleep(2)
 
             step14 = "14、点击 第一条结果 1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step14)
-            SeaOfStarsAW.ut_device.click(0.252, 0.38)
+            SeaOfStarsAW.ut_device.click(0.416, 0.782)
             time.sleep(1)
 
             step15 = "15、点击图片 停留1s"
@@ -155,21 +159,23 @@ class PerformanceDynamic_zhihu_0030(Case):
             step17 = "17、返回首页 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step17)
             SeaOfStarsAW.ut_device.click(0.252, 0.38)
-            SeaOfStarsAW.ut_device.click(0.93, 0.097)
-            SeaOfStarsAW.ut_device.click(0.05, 0.009)
-            SeaOfStarsAW.ut_device.click(0.05, 0.009)
-
-            time.sleep(2)
-
-            step18 = "18、点击底部  发现 停留2s"
-            SeaOfStarsAW.trace_thread.add_log(app_name, step18)
-            SeaOfStarsAW.ut_device(label="首页").click()
             time.sleep(1)
-
-            step19 = "19、点击底部 首页 停留2s"
-            SeaOfStarsAW.trace_thread.add_log(app_name, step19)
-            SeaOfStarsAW.ut_device(label="发现").click()
+            SeaOfStarsAW.ut_device.click(0.93, 0.097)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.05, 0.009)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.05, 0.009)
             time.sleep(2)
+
+            # step18 = "18、点击底部  发现 停留2s"
+            # SeaOfStarsAW.trace_thread.add_log(app_name, step18)
+            # SeaOfStarsAW.ut_device(label="首页").click()
+            # time.sleep(1)
+            #
+            # step19 = "19、点击底部 首页 停留2s"
+            # SeaOfStarsAW.trace_thread.add_log(app_name, step19)
+            # SeaOfStarsAW.ut_device(label="发现").click()
+            # time.sleep(2)
 
             step20 = "20、返回home 停留1s、"
             SeaOfStarsAW.trace_thread.add_log(app_name, step20)

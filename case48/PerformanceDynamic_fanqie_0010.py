@@ -27,11 +27,13 @@ class PerformanceDynamic_fanqie_0010(Case):
         测试用例执行
         """
         logging.info("用例开始执行")
-        # if SeaOfStarsAW.ut_device.locked():
-        #     SeaOfStarsAW.ut_device.unlock()
-        #     time.sleep(2)
+        if SeaOfStarsAW.ut_device.locked():
+            SeaOfStarsAW.ut_device.unlock()
+            time.sleep(2)
         for test_time in range(0, self.TEST_TIME):
             step = 0
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
             # 1、启动番茄免费小说，启动3s
             logging.info('启动番茄免费小说，启动3s')
             SeaOfStarsAW.trace_thread.add_log('番茄小说', '启动番茄小说，浏览主页')

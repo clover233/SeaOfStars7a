@@ -35,9 +35,8 @@ class PerformanceDynamic_youku_0010(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
             app_name ="优酷"
 
             step1 = "'1、打开优酷,等待10s'"
@@ -81,38 +80,47 @@ class PerformanceDynamic_youku_0010(Case):
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
-            for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
-                time.sleep(2)
+
 
             step7 = "7、点击设置"
             SeaOfStarsAW.trace_thread.add_log(app_name, step7)
+            SeaOfStarsAW.ut_device.click(0.058, 0.078)
+            SeaOfStarsAW.ut_device.swipe_up()
             SeaOfStarsAW.ut_device(label="设置").click()
+            time.sleep(2)
 
 
             step8 = "8、返回我的页"
             SeaOfStarsAW.trace_thread.add_log(app_name, step8)
             SeaOfStarsAW.ut_device.click(0.054, 0.083)
+            time.sleep(2)
 
-            step9 = "9、点击更多"
-            SeaOfStarsAW.trace_thread.add_log(app_name, step9)
-            SeaOfStarsAW.ut_device(label="更多").click()
-
-            step10 = "10、返回"
-            SeaOfStarsAW.trace_thread.add_log(app_name, step10)
-            SeaOfStarsAW.ut_device.click(0.054, 0.083)
+            # step9 = "9、点击更多"
+            # SeaOfStarsAW.trace_thread.add_log(app_name, step9)
+            # SeaOfStarsAW.ut_device(label="更多").click()
+            # time.sleep(2)
+            #
+            # step10 = "10、返回"
+            # SeaOfStarsAW.trace_thread.add_log(app_name, step10)
+            # SeaOfStarsAW.ut_device.click(0.054, 0.083)
+            # time.sleep(2)
 
             step11 = "11、点击我的下载 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step11)
+            SeaOfStarsAW.ut_device.swipe_down()
             SeaOfStarsAW.ut_device(label="我的下载").click()
+            time.sleep(2)
 
             step12 = "12、左滑返回上一级界面 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step12)
             SeaOfStarsAW.ut_device.click(0.054, 0.083)
+            time.sleep(2)
 
-            step13 = "13、回到首页 左滑返回上一级界面 停留1s "
+            step13 = "13、回到首页 停留1s "
             SeaOfStarsAW.trace_thread.add_log(app_name, step13)
             SeaOfStarsAW.ut_device(label="首页").click()
+            time.sleep(2)
 
             step14 = "14、左滑5次 右滑5次 每次停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step14)

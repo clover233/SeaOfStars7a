@@ -32,6 +32,8 @@ class PerformanceDynamic_Alipay_0020(Case):
             time.sleep(2)
         for test_time in range(0, self.TEST_TIME):
             step = 0
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
 
             # 应用启动
             logging.info('1、应用启动')

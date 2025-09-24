@@ -29,15 +29,14 @@ class PerformanceDynamic_Weibo_0030(Case):
         测试用例执行
         """
         logging.info("用例开始执行")
-        # if SeaOfStarsAW.ut_device.locked():
-        #     SeaOfStarsAW.ut_device.unlock()
-        #     time.sleep(2)
+        if SeaOfStarsAW.ut_device.locked():
+            SeaOfStarsAW.ut_device.unlock()
+            time.sleep(2)
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
 
             # 1、启动微博
             logging.info('启动微博')
@@ -101,12 +100,13 @@ class PerformanceDynamic_Weibo_0030(Case):
 
             # 12、点击转发微博 等待1s
             SeaOfStarsAW.trace_thread.add_log('微博', '12、点击第一条博文的第一张图片 查看大图，等待1s')
-            SeaOfStarsAW.ut_device(labelContains="转发").click()
+            SeaOfStarsAW.ut_device.click(0.152, 0.919)
             time.sleep(1)
 
             # 13、点击取消
             SeaOfStarsAW.trace_thread.add_log('微博', '13、点击取消')
             SeaOfStarsAW.ut_device(labelContains="取消").click()
+
             # 14、点击返回，返回页面
             SeaOfStarsAW.trace_thread.add_log('微博', '14、左滑3次，返回页面')
             for i in range(3):

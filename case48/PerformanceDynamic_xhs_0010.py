@@ -35,9 +35,8 @@ class PerformanceDynamic_xhs_0010(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
 
             step1 = "'1、打开小红书,等待10s'"
             logging.info('启动小红书')
@@ -49,7 +48,9 @@ class PerformanceDynamic_xhs_0010(Case):
             step2 = "2、点击我的 -进入收藏 - 图片链接"
             SeaOfStarsAW.trace_thread.add_log('小红书', step2)
             SeaOfStarsAW.ut_device.click(0.904, 0.936)
-            SeaOfStarsAW.ut_device(labelContains="收藏").click()
+
+            SeaOfStarsAW.ut_device.click(0.254, 0.482)
+
             SeaOfStarsAW.ut_device.click(0.216, 0.68)
             time.sleep(1)
 
@@ -67,18 +68,18 @@ class PerformanceDynamic_xhs_0010(Case):
             step5 = "5、返回我的页面 停留1s"
             SeaOfStarsAW.trace_thread.add_log('小红书', step5)
             SeaOfStarsAW.ut_device.swipe_right()
-            SeaOfStarsAW.ut_device(labelContains="正文").click()
+            # SeaOfStarsAW.ut_device(labelContains="正文").click()
             time.sleep(5)
 
             step6 = "6、点击设置图标 停留1s"
             SeaOfStarsAW.trace_thread.add_log('小红书', step6)
-            SeaOfStarsAW.ut_device(labelContains="设置").click()
+            SeaOfStarsAW.ut_device.click(0.918, 0.329)
             time.sleep(1)
 
             step7 = "7、返回首页 停留1s"
             SeaOfStarsAW.trace_thread.add_log('小红书', step7)
-            SeaOfStarsAW.ut_device.swipe_right()
-            SeaOfStarsAW.ut_device.click(0.128, 0.935)
+            SeaOfStarsAW.ut_device.click(0.052, 0.093)
+            SeaOfStarsAW.ut_device.click(0.1, 0.937)
             time.sleep(1)
 
             step8 = "8、上滑5次 下滑6次 每次停留2s"

@@ -32,6 +32,8 @@ class PerformanceDynamic_Baidumap_0010(Case):
             time.sleep(2)
         for test_time in range(0, self.TEST_TIME):
             step = 0
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
 
             # 启动百度地图，停留2S
             # 建议停止5s 有广告

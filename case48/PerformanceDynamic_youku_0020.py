@@ -35,9 +35,8 @@ class PerformanceDynamic_youku_0020(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
             app_name ="优酷"
 
             step1 = "'1、打开优酷,等待10s'"
@@ -92,10 +91,12 @@ class PerformanceDynamic_youku_0020(Case):
             step8 = "8、点击搜索框"
             SeaOfStarsAW.trace_thread.add_log(app_name, step8)
             SeaOfStarsAW.ut_device.click(0.556, 0.084)
+            time.sleep(2)
 
             step9 = "9、搜索好声音"
             SeaOfStarsAW.trace_thread.add_log(app_name, step9)
             SeaOfStarsAW.ut_device().set_text("好声音")
+            time.sleep(1)
             SeaOfStarsAW.ut_device(label="搜索").click()
 
 
@@ -110,9 +111,9 @@ class PerformanceDynamic_youku_0020(Case):
 
             step11 = "11、返回主界面"
             SeaOfStarsAW.trace_thread.add_log(app_name, step11)
-            SeaOfStarsAW.ut_device().set_text("取消")
-            SeaOfStarsAW.ut_device().set_text("取消")
-
+            for _ in range(2):
+                SeaOfStarsAW.ut_device(label="取消").click()
+                time.sleep(1)
 
             step12 = "12、左滑返回首页"
             SeaOfStarsAW.trace_thread.add_log(app_name, step12)

@@ -29,15 +29,14 @@ class PerformanceDynamic_xhs_0020(Case):
         测试用例执行
         """
         logging.info("用例开始执行")
-        # if SeaOfStarsAW.ut_device.locked():
-        #     SeaOfStarsAW.ut_device.unlock()
-        #     time.sleep(2)
+        if SeaOfStarsAW.ut_device.locked():
+            SeaOfStarsAW.ut_device.unlock()
+            time.sleep(2)
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
 
             step1 = "'1、打开小红书,等待10s'"
             logging.info('启动小红书')
@@ -58,7 +57,7 @@ class PerformanceDynamic_xhs_0020(Case):
             step3 = "3、点击一个主题进入 上滑5次 下滑5次 每次停留2s"
             SeaOfStarsAW.trace_thread.add_log('小红书', step3)
             SeaOfStarsAW.ut_device(labelContains="推荐").click()
-            time.sleep(10)
+            time.sleep(6)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
@@ -71,6 +70,7 @@ class PerformanceDynamic_xhs_0020(Case):
             SeaOfStarsAW.trace_thread.add_log('小红书', step4)
             SeaOfStarsAW.ut_device.click(0.907, 0.94)
             SeaOfStarsAW.ut_device(labelContains="收藏").click()
+            SeaOfStarsAW.ut_device.click(0.652, 0.615)
             SeaOfStarsAW.ut_device.click(0.152,0.669)
             time.sleep(1)
 
@@ -99,8 +99,8 @@ class PerformanceDynamic_xhs_0020(Case):
 
             step9 = "9、返回首页"
             SeaOfStarsAW.trace_thread.add_log('小红书', step9)
-            SeaOfStarsAW.swipe_back()
-            SeaOfStarsAW.ut_device.click(0.11, 0.939)
+            # SeaOfStarsAW.swipe_back()
+            # SeaOfStarsAW.ut_device.click(0.11, 0.939)
 
             step10 = "10、返回home页面"
             SeaOfStarsAW.trace_thread.add_log('小红书', step10)
