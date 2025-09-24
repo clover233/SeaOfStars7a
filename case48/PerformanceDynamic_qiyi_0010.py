@@ -39,7 +39,7 @@ class PerformanceDynamic_qiyi_0010(Case):
             #                          self.screenshot_dir_path)
 
             logging.info('启动爱奇艺')
-            # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '启动爱奇艺')
+            SeaOfStarsAW.trace_thread.add_log('爱奇艺', '启动爱奇艺')
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.85, 0.145)
 

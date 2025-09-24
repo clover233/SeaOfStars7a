@@ -45,6 +45,8 @@ class PerformanceDynamic_qimao_0020(Case):
 
             time.sleep(8)
             # SeaOfStarsAW.trace_thread.add_log('七猫', '主页浏览')
+            SeaOfStarsAW.ut_device(label='书城').click()
+            time.sleep(2)
             logging.info('上滑3次，下滑3次')
             for _ in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()

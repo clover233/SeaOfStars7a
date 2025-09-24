@@ -62,7 +62,7 @@ class PerformanceDynamic_qiyi_0060(Case):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(1)
             logging.info('返回首页')
-            SeaOfStarsAW.ut_device(label='pread mini back iphone').click()
+            SeaOfStarsAW.ut_device.swipe(0.010, 0.809, 0.933, 0.805, 0.5)
             time.sleep(2)
             logging.info('上滑退出')
             # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '上滑退出')
