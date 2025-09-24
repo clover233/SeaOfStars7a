@@ -49,7 +49,9 @@ class PerformanceDynamic_wpsoffice_0020(Case):
 
             step2 = "2、点击底部找模版 "
             SeaOfStarsAW.trace_thread.add_log(app_name, step2)
-            SeaOfStarsAW.ut_device(label="找模版").click()
+            SeaOfStarsAW.ut_device.click(0.69, 0.935)
+            time.sleep(2)
+            SeaOfStarsAW.ut_device.click(0.812, 0.234)
 
             step3 = "3、滑动浏览上滑2次 下滑2次 每次停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step3)
@@ -62,12 +64,12 @@ class PerformanceDynamic_wpsoffice_0020(Case):
 
             step4 = "4、点击首页 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step4)
-            SeaOfStarsAW.ut_device(label="首页").click()
+            SeaOfStarsAW.ut_device.click(0.104, 0.93)
             time.sleep(2)
 
             step5 = "5、点击右下角红色 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step5)
-            SeaOfStarsAW.ut_device.click(0.892, 0.765)
+            SeaOfStarsAW.ut_device.click(0.896, 0.843)
             time.sleep(1)
 
 

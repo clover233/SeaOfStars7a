@@ -32,9 +32,9 @@ class PerformanceDynamic_weixin_0050(Case):
             time.sleep(2)
 
         for test_time in range(0, self.TEST_TIME):
-            step = 0
-            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-                                     self.screenshot_dir_path)
+            # step = 0
+            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+            #                          self.screenshot_dir_path)
             # 启动相机
             logging.info('启动微信')
             # SeaOfStarsAW.ut_device.session().app_activate('com.tencent.mqq')
@@ -50,7 +50,8 @@ class PerformanceDynamic_weixin_0050(Case):
             time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.598, 0.598)
             time.sleep(2)
-            #
+
+            logging.info('点击照片')
             SeaOfStarsAW.trace_thread.add_log('微信', '点击朋友圈相机预览')
             SeaOfStarsAW.ut_device.click(0.61, 0.929)
             time.sleep(2)
@@ -59,10 +60,12 @@ class PerformanceDynamic_weixin_0050(Case):
             time.sleep(2)
             SeaOfStarsAW.ut_device(label="拍照").click()
             time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.494, 0.78)
+            SeaOfStarsAW.ut_device.click(0.5, 0.777)
             time.sleep(2)
-            SeaOfStarsAW.ut_device(label="关闭").click()
+            SeaOfStarsAW.ut_device.click(0.084, 0.084)
             time.sleep(2)
+            # SeaOfStarsAW.ut_device(label="关闭").click()
+            # time.sleep(2)
             SeaOfStarsAW.ut_device(label="拍照").click()
             time.sleep(2)
             SeaOfStarsAW.ut_device(label="从手机相册选择").click()
@@ -70,14 +73,15 @@ class PerformanceDynamic_weixin_0050(Case):
             SeaOfStarsAW.ut_device.click(0.45, 0.46)
             time.sleep(2)
 
-            SeaOfStarsAW.ut_device.swipe(0.5, 0.2, 0.5, 0.7)
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.196, 0.181)
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.swipe(0.5, 0.7, 0.5, 0.2)
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.696, 0.463)
-            time.sleep(2)
+            # SeaOfStarsAW.ut_device.swipe(0.5, 0.2, 0.5, 0.7)
+            # time.sleep(2)
+            # SeaOfStarsAW.ut_device.click(0.196, 0.181)
+            # time.sleep(2)
+            # SeaOfStarsAW.ut_device.swipe(0.5, 0.7, 0.5, 0.2)
+            # time.sleep(2)
+            # SeaOfStarsAW.ut_device.click(0.696, 0.463)
+            # time.sleep(2)
+
             SeaOfStarsAW.ut_device(label="预览").click()
             time.sleep(2)
             SeaOfStarsAW.swipe_left()

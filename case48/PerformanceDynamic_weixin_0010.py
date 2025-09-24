@@ -55,7 +55,7 @@ class PerformanceDynamic_weixin_0010(Case):
 
             SeaOfStarsAW.trace_thread.add_log('微信', '进入群聊')
             # SeaOfStarsAW.check_status(label='测试群聊')
-            SeaOfStarsAW.ut_device(label="测试用例36").click()
+            SeaOfStarsAW.ut_device.click(0.552, 0.23)
             time.sleep(2)
             step += 1
             # SeaOfStarsAW.ut_device.screenshot(self.screenshot_dir_path + '/' + self.__class__.__name__ + 'step_' + str(step) + '_' +time.strftime('%H%M%S', time.localtime()) + '.png')

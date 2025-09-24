@@ -40,7 +40,7 @@ class PerformanceDynamic_qimao_0010(Case):
 
             logging.info('七猫')
             # SeaOfStarsAW.trace_thread.add_log('七猫', '启动七猫')
-            # SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.628, 0.138)
 
             time.sleep(8)

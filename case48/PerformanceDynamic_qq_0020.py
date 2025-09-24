@@ -40,7 +40,7 @@ class PerformanceDynamic_qq_0020(Case):
 
             logging.info('启动qq')
             # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '启动爱奇艺')
-            # SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.17, 0.252)
 
             time.sleep(5)

@@ -40,7 +40,7 @@ class PerformanceDynamic_qimao_0020(Case):
 
             logging.info('启动七猫')
             # SeaOfStarsAW.trace_thread.add_log('七猫', '启动七猫')
-            # SeaOfStarsAW.ut_device.swipe_left()
+            SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.628, 0.138)
 
             time.sleep(8)
@@ -113,7 +113,7 @@ class PerformanceDynamic_qimao_0020(Case):
             SeaOfStarsAW.ut_device.send_keys('长生')
             time.sleep(2)
             logging.info('点击搜索')
-            SeaOfStarsAW.ut_device.click(0.876, 0.891)
+            SeaOfStarsAW.ut_device(label='搜索').click()
             time.sleep(2)
             logging.info('点击返回')
             # SeaOfStarsAW.trace_thread.add_log('七猫', '返回桌面')
