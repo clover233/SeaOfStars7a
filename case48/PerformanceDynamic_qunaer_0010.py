@@ -42,6 +42,7 @@ class PerformanceDynamic_qunaer_0010(Case):
             # SeaOfStarsAW.trace_thread.add_log('去哪旅行', '去哪旅行')
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.852, 0.259)
+            # SeaOfStarsAW.ut_device.app_activate("com.qunar.iphoneclient8")
 
             time.sleep(2)
             logging.info('点击机票')
