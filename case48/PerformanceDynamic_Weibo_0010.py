@@ -29,15 +29,14 @@ class PerformanceDynamic_Weibo_0010(Case):
         测试用例执行
         """
         logging.info("用例开始执行")
-        # if SeaOfStarsAW.ut_device.locked():
-        #     SeaOfStarsAW.ut_device.unlock()
-        #     time.sleep(2)
+        if SeaOfStarsAW.ut_device.locked():
+            SeaOfStarsAW.ut_device.unlock()
+            time.sleep(2)
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
 
             # 1、启动微博
             logging.info('启动微博')
@@ -69,13 +68,15 @@ class PerformanceDynamic_Weibo_0010(Case):
             SeaOfStarsAW.trace_thread.add_log('微博', '5、点击第一条博文视频播放5s')
             SeaOfStarsAW.ut_device(labelContains="正文").click()
             time.sleep(5)
-            # 6、左滑返回，等待1s
+
+            # 6、返回，等待1s
             SeaOfStarsAW.trace_thread.add_log('微博', '6、左滑返回，等待1s')
-            SeaOfStarsAW.ut_device.swipe_right()
+            SeaOfStarsAW.ut_device.click(0.05, 0.085)
             time.sleep(1)
 
             # 7、点击评论，等待2s
             SeaOfStarsAW.trace_thread.add_log('微博', '7、点击评论，等待2s')
+            SeaOfStarsAW.ut_device.swipe_up()
             SeaOfStarsAW.ut_device(labelContains="评论").click()
             time.sleep(2)
             # 8、上滑5次、下滑6次，等待2s
@@ -129,5 +130,7 @@ class PerformanceDynamic_Weibo_0010(Case):
             SeaOfStarsAW.ut_device.swipe_right()
             SeaOfStarsAW.ut_device.app_terminate("com.sina.weibo")
             time.sleep(2)
+
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')

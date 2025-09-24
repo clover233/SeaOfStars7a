@@ -35,16 +35,15 @@ class PerformanceDynamic_xhs_0030(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
 
             step1 = "'1、打开小红书,等待10s'"
             logging.info('启动小红书')
             SeaOfStarsAW.trace_thread.add_log('小红书', step1)
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.149, 0.714)
-            time.sleep(10)
+            time.sleep(6)
 
             step2 = "2、点击右上角 搜索"
             SeaOfStarsAW.trace_thread.add_log('小红书', step2)
@@ -56,7 +55,7 @@ class PerformanceDynamic_xhs_0030(Case):
             for i in range(3):
                 SeaOfStarsAW.ut_device().set_text("穿搭图片")
                 time.sleep(1)
-                SeaOfStarsAW.ut_device.click(0.613, 0.474)
+                SeaOfStarsAW.ut_device.click(0.8, 0.097)
                 time.sleep(1)
 
             step4 = "4、搜索 穿搭图片（停留1s）"
@@ -111,8 +110,7 @@ class PerformanceDynamic_xhs_0030(Case):
 
             step12 = "12、返回首页"
             SeaOfStarsAW.trace_thread.add_log('小红书', step12)
-            SeaOfStarsAW.swipe_return()
-            SeaOfStarsAW.swipe_return()
+
 
             step13 = "13、返回home页面"
             SeaOfStarsAW.trace_thread.add_log('小红书', step13)

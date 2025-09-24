@@ -94,12 +94,12 @@ class PerformanceDynamic_ximalaya_0010(Case):
             step9 = "9、点击 活着"
             SeaOfStarsAW.trace_thread.add_log(app_name, step9)
             # 需要提前订阅号活着
-            SeaOfStarsAW.ut_device.click(0.198,0.617)
+            SeaOfStarsAW.ut_device.click(0.568, 0.767)
             time.sleep(2)
 
             step10 = "10、点击 进行播放"
             SeaOfStarsAW.trace_thread.add_log(app_name, step10)
-            SeaOfStarsAW.ut_device(label="开始播放").click()
+            SeaOfStarsAW.ut_device.click(0.698, 0.946)
             time.sleep(2)
 
             step11 = "11、点击评论"
@@ -117,14 +117,15 @@ class PerformanceDynamic_ximalaya_0010(Case):
 
             step13 = "13、点击 暂停播放"
             SeaOfStarsAW.trace_thread.add_log(app_name, step13)
-            SeaOfStarsAW.ut_device(label="暂停").click()
+            SeaOfStarsAW.ut_device.click(0.914, 0.147)
             time.sleep(1)
 
             step14 = "14、返回首页"
             SeaOfStarsAW.trace_thread.add_log(app_name, step14)
-            for i in range(2):
-                SeaOfStarsAW.ut_device.swipe(0.025,0.5, 0.925,0.5)
-            SeaOfStarsAW.ut_device(label="首页").click()
+            for i in range(4):
+                SeaOfStarsAW.ut_device.click(0.072, 0.088)
+                time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.11, 0.931)
             time.sleep(1)
 
             step15 = "15、点击搜索栏"
@@ -147,9 +148,8 @@ class PerformanceDynamic_ximalaya_0010(Case):
 
             step18 = "18、返回首页 1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step18)
-            for i in range(1):
-                SeaOfStarsAW.ut_device.swipe(0.025,0.5, 0.925,0.5)
-
+            for i in range(2):
+                SeaOfStarsAW.ut_device.click(0.928, 0.086)
 
             step19 = "19、上滑 返回桌面"
             SeaOfStarsAW.trace_thread.add_log(app_name, step19)

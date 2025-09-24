@@ -29,15 +29,14 @@ class PerformanceDynamic_weipinhui_0010(Case):
         测试用例执行
         """
         logging.info("用例开始执行")
-        # if SeaOfStarsAW.ut_device.locked():
-        #     SeaOfStarsAW.ut_device.unlock()
-        #     time.sleep(2)
+        if SeaOfStarsAW.ut_device.locked():
+            SeaOfStarsAW.ut_device.unlock()
+            time.sleep(2)
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
             app_name ="唯品会"
 
             step1 = "'1、打开唯品会,等待10s'"
@@ -78,12 +77,7 @@ class PerformanceDynamic_weipinhui_0010(Case):
             step6 = "6、进入店铺浏览 - 点击店铺图标3s 上滑3cm 停留2s 上滑2次 下滑3次 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step6)
             SeaOfStarsAW.ut_device(label="进入店铺").click()
-            for i in range(2):
-                SeaOfStarsAW.ut_device.swipe_down()
-                time.sleep(2)
-            for i in range(2):
-                SeaOfStarsAW.ut_device.swipe_up()
-                time.sleep(2)
+
 
             step7 = "7、返回商品详情 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step7)
@@ -93,26 +87,30 @@ class PerformanceDynamic_weipinhui_0010(Case):
             step8 = "8、点后右下角 特卖价 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step8)
             SeaOfStarsAW.ut_device(label="购买按钮").click()
+            time.sleep(2)
             SeaOfStarsAW.ut_device(label="购买按钮").click()
             time.sleep(2)
 
             step9 = "9、点击 去购物车 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step9)
             # SeaOfStarsAW.ut_device(label="去购物车").click()
-            SeaOfStarsAW.ut_device(label="购物车按钮").click()
+            SeaOfStarsAW.ut_device.click(0.488, 0.22)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.28, 0.935)
             time.sleep(2)
 
-            step10 = "10、点击结算 2s"
-            SeaOfStarsAW.trace_thread.add_log(app_name, step10)
-            SeaOfStarsAW.ut_device(label="结算").click()
-            time.sleep(2)
-
-            step11 = "11、返回购物车界面 1s"
-            SeaOfStarsAW.trace_thread.add_log(app_name, step11)
-            SeaOfStarsAW.ut_device(label="关闭").click()
-            SeaOfStarsAW.ut_device(label="返回按钮").click()
-            SeaOfStarsAW.ut_device.click(0.364, 0.592)
-            time.sleep(2)
+            # step10 = "10、点击结算 2s"
+            # SeaOfStarsAW.trace_thread.add_log(app_name, step10)
+            # SeaOfStarsAW.ut_device(label="结算").click()
+            # time.sleep(2)
+            #
+            # step11 = "11、返回购物车界面 1s"
+            # SeaOfStarsAW.trace_thread.add_log(app_name, step11)
+            # SeaOfStarsAW.ut_device(label="关闭").click()
+            # time.sleep(2)
+            # SeaOfStarsAW.ut_device(label="返回按钮").click()
+            # SeaOfStarsAW.ut_device.click(0.364, 0.592)
+            # time.sleep(2)
 
             step12 = "12、长按商品 1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step12)

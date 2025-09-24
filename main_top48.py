@@ -16,8 +16,8 @@ from case48.PerformanceDynamic_58city_0020 import PerformanceDynamic_58city_0020
 from case48.PerformanceDynamic_Alipay_0010 import PerformanceDynamic_Alipay_0010
 from case48.PerformanceDynamic_Alipay_0020 import PerformanceDynamic_Alipay_0020
 from case48.PerformanceDynamic_Alipay_0070 import PerformanceDynamic_Alipay_0070
-from case48.PerformanceDynamic_Appmarket_0010 import PerformanceDynamic_Appmarket_0010
-from case48.PerformanceDynamic_AttachedScreen_0020 import PerformanceDynamic_AttachedScreen_0020
+# from case48.PerformanceDynamic_Appmarket_0010 import PerformanceDynamic_Appmarket_0010
+# from case48.PerformanceDynamic_AttachedScreen_0020 import PerformanceDynamic_AttachedScreen_0020
 from case48.PerformanceDynamic_AutoNavi_0010 import PerformanceDynamic_AutoNavi_0010
 from case48.PerformanceDynamic_AutoNavi_0030 import PerformanceDynamic_AutoNavi_0030
 from case48.PerformanceDynamic_AutoNavi_0040 import PerformanceDynamic_AutoNavi_0040
@@ -25,16 +25,16 @@ from case48.PerformanceDynamic_AutoNavi_0050 import PerformanceDynamic_AutoNavi_
 from case48.PerformanceDynamic_AutoNavi_0060 import PerformanceDynamic_AutoNavi_0060
 from case48.PerformanceDynamic_Baidu_0010 import PerformanceDynamic_Baidu_0010
 from case48.PerformanceDynamic_Baidumap_0010 import PerformanceDynamic_Baidumap_0010
-from case48.PerformanceDynamic_Beiwanglu_0010 import PerformanceDynamic_Beiwanglu_0010
-from case48.PerformanceDynamic_Beiwanglu_0020 import PerformanceDynamic_Beiwanglu_0020
+# from case48.PerformanceDynamic_Beiwanglu_0010 import PerformanceDynamic_Beiwanglu_0010
+# from case48.PerformanceDynamic_Beiwanglu_0020 import PerformanceDynamic_Beiwanglu_0020
 from case48.PerformanceDynamic_Bilibili_0020 import PerformanceDynamic_Bilibili_0020
 from case48.PerformanceDynamic_Bilibili_0030 import PerformanceDynamic_Bilibili_0030
 from case48.PerformanceDynamic_Bilibili_0040 import PerformanceDynamic_Bilibili_0040
 from case48.PerformanceDynamic_Bilibili_0050 import PerformanceDynamic_Bilibili_0050
-from case48.PerformanceDynamic_Browser_0010 import PerformanceDynamic_Browser_0010
-from case48.PerformanceDynamic_Browser_0020 import PerformanceDynamic_Browser_0020
-from case48.PerformanceDynamic_Call_0010 import PerformanceDynamic_Call_0010
-from case48.PerformanceDynamic_Call_0020 import PerformanceDynamic_Call_0020
+# from case48.PerformanceDynamic_Browser_0010 import PerformanceDynamic_Browser_0010
+# from case48.PerformanceDynamic_Browser_0020 import PerformanceDynamic_Browser_0020
+# from case48.PerformanceDynamic_Call_0010 import PerformanceDynamic_Call_0010
+# from case48.PerformanceDynamic_Call_0020 import PerformanceDynamic_Call_0020
 # 云闪付
 # 大众点评
 from case48.PerformanceDynamic_Dingding_0010 import PerformanceDynamic_Dingding_0010
@@ -114,6 +114,7 @@ from case48.PerformanceDynamic_xhs_0010 import PerformanceDynamic_xhs_0010
 from case48.PerformanceDynamic_xhs_0020 import PerformanceDynamic_xhs_0020
 from case48.PerformanceDynamic_xhs_0030 import PerformanceDynamic_xhs_0030
 from case48.PerformanceDynamic_xhs_0040 import PerformanceDynamic_xhs_0040
+from case48.PerformanceDynamic_xhs_0050 import PerformanceDynamic_xhs_0050
 from case48.PerformanceDynamic_xianyu_0010 import PerformanceDynamic_xianyu_0010
 from case48.PerformanceDynamic_xianyu_0020 import PerformanceDynamic_xianyu_0020
 from case48.PerformanceDynamic_xiechengTrip_0010 import PerformanceDynamic_xiechengTrip_0010
@@ -257,6 +258,7 @@ case_name_bundle_name = {
     "PerformanceDynamic_xhs_0020":"com.xingin.discover",
     "PerformanceDynamic_xhs_0030":"com.xingin.discover",
     "PerformanceDynamic_xhs_0040":"com.xingin.discover",
+    "PerformanceDynamic_xhs_0050":"com.xingin.discover",
     "PerformanceDynamic_xianyu_0010":"com.taobao.fleamarket",
     "PerformanceDynamic_xianyu_0020":"com.taobao.fleamarket",
     "PerformanceDynamic_xiechengTrip_0010":"ctrip.com",
@@ -279,8 +281,6 @@ all_cases = [
     # PerformanceDynamic_Alipay_0010,
     # PerformanceDynamic_Alipay_0020,
     # PerformanceDynamic_Alipay_0070,
-    # PerformanceDynamic_Appmarket_0010,
-    # PerformanceDynamic_AttachedScreen_0020,
     # PerformanceDynamic_AutoNavi_0010,
     # PerformanceDynamic_AutoNavi_0030,
     # PerformanceDynamic_AutoNavi_0040,
@@ -288,16 +288,10 @@ all_cases = [
     # PerformanceDynamic_AutoNavi_0060,
     # PerformanceDynamic_Baidu_0010,
     # PerformanceDynamic_Baidumap_0010,
-    # PerformanceDynamic_Beiwanglu_0010,
-    # PerformanceDynamic_Beiwanglu_0020,
     # PerformanceDynamic_Bilibili_0020,
     # PerformanceDynamic_Bilibili_0030,
     # PerformanceDynamic_Bilibili_0040,
     # PerformanceDynamic_Bilibili_0050,
-    # PerformanceDynamic_Browser_0010,
-    # PerformanceDynamic_Browser_0020,
-    # PerformanceDynamic_Call_0010,
-    # PerformanceDynamic_Call_0020,
     # # 云闪付用例
     # # 大众点评用例
     # PerformanceDynamic_Dingding_0010,
@@ -354,31 +348,30 @@ all_cases = [
     # PerformanceDynamic_wangzherongyao_0030,
     # PerformanceDynamic_mangguoTV_0010,
     # PerformanceDynamic_meituan_0010,
+    PerformanceDynamic_Weibo_0010,
+    PerformanceDynamic_Weibo_0020,
+    PerformanceDynamic_Weibo_0030,
 
-    # PerformanceDynamic_Weibo_0010,
-    # PerformanceDynamic_Weibo_0020,
-    # PerformanceDynamic_Weibo_0030,
-    # PerformanceDynamic_Weibo_0040,
-    # PerformanceDynamic_weipinhui_0010,
-    # PerformanceDynamic_weipinhui_0020,
-    # PerformanceDynamic_weipinhui_0030,
-    # PerformanceDynamic_wpsoffice_0010,
-    # PerformanceDynamic_wpsoffice_0020,
-
-    # PerformanceDynamic_weixin_0010,
-    # PerformanceDynamic_weixin_0020,
-    #
-    # PerformanceDynamic_weixin_0030,
-    # PerformanceDynamic_weixin_0050,
-    # PerformanceDynamic_weixin_0070,
-    # PerformanceDynamic_weixin_0080,
-    # PerformanceDynamic_weixin_0090,
+    PerformanceDynamic_Weibo_0040,
+    PerformanceDynamic_weipinhui_0010,
+    PerformanceDynamic_weipinhui_0020,
+    PerformanceDynamic_weipinhui_0030,
+    PerformanceDynamic_wpsoffice_0010,
+    PerformanceDynamic_wpsoffice_0020,
+    #PerformanceDynamic_weixin_0010,
+    PerformanceDynamic_weixin_0020,
+    PerformanceDynamic_weixin_0030,
+    PerformanceDynamic_weixin_0050,
+    PerformanceDynamic_weixin_0070,
+    PerformanceDynamic_weixin_0080,
+    PerformanceDynamic_weixin_0090,
     PerformanceDynamic_weixin_0100,
     PerformanceDynamic_weixin_0110,
     PerformanceDynamic_xhs_0010,
     PerformanceDynamic_xhs_0020,
     PerformanceDynamic_xhs_0030,
     PerformanceDynamic_xhs_0040,
+    PerformanceDynamic_xhs_0050,
     PerformanceDynamic_xianyu_0010,
     PerformanceDynamic_xianyu_0020,
     PerformanceDynamic_xiechengTrip_0010,
@@ -390,22 +383,22 @@ all_cases = [
     PerformanceDynamic_youku_0010,
     PerformanceDynamic_youku_0020,
     PerformanceDynamic_zhihu_0030,
-    PerformanceDynamic_zhongzai_0010,
-    PerformanceDynamic_zhongzai_0020,
     PerformanceDynamic_zuoyebang_0010,
     PerformanceDynamic_zuoyebang_0020,
+    PerformanceDynamic_zhongzai_0010,
+    PerformanceDynamic_zhongzai_0020,
 ]
 Basic1 = [
     PerformanceDynamic_jrtt_0010,
     PerformanceDynamic_UC_0010,
-    PerformanceDynamic_Browser_0010,
+    # PerformanceDynamic_Browser_0010,
     PerformanceDynamic_qqliulanqi_0010,
     PerformanceDynamic_fanqie_0010,
     PerformanceDynamic_qimao_0010,
     PerformanceDynamic_zhihu_0030,
     PerformanceDynamic_jrtt_0020,
     PerformanceDynamic_UC_0020,
-    PerformanceDynamic_Browser_0020,
+    # PerformanceDynamic_Browser_0020,
     PerformanceDynamic_qqliulanqi_0010,
     PerformanceDynamic_fanqie_0020,
     PerformanceDynamic_Baidu_0010,
@@ -427,15 +420,15 @@ Basic1 = [
     PerformanceDynamic_weixin_0030,
     PerformanceDynamic_weixin_0090,
     # PerformanceDynamic_Launcher_0010,
-    PerformanceDynamic_AttachedScreen_0020,
+    # PerformanceDynamic_AttachedScreen_0020,
     PerformanceDynamic_wpsoffice_0010,
     PerformanceDynamic_Dingding_0010,
-    PerformanceDynamic_Beiwanglu_0010,
+    # PerformanceDynamic_Beiwanglu_0010,
     PerformanceDynamic_xuexiqiangguo_0010,
-    PerformanceDynamic_AttachedScreen_0020,
+    # PerformanceDynamic_AttachedScreen_0020,
     PerformanceDynamic_wpsoffice_0020,
     PerformanceDynamic_Dingding_0020,
-    PerformanceDynamic_Beiwanglu_0020,
+    # PerformanceDynamic_Beiwanglu_0020,
     # PerformanceDynamic_DHSouApp_0010,
     # PerformanceDynamic_baidu_0010,
     PerformanceDynamic_xuexiqiangguo_0020,
@@ -448,7 +441,7 @@ Basic1 = [
     # PerformanceDynamic_weixin_0010,
     PerformanceDynamic_meituan_0010,
     PerformanceDynamic_weixin_0020,
-    PerformanceDynamic_Appmarket_0010,
+    # PerformanceDynamic_Appmarket_0010,
     PerformanceDynamic_ths_0040,
     PerformanceDynamic_Dongchedi_0010,
     PerformanceDynamic_Douyin_0010,
@@ -505,10 +498,10 @@ Basic2 = [
     # PerformanceDynamic_splitscreen_0010,
     # PerformanceDynamic_Launcher_0010,
     PerformanceDynamic_AutoNavi_0040,
-    PerformanceDynamic_Call_0020,
+    # PerformanceDynamic_Call_0020,
     # PerformanceDynamic_DHBaidutieba_0010,
     PerformanceDynamic_weixin_0110,
-    # PerformanceDynamic_xhs_0050,
+    PerformanceDynamic_xhs_0050,
     # PerformanceDynamic_dazhongdianping_0010,
     # PerformanceDynamic_dazhongdianping_0020,
     # PerformanceDynamic_Photo_0030,
@@ -698,7 +691,7 @@ Basic4 = [
     # PerformanceDynamic_DHTesla_0010,
     # PerformanceDynamic_weixin_0010,
     PerformanceDynamic_Douyin_0010,
-    PerformanceDynamic_Call_0010,
+    # PerformanceDynamic_Call_0010,
     PerformanceDynamic_weixin_0030,
     PerformanceDynamic_qq_0020,
     PerformanceDynamic_weixin_0090,
@@ -792,7 +785,7 @@ Basic5 = [
     # PerformanceDynamic_DHMiHome_0010,
     # PerformanceDynamic_Beiwanglu_AI_0030,
     # PerformanceDynamic_DHTesla_0010,
-    PerformanceDynamic_Appmarket_0010,
+    # PerformanceDynamic_Appmarket_0010,
     # PerformanceDynamic_Photo_AI_0010,
     # PerformanceDynamic_Douyin_0070,
     # PerformanceDynamic_Launcher_0020,
@@ -930,6 +923,8 @@ if __name__ == '__main__':
                                     SeaOfStarsAW.ut_device.app_terminate(name)
                             else:
                                 SeaOfStarsAW.ut_device.app_terminate(bundle_name)
+                        except KeyError:
+                            pass
                         finally:
                             pass
                         #SeaOfStarsAW.swipe_to_launcher()

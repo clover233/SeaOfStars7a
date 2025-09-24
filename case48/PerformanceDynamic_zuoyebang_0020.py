@@ -35,9 +35,8 @@ class PerformanceDynamic_zuoyebang_0020(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
             app_name ="作业帮"
 
             step1 = "'打开作业帮,等待10s'"
@@ -77,7 +76,7 @@ class PerformanceDynamic_zuoyebang_0020(Case):
 
             step6 = "返回首页 返回home"
             SeaOfStarsAW.trace_thread.add_log(app_name, step6)
-            SeaOfStarsAW.ut_device(label="首页").click()
+            # SeaOfStarsAW.ut_device(label="首页").click()
             # for i in range(4):
             #     SeaOfStarsAW.ut_device.swipe(0.025,0.5, 0.925,0.5)
             SeaOfStarsAW.ut_device.home()

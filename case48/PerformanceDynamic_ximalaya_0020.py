@@ -59,7 +59,7 @@ class PerformanceDynamic_ximalaya_0020(Case):
 
             step4 = "4、返回首页 1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step4)
-            SeaOfStarsAW.ut_device(label="返回").click()
+            # SeaOfStarsAW.ut_device(label="返回").click()
             time.sleep(1)
 
             step5 = "5、返回主界面"

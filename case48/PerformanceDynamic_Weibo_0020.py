@@ -35,9 +35,8 @@ class PerformanceDynamic_Weibo_0020(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
 
             # 1、启动微博
             logging.info('启动微博')
@@ -82,5 +81,7 @@ class PerformanceDynamic_Weibo_0020(Case):
             SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(2)
             SeaOfStarsAW.ut_device.app_terminate("com.sina.weibo")
+
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')

@@ -35,9 +35,8 @@ class PerformanceDynamic_zhongzai_0020(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
             app_name ="重载"
 
             step1 = "'1、打开qq音乐,等待10s'"
@@ -77,15 +76,15 @@ class PerformanceDynamic_zhongzai_0020(Case):
             SeaOfStarsAW.ut_device.click(0.656, 0.623)
             time.sleep(1)
 
-            step7 = "7、输入 西安北站 并搜索 停留1s"
-            SeaOfStarsAW.trace_thread.add_log(app_name, step7)
-            SeaOfStarsAW.ut_device().set_text("西安北站")
-
-            time.sleep(1)
+            # step7 = "7、输入 西安北站 并搜索 停留1s"
+            # SeaOfStarsAW.trace_thread.add_log(app_name, step7)
+            # SeaOfStarsAW.ut_device().set_text("西安北站")
+            #
+            # time.sleep(1)
 
             step8 = "8、点击第一个结果 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step8)
-            SeaOfStarsAW.ut_device(label="西安北站").click()
+            SeaOfStarsAW.ut_device.click(0.394, 0.401)
             time.sleep(1)
 
             step9 = "9、点击 开始导航 停留1s"
@@ -120,6 +119,7 @@ class PerformanceDynamic_zhongzai_0020(Case):
 
             step14 = "14、点击民宿 客栈 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step14)
+            SeaOfStarsAW.ut_device.swipe_down()
             SeaOfStarsAW.ut_device(label="民宿/客栈").click()
 
             step15 = "15、向上抛滑2次  每次停留2s"
@@ -138,11 +138,14 @@ class PerformanceDynamic_zhongzai_0020(Case):
             SeaOfStarsAW.trace_thread.add_log(app_name, step17)
             SeaOfStarsAW.ut_device.click(0.512, 0.505)
 
-            step18 = "18、输入 臻选民宿 点击搜索"
-            SeaOfStarsAW.trace_thread.add_log(app_name, step18)
-            SeaOfStarsAW.ut_device.click(0.476, 0.088)
-            SeaOfStarsAW.ut_device().set_text("臻选民宿")
-            SeaOfStarsAW.ut_device(label="搜索").click()
+            # step18 = "18、输入 臻选民宿 点击搜索"
+            # SeaOfStarsAW.trace_thread.add_log(app_name, step18)
+            # time.sleep(1)
+            # SeaOfStarsAW.ut_device.click(0.476, 0.088)
+            # time.sleep(1)
+            # SeaOfStarsAW.ut_device().set_text("臻选民宿")
+            # time.sleep(1)
+            # SeaOfStarsAW.ut_device(label="搜索").click()
 
             step19 = "19、点击第一个民宿"
             SeaOfStarsAW.trace_thread.add_log(app_name, step19)
@@ -158,10 +161,12 @@ class PerformanceDynamic_zhongzai_0020(Case):
             step21 = "21、点击评论 "
             SeaOfStarsAW.trace_thread.add_log(app_name, step21)
             SeaOfStarsAW.ut_device(label="评价").click()
+            time.sleep(1)
 
             step12 = "22、点击查看75条评论"
             SeaOfStarsAW.trace_thread.add_log(app_name, step12)
             SeaOfStarsAW.ut_device.click(0.72, 0.337)
+            time.sleep(1)
 
             step13 = "23、上滑2次 下滑3次 每次停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step13)
@@ -188,8 +193,11 @@ class PerformanceDynamic_zhongzai_0020(Case):
             # 因为无x，较原本应用删减掉2个步骤
             step17 = "27、返回首页"
             SeaOfStarsAW.trace_thread.add_log(app_name, step17)
+            time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.074, 0.081)
+            time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.074, 0.081)
+            time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.074, 0.081)
 
             step18 = "28、返回home"
@@ -218,7 +226,6 @@ class PerformanceDynamic_zhongzai_0020(Case):
             for i in range(6):
                 SeaOfStarsAW.ut_device.swipe_up()
             time.sleep(1)
-
 
             step35 = "35、朋友圈 下滑6次 1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step35)

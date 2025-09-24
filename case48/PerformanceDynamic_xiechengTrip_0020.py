@@ -35,9 +35,8 @@ class PerformanceDynamic_xiechengTrip_0020(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
             app_name ="携程"
 
             step1 = "'1、打开携程,等待10s'"
@@ -53,7 +52,7 @@ class PerformanceDynamic_xiechengTrip_0020(Case):
 
             step3 = "3、点击查询"
             SeaOfStarsAW.trace_thread.add_log(app_name, step3)
-            SeaOfStarsAW.ut_device(label="查询").click()
+            SeaOfStarsAW.ut_device(label="查 询").click()
 
 
             step4 = "4、上滑3次 下滑4次"

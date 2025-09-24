@@ -50,7 +50,7 @@ class PerformanceDynamic_xuexiqiangguo_0020(Case):
 
             step2 = "点击学习停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step2)
-            SeaOfStarsAW.ut_device(label="(null),").click()
+            SeaOfStarsAW.ut_device.click(0.494, 0.943)
             time.sleep(2)
 
             step2 = "左滑5次  每次间隔2s"
@@ -62,10 +62,10 @@ class PerformanceDynamic_xuexiqiangguo_0020(Case):
             step3 = "上滑5次 下滑5次 停留2次"
             SeaOfStarsAW.trace_thread.add_log(app_name, step3)
             for i in range(5):
-                SeaOfStarsAW.scroll_up()
+                SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
             for i in range(5):
-                SeaOfStarsAW.scroll_down()
+                SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
             step4 = "右滑5次 间隔2s"
@@ -87,14 +87,14 @@ class PerformanceDynamic_xuexiqiangguo_0020(Case):
             SeaOfStarsAW.trace_thread.add_log(app_name, step6)
             SeaOfStarsAW.ut_device(label="STFeedsChannelEditBtn").click()
 
-            step7 = "点击 县级融媒体 1s"
+            step7 = "点击 融媒中心 1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step7)
-            SeaOfStarsAW.ut_device(label="县级融媒").click()
+            SeaOfStarsAW.ut_device(label="融媒中心").click()
             time.sleep(1)
 
             step8 = "点击第一条内容  停留2s 上下个滑动5s 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step8)
-            SeaOfStarsAW.ut_device.click(0.876, 0.342)
+            SeaOfStarsAW.ut_device.click(0.382, 0.7)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
@@ -104,13 +104,14 @@ class PerformanceDynamic_xuexiqiangguo_0020(Case):
 
             step9 = "点击 电视台 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step9)
-            # SeaOfStarsAW.ut_device(label="去购物车").click()
-            SeaOfStarsAW.ut_device(label="电视台,").click()
+            SeaOfStarsAW.ut_device.click(0.06, 0.086)
+
+            SeaOfStarsAW.ut_device.click(0.702, 0.928)
             time.sleep(2)
 
             step10 = "点击电台 上下各滑动5次 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step10)
-            SeaOfStarsAW.ut_device(label="电台,").click()
+            SeaOfStarsAW.ut_device.click(0.902, 0.931)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
@@ -121,14 +122,14 @@ class PerformanceDynamic_xuexiqiangguo_0020(Case):
             step11 = "点击听原著 2s 左滑5ci 每次2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step11)
             SeaOfStarsAW.ut_device.click(0.308, 0.131)
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe_left()
-                time.sleep(2)
+            # for i in range(5):
+            #     SeaOfStarsAW.ut_device.swipe_left()
+            #     time.sleep(2)
 
             step12 = "点击播放全部 2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step12)
-            SeaOfStarsAW.ut_device.click(0.494, 0.285)
-            SeaOfStarsAW.ut_device(label="全部播放").click()
+            SeaOfStarsAW.ut_device.click(0.638, 0.574)
+            SeaOfStarsAW.ut_device.click(0.842, 0.317)
             time.sleep(2)
 
 
@@ -139,20 +140,19 @@ class PerformanceDynamic_xuexiqiangguo_0020(Case):
 
             step14 = "点击开展播放列表 停留1s 下滑1s 停留1s 点击关闭 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step14)
-            SeaOfStarsAW.ut_device(label="播放列表").click()
+            SeaOfStarsAW.ut_device.click(0.084, 0.1)
             time.sleep(1)
-            SeaOfStarsAW.ut_device(label="关闭").click()
+            SeaOfStarsAW.ut_device.click(0.084, 0.1)
             time.sleep(1)
 
             step15 = "返回1次 到电视台 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step15)
-            SeaOfStarsAW.ut_device.click(0.086, 0.09)
-            SeaOfStarsAW.ut_device.click(0.086, 0.09)
+            SeaOfStarsAW.ut_device.click(0.706, 0.934)
             time.sleep(1)
 
             step16 = "点击百灵 点击首页 1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step16)
-            SeaOfStarsAW.ut_device(label="百灵,").click()
+            SeaOfStarsAW.ut_device.click(0.3, 0.934)
             time.sleep(1)
 
             step17 = "返回home"

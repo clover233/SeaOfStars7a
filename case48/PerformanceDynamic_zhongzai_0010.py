@@ -35,9 +35,8 @@ class PerformanceDynamic_zhongzai_0010(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
             app_name ="重载"
 
             step1 = "'1、打开qq音乐,等待10s'"
@@ -74,18 +73,17 @@ class PerformanceDynamic_zhongzai_0010(Case):
 
             step6 = "6、点击搜索框 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step6)
-            SeaOfStarsAW.ut_device.click(0.656, 0.623)
+            SeaOfStarsAW.ut_device.click(0.458, 0.571)
             time.sleep(1)
 
-            step7 = "7、输入 西安北站 并搜索 停留1s"
-            SeaOfStarsAW.trace_thread.add_log(app_name, step7)
-            SeaOfStarsAW.ut_device().set_text("西安北站")
-
-            time.sleep(1)
+            # step7 = "7、输入 西安北站 并搜索 停留1s"
+            # SeaOfStarsAW.trace_thread.add_log(app_name, step7)
+            # SeaOfStarsAW.ut_device().set_text("西安北站")
+            # time.sleep(1)
 
             step8 = "8、点击第一个结果 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step8)
-            SeaOfStarsAW.ut_device(label="西安北站").click()
+            SeaOfStarsAW.ut_device.click(0.394, 0.401)
             time.sleep(1)
 
             step9 = "9、点击 开始导航 停留1s"
@@ -107,12 +105,12 @@ class PerformanceDynamic_zhongzai_0010(Case):
             step12 = "12、连续拍摄5次 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step12)
             for i in range(5):
-                SeaOfStarsAW.ut_device(label="拍照").click()
+                SeaOfStarsAW.ut_device.click(0.5, 0.824)
             time.sleep(1)
 
             step13 = "13、打开缩略图 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step13)
-            SeaOfStarsAW.ut_device(label="照片与视频显示器").click()
+            SeaOfStarsAW.ut_device.click(0.136, 0.931)
             time.sleep(1)
 
             step14 = "14、向左滑动6次 1s"
@@ -124,6 +122,7 @@ class PerformanceDynamic_zhongzai_0010(Case):
             step15 = "15、返回相机拍摄页面 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step15)
             SeaOfStarsAW.ut_device(label="首页").click()
+            time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.068, 0.083)
             time.sleep(1)
 

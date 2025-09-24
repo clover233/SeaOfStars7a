@@ -29,15 +29,14 @@ class PerformanceDynamic_wpsoffice_0020(Case):
         测试用例执行
         """
         logging.info("用例开始执行")
-        # if SeaOfStarsAW.ut_device.locked():
-        #     SeaOfStarsAW.ut_device.unlock()
-        #     time.sleep(2)
+        if SeaOfStarsAW.ut_device.locked():
+            SeaOfStarsAW.ut_device.unlock()
+            time.sleep(2)
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
             app_name ="wpsoffice"
 
             step1 = "'1、打开wps,等待10s'"

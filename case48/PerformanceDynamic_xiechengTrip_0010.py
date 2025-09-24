@@ -35,9 +35,8 @@ class PerformanceDynamic_xiechengTrip_0010(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
             app_name ="携程"
 
             step1 = "'1、打开携程,等待10s'"
@@ -45,7 +44,7 @@ class PerformanceDynamic_xiechengTrip_0010(Case):
             SeaOfStarsAW.trace_thread.add_log(app_name, step1)
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.626, 0.717)
-            time.sleep(10)
+            time.sleep(5)
 
             step2 = "2、上 抛滑1次 "
             SeaOfStarsAW.trace_thread.add_log(app_name, step2)
@@ -55,12 +54,14 @@ class PerformanceDynamic_xiechengTrip_0010(Case):
 
             step3 = "3、下 抛滑1次"
             SeaOfStarsAW.trace_thread.add_log(app_name, step3)
-            for i in range(2):
+            for i in range(1):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
             step4 = "4、点击民宿 客栈 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step4)
+            for _ in range(1):
+                SeaOfStarsAW.ut_device.swipe_down()
             SeaOfStarsAW.ut_device(label="民宿/客栈").click()
 
             step5 = "5、向上抛滑2次  每次停留2s"
@@ -81,18 +82,20 @@ class PerformanceDynamic_xiechengTrip_0010(Case):
 
             step8 = "8、输入 臻选民宿 点击搜索"
             SeaOfStarsAW.trace_thread.add_log(app_name, step8)
-            SeaOfStarsAW.ut_device.click(0.476, 0.088)
-            SeaOfStarsAW.ut_device().set_text("臻选民宿")
-            SeaOfStarsAW.ut_device(label="搜索").click()
+            # SeaOfStarsAW.ut_device.click(0.442, 0.095)
+            # # 携程会记录之前搜索记录
+            # SeaOfStarsAW.ut_device().set_text("臻选民宿")
+            # SeaOfStarsAW.ut_device(label="搜索").click()
 
             step9 = "9、点击第一个民宿"
             SeaOfStarsAW.trace_thread.add_log(app_name, step9)
+            time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.53, 0.464)
 
 
             step10 = "10、向上抛滑2次"
             SeaOfStarsAW.trace_thread.add_log(app_name, step10)
-            for i in range(2):
+            for i in range(1):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
 
@@ -129,9 +132,9 @@ class PerformanceDynamic_xiechengTrip_0010(Case):
 
             step17 = "17、返回首页"
             SeaOfStarsAW.trace_thread.add_log(app_name, step17)
-            SeaOfStarsAW.ut_device.click(0.074, 0.081)
-            SeaOfStarsAW.ut_device.click(0.074, 0.081)
-            SeaOfStarsAW.ut_device.click(0.074, 0.081)
+            for _ in range(3):
+                SeaOfStarsAW.ut_device.click(0.074, 0.081)
+                time.sleep(2)
 
             step18 = "18、返回home"
             SeaOfStarsAW.trace_thread.add_log(app_name, step18)

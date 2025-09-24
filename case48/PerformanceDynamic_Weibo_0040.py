@@ -29,15 +29,14 @@ class PerformanceDynamic_Weibo_0040(Case):
         测试用例执行
         """
         logging.info("用例开始执行")
-        # if SeaOfStarsAW.ut_device.locked():
-        #     SeaOfStarsAW.ut_device.unlock()
-        #     time.sleep(2)
+        if SeaOfStarsAW.ut_device.locked():
+            SeaOfStarsAW.ut_device.unlock()
+            time.sleep(2)
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
-            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-            #                          self.screenshot_dir_path)
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
 
             # 1、启动微博
             logging.info('启动微博')
@@ -77,6 +76,7 @@ class PerformanceDynamic_Weibo_0040(Case):
 
             # 8、点击第一条微博 浏览 等待2s
             SeaOfStarsAW.trace_thread.add_log('微博', '点击第一条微博 浏览 等待2s')
+            SeaOfStarsAW.ut_device.swipe_up()
             SeaOfStarsAW.ut_device(labelContains="正文").click()
             time.sleep(2)
 

@@ -32,6 +32,8 @@ class PerformanceDynamic_AutoNavi_0060(Case):
             time.sleep(2)
         for test_time in range(0, self.TEST_TIME):
             step = 0
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+                                     self.screenshot_dir_path)
 
             # 1、启动高德地图，停留3s
             logging.info('1、启动高德地图')
