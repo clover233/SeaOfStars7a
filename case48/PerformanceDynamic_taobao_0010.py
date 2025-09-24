@@ -39,8 +39,9 @@ class PerformanceDynamic_taobao_0010(Case):
             #                          self.screenshot_dir_path)
             logging.info('启动淘宝')
             # SeaOfStarsAW.trace_thread.add_log('QQ', '应用启动')
-            SeaOfStarsAW.ut_device.swipe_left()
-            SeaOfStarsAW.ut_device.click(0.362, 0.363)
+            # SeaOfStarsAW.ut_device.swipe_left()
+            # SeaOfStarsAW.ut_device.click(0.362, 0.363)
+            SeaOfStarsAW.ut_device.app_activate("com.taobao.taobao4iphone")
 
             logging.info('等待5s')
             time.sleep(5)
@@ -80,7 +81,7 @@ class PerformanceDynamic_taobao_0010(Case):
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
-            SeaOfStarsAW.ut_device(label='返回').click()
+            SeaOfStarsAW.ut_device(label='关闭').click()
             time.sleep(2)
             logging.info('点击客服')
             SeaOfStarsAW.ut_device.click(0.18, 0.927)

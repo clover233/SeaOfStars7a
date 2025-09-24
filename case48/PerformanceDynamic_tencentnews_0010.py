@@ -40,8 +40,9 @@ class PerformanceDynamic_tencentnews_0010(Case):
 
             logging.info('启动腾讯新闻')
             # SeaOfStarsAW.trace_thread.add_log('腾讯新闻', '启动腾讯新闻')
-            SeaOfStarsAW.ut_device.swipe_left()
-            SeaOfStarsAW.ut_device.click(0.632, 0.363)
+            # SeaOfStarsAW.ut_device.swipe_left()
+            # SeaOfStarsAW.ut_device.click(0.632, 0.363)
+            SeaOfStarsAW.ut_device.app_activate("com.tencent.info")
 
             logging.info('等待5s')
             time.sleep(8)

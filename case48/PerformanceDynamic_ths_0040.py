@@ -40,8 +40,10 @@ class PerformanceDynamic_ths_0040(Case):
 
             logging.info('启动同花顺')
             # SeaOfStarsAW.trace_thread.add_log('同花顺', '启动同花顺')
-            SeaOfStarsAW.ut_device.swipe_left()
-            SeaOfStarsAW.ut_device.click(0.172, 0.482)
+            # SeaOfStarsAW.ut_device.swipe_left()
+            # SeaOfStarsAW.ut_device.click(0.172, 0.482)
+            SeaOfStarsAW.ut_device.app_activate("cn.com.10jqka.IHexin")
+
             logging.info('等待5s')
             time.sleep(5)
 
