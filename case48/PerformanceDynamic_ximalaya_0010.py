@@ -93,7 +93,7 @@ class PerformanceDynamic_ximalaya_0010(Case):
 
             step9 = "9、点击 活着"
             SeaOfStarsAW.trace_thread.add_log(app_name, step9)
-            # todo 需要提前订阅号活着
+            # 需要提前订阅号活着
             SeaOfStarsAW.ut_device.click(0.568, 0.767)
             time.sleep(2)
 
