@@ -35,18 +35,14 @@ class PerformanceDynamic_jingdong_0010(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-                                     self.screenshot_dir_path)
+            # todo 后续放开log
+            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+            #                          self.screenshot_dir_path)
 
             # 1、启动京东，等待3s
             logging.info('启动京东')
             SeaOfStarsAW.trace_thread.add_log('京东', '启动京东，等待3s')
             # todo 微博的坐标地址要改下
-            # for _ in range(4):
-            #     SeaOfStarsAW.swipe_left()
-            #     time.sleep(2)
-            # SeaOfStarsAW.ut_device.click(0.847, 0.246)
-            # time.sleep(3)
             SeaOfStarsAW.ut_device.session().app_activate('com.360buy.jdmobile')
             time.sleep(3)
             time.sleep(2)
@@ -55,15 +51,16 @@ class PerformanceDynamic_jingdong_0010(Case):
             SeaOfStarsAW.trace_thread.add_log('京东', '首页浏览，上滑5次，下滑5次，每次停留2s')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 3、点击顶部手机数码，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '点击顶部手机数码，等待2s-浏览')
             SeaOfStarsAW.ut_device(labelContains="首页").click()
             time.sleep(1)
-            SeaOfStarsAW.ut_device.click(0.518, 0.183)
+            SeaOfStarsAW.ut_device.click(0.399, 0.188)
             time.sleep(2)
             # 4、手机数码界面浏览，上滑5次，下滑5次，每次停留2s
             for i in range(5):
@@ -73,21 +70,20 @@ class PerformanceDynamic_jingdong_0010(Case):
             time.sleep(2)
 
             # 5、点击底部分类，等待2s
-            SeaOfStarsAW.trace_thread.add_log('京东', '击底部分类，等待2s-浏览')
-            SeaOfStarsAW.ut_device.click(0.097, 0.934)
-            time.sleep(1)
-            SeaOfStarsAW.ut_device.click(0.878, 0.425)
+            SeaOfStarsAW.trace_thread.add_log('京东', '点击底部分类，等待2s-浏览')
+            SeaOfStarsAW.ut_device(labelContains="分类").click()
             time.sleep(2)
             # 6、分类页面浏览，上滑5次，下滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 7、点击左侧电脑，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '点击左侧电脑，等待2s-浏览')
-            SeaOfStarsAW.ut_device.click(0.241, 0.218)
+            SeaOfStarsAW.ut_device.click(0.138, 0.535)
             time.sleep(2)
             # 8、电脑页面浏览，上滑5次、下滑5次，等待2s
             for i in range(5):
@@ -97,18 +93,19 @@ class PerformanceDynamic_jingdong_0010(Case):
             time.sleep(2)
             # 9、点击第一类商品进入，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '点击第一类商品进入，等待2s-浏览')
-            SeaOfStarsAW.ut_device.click(0.16, 0.351)
+            SeaOfStarsAW.ut_device.click(0.633, 0.587)
             time.sleep(2)
             # 10、浏览商品页，上滑5次，下滑5次，每次停留2s
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
             # 11、返回首页等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '返回首页等待2s')
             for i in range(3):
-                SeaOfStarsAW.ut_device.swipe_right()
+                SeaOfStarsAW.ut_device.swipe(0.005, 0.585, 0.999, 0.585, 1.0)
             time.sleep(2)
             # 12、返回home页，等待2s
             SeaOfStarsAW.ut_device.home()
@@ -117,7 +114,5 @@ class PerformanceDynamic_jingdong_0010(Case):
             SeaOfStarsAW.stop_trace()
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
-            SeaOfStarsAW.stop_trace()
-
 
         logging.info('用例执行结束')
