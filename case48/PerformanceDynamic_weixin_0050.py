@@ -108,5 +108,6 @@ class PerformanceDynamic_weixin_0050(Case):
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
             SeaOfStarsAW.ut_device.app_terminate("com.tencent.xin")
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')

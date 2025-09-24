@@ -109,6 +109,7 @@ class PerformanceDynamic_hanglvzongheng_0020(Case):
             SeaOfStarsAW.ut_device.app_terminate('com.travelsky.umetrip')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
+            SeaOfStarsAW.stop_trace()
 
 
 

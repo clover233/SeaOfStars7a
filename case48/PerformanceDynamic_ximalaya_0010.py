@@ -156,6 +156,7 @@ class PerformanceDynamic_ximalaya_0010(Case):
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.swipe_right()
             SeaOfStarsAW.ut_device.app_terminate("com.gemd.iting")
+            SeaOfStarsAW.stop_trace()
 
 
         logging.info('用例执行结束')

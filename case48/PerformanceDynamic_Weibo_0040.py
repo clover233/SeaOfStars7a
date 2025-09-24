@@ -90,4 +90,6 @@ class PerformanceDynamic_Weibo_0040(Case):
             time.sleep(2)
             SeaOfStarsAW.ut_device.app_terminate("com.sina.weibo")
 
+            SeaOfStarsAW.stop_trace()
+
         logging.info('用例执行结束')

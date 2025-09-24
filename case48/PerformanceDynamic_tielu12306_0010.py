@@ -88,5 +88,6 @@ class PerformanceDynamic_tielu12306_0010(Case):
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
             SeaOfStarsAW.ut_device.app_terminate("cn.12306.rails12306")
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')

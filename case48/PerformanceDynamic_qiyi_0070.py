@@ -76,5 +76,6 @@ class PerformanceDynamic_qiyi_0070(Case):
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
             SeaOfStarsAW.ut_device.app_terminate("com.qiyi.iphone")
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')

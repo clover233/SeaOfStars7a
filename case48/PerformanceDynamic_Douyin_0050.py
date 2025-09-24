@@ -166,6 +166,7 @@ class PerformanceDynamic_Douyin_0050(Case):
             SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.ugc.Aweme')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
+            SeaOfStarsAW.stop_trace()
 
 
 

@@ -147,7 +147,7 @@ class PerformanceDynamic_Dongchedi_0010(Case):
             SeaOfStarsAW.ut_device.home()
             time.sleep(1)
             SeaOfStarsAW.ut_device.app_terminate('com.ss.ios.auto')
-
+            SeaOfStarsAW.stop_trace()
 
 
 

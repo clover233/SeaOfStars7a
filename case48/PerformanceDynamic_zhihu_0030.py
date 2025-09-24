@@ -184,6 +184,7 @@ class PerformanceDynamic_zhihu_0030(Case):
             SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(1)
             SeaOfStarsAW.ut_device.app_terminate("com.zhihu.ios")
+            SeaOfStarsAW.stop_trace()
 
 
         logging.info('用例执行结束')

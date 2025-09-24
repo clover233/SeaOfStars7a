@@ -84,4 +84,8 @@ class PerformanceDynamic_Baidumap_0010(Case):
             SeaOfStarsAW.ut_device.app_terminate('com.baidu.map')
             time.sleep(1)
 
+            SeaOfStarsAW.stop_trace()
+
+
+
         logging.info('用例执行结束')

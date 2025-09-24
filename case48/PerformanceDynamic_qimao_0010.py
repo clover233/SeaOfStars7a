@@ -73,5 +73,6 @@ class PerformanceDynamic_qimao_0010(Case):
             time.sleep(2)
             SeaOfStarsAW.ut_device.app_terminate('com.yueyou.cyreader')
             time.sleep(1)
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')

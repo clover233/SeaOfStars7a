@@ -97,5 +97,6 @@ class PerformanceDynamic_qqliulanqi_0010(Case):
             logging.info('上滑退出')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
+            SeaOfStarsAW.stop_trace()
 
         logging.info('用例执行结束')

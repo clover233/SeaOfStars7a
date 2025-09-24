@@ -131,6 +131,7 @@ class PerformanceDynamic_jingdong_0040(Case):
             SeaOfStarsAW.stop_trace()
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
+            SeaOfStarsAW.stop_trace()
 
 
 

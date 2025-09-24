@@ -92,4 +92,5 @@ class PerformanceDynamic_AutoNavi_0030(Case):
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.app_terminate('com.autonavi.amap')
 
+            SeaOfStarsAW.stop_trace()
         logging.info('用例执行结束')
