@@ -40,8 +40,9 @@ class PerformanceDynamic_tielu12306_0010(Case):
 
             logging.info('启动铁路12306')
             # SeaOfStarsAW.trace_thread.add_log('铁路12306', '启动12306')
-            SeaOfStarsAW.ut_device.swipe_left()
-            SeaOfStarsAW.ut_device.click(0.394, 0.474)
+            # SeaOfStarsAW.ut_device.swipe_left()
+            # SeaOfStarsAW.ut_device.click(0.394, 0.474)
+            SeaOfStarsAW.ut_device.app_activate("cn.12306.rails12306")
 
             logging.info('等待5s')
             time.sleep(5)
