@@ -43,7 +43,6 @@ class PerformanceDynamic_wangzherongyao_0030(Case):
             # SeaOfStarsAW.ut_device.swipe_left()
             # SeaOfStarsAW.ut_device.click(0.834, 0.484)
             SeaOfStarsAW.ut_device.app_activate("com.tencent.smoba")
-
             logging.info('等待20s')
             time.sleep(20)
             # SeaOfStarsAW.trace_thread.add_log('王者荣耀, '上滑退出')
