@@ -35,19 +35,14 @@ class PerformanceDynamic_jingdong_0020(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-                                     self.screenshot_dir_path)
+            # todo 后续放开log
+            # SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
+            #                          self.screenshot_dir_path)
 
             # 1、启动京东，等待3s
             logging.info('启动京东')
             SeaOfStarsAW.trace_thread.add_log('京东', '启动京东，等待3s')
             # todo 微博的坐标地址要改下
-            # for _ in range(4):
-            #     SeaOfStarsAW.swipe_left()
-            #     time.sleep(2)
-            #
-            # SeaOfStarsAW.ut_device.click(0.847, 0.246)
-            # time.sleep(3)
             SeaOfStarsAW.ut_device.session().app_activate('com.360buy.jdmobile')
             time.sleep(3)
             time.sleep(2)
@@ -57,18 +52,19 @@ class PerformanceDynamic_jingdong_0020(Case):
             SeaOfStarsAW.trace_thread.add_log('京东', '首页浏览，上滑5次，下滑5次，每次停留2s')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 3、点击上方粮油调味，等待2s
             logging.info('点击上方粮油调味，等待2s-浏览')
             SeaOfStarsAW.trace_thread.add_log('京东', '点击上方粮油调味，等待2s-浏览')
-            SeaOfStarsAW.ut_device.click(0.265, 0.261)
+            SeaOfStarsAW.ut_device.click(0.429, 0.185)
             # SeaOfStarsAW.ut_device(labelContains="京东超市").click()
             time.sleep(2)
             # SeaOfStarsAW.ut_device(labelContains="粮油调味").click()
-            SeaOfStarsAW.ut_device.click(0.453, 0.242)
+            SeaOfStarsAW.ut_device.click(0.133, 0.334)
             time.sleep(2)
             # 4、粮油调味页面浏览，上滑5次，下滑5次，每次停留2s
             for i in range(5):
@@ -79,36 +75,35 @@ class PerformanceDynamic_jingdong_0020(Case):
 
             # 5、加入第一个商品到购物车，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '加入第一个商品到购物车，等待2s')
-            SeaOfStarsAW.ut_device.click(0.359, 0.356)
+            SeaOfStarsAW.ut_device.click(0.225, 0.515)
             time.sleep(1)
-            SeaOfStarsAW.ut_device(labelContains="加入购物车").click()
+            SeaOfStarsAW.ut_device.click(0.454, 0.933)
             time.sleep(1)
             SeaOfStarsAW.ut_device(labelContains="确定").click()
             time.sleep(2)
             # 6、点击结算，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '点击结算，停留2s')
-            SeaOfStarsAW.ut_device.click(0.219, 0.946)
+            SeaOfStarsAW.ut_device.click(0.722, 0.935)
             time.sleep(2)
             SeaOfStarsAW.ut_device(labelContains="去结算").click()
             time.sleep(2)
             # 7、点击新建地址，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '点击新建地址，等待2s')
-            SeaOfStarsAW.ut_device.click(0.592, 0.176)
-            time.sleep(2)
-            SeaOfStarsAW.ut_device(labelContains="新增收货地址").click()
+            SeaOfStarsAW.ut_device.click(0.664, 0.554)
             time.sleep(2)
             # 8、返回首页，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '返回首页，等待2s')
             for i in range(4):
-                SeaOfStarsAW.ut_device.swipe_right()
-            SeaOfStarsAW.ut_device(labelContains="pd recommend pop close").click()
+                SeaOfStarsAW.ut_device.swipe(0.005, 0.585, 0.999, 0.585, 1.0)
+                time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.931, 0.218)
             time.sleep(2)
-            for i in range(7):
-                SeaOfStarsAW.ut_device.swipe_right()
-            time.sleep(2)
+            for i in range(2):
+                SeaOfStarsAW.ut_device.swipe(0.005, 0.585, 0.999, 0.585, 1.0)
+                time.sleep(1)
             # 9、点击购物车，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '点击购物车，等待2s')
-            SeaOfStarsAW.ut_device.click(0.219, 0.946)
+            SeaOfStarsAW.ut_device(labelContains="购物车").click()
             time.sleep(2)
             # 10、点击去结算，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '点击去结算，停留2s')
@@ -116,7 +111,9 @@ class PerformanceDynamic_jingdong_0020(Case):
             time.sleep(2)
             # 11、返回首页等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '返回首页等待2s')
-            SeaOfStarsAW.ut_device.swipe_right()
+            SeaOfStarsAW.ut_device.click(0.335, 0.557)
+            time.sleep(2)
+            SeaOfStarsAW.ut_device.swipe(0.005, 0.585, 0.999, 0.585, 1.0)
             time.sleep(1)
             SeaOfStarsAW.ut_device(labelContains="首页").click()
             time.sleep(2)
@@ -128,7 +125,5 @@ class PerformanceDynamic_jingdong_0020(Case):
             SeaOfStarsAW.stop_trace()
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
-            SeaOfStarsAW.stop_trace()
-
 
         logging.info('用例执行结束')
