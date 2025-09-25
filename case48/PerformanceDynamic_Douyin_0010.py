@@ -56,7 +56,7 @@ class PerformanceDynamic_Douyin_0010(Case):
 
             # 4、点击当前视频的up主头像进入主页
             SeaOfStarsAW.trace_thread.add_log('抖音', '4、点击当前视频的up主头像进入主页')
-            SeaOfStarsAW.ut_device.click(0.927, 0.502)
+            SeaOfStarsAW.ut_device.click(0.924, 0.459)
             time.sleep(2)
 
             # 5、返回抖音首页

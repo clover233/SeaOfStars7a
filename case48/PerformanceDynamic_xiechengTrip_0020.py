@@ -67,20 +67,26 @@ class PerformanceDynamic_xiechengTrip_0020(Case):
             step5 = "5、查第一条结果"
             SeaOfStarsAW.trace_thread.add_log(app_name, step5)
             SeaOfStarsAW.ut_device.click(0.532, 0.226)
+            time.sleep(2)
 
             step6 = "6、返回首页"
             SeaOfStarsAW.trace_thread.add_log(app_name, step6)
             SeaOfStarsAW.ut_device.click(0.048, 0.084)
+            time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.048, 0.084)
+            time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.048, 0.084)
+            time.sleep(2)
 
             step7 = "7、点击火车票"
             SeaOfStarsAW.trace_thread.add_log(app_name, step7)
             SeaOfStarsAW.ut_device(label="火车票").click()
+            time.sleep(2)
 
             step8 = "8、点击查询"
             SeaOfStarsAW.trace_thread.add_log(app_name, step8)
             SeaOfStarsAW.ut_device(label="查询").click()
+            time.sleep(2)
 
 
             step9 = "9、上滑3次 下滑4次"
@@ -96,17 +102,23 @@ class PerformanceDynamic_xiechengTrip_0020(Case):
             step10 = "10、查看第一条结果"
             SeaOfStarsAW.trace_thread.add_log(app_name, step10)
             SeaOfStarsAW.ut_device.click(0.532, 0.226)
+            time.sleep(2)
 
             step11 = "11、点击 预定 "
             SeaOfStarsAW.trace_thread.add_log(app_name, step11)
             SeaOfStarsAW.ut_device.click(0.88, 0.349)
+            time.sleep(2)
 
             step12 = "12、返回主界面"
             SeaOfStarsAW.trace_thread.add_log(app_name, step12)
             SeaOfStarsAW.ut_device.click(0.048, 0.084)
+            time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.048, 0.084)
+            time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.048, 0.084)
+            time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.048, 0.084)
+            time.sleep(2)
 
             step13 = "13、返回home"
             SeaOfStarsAW.trace_thread.add_log(app_name, step13)
