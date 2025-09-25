@@ -73,7 +73,7 @@ class PerformanceDynamic_taobao_0010(Case):
                 time.sleep(2)
             # SeaOfStarsAW.ut_device.xpath('//Window[1]/Other[2]/Image[16]').click()
             logging.info('点击评论区')
-            SeaOfStarsAW.ut_device.click(0.44, 0.483)
+            SeaOfStarsAW.ut_device.click(0.162, 0.393)
             time.sleep(2)
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -81,7 +81,7 @@ class PerformanceDynamic_taobao_0010(Case):
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
-            SeaOfStarsAW.ut_device(label='关闭').click()
+            # SeaOfStarsAW.ut_device(label='关闭').click()
             time.sleep(2)
             logging.info('点击客服')
             SeaOfStarsAW.ut_device.click(0.18, 0.927)

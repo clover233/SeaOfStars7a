@@ -40,14 +40,14 @@ class PerformanceDynamic_TencentVideo_0010(Case):
 
 
             logging.info('启动腾讯视频')
-            # SeaOfStarsAW.trace_thread.add_log('微信', '启动微信')
+            SeaOfStarsAW.trace_thread.add_log('微信', '启动微信')
             # SeaOfStarsAW.ut_device.swipe_left()
             # SeaOfStarsAW.ut_device.click(0.87, 0.37)
             SeaOfStarsAW.ut_device.app_activate("com.tencent.live4iphone")
 
             logging.info('等待8s')
             time.sleep(8)
-            # SeaOfStarsAW.trace_thread.add_log('腾讯视频', '主页浏览，上滑5次，下滑2次')
+            SeaOfStarsAW.trace_thread.add_log('腾讯视频', '主页浏览，上滑5次，下滑2次')
             logging.info('上滑5次')
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -56,14 +56,16 @@ class PerformanceDynamic_TencentVideo_0010(Case):
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
-            # SeaOfStarsAW.trace_thread.add_log('腾讯视频', '浏览电视剧')
+
+            SeaOfStarsAW.trace_thread.add_log('腾讯视频', '浏览电视剧')
             logging.info('点击电视剧')
             SeaOfStarsAW.ut_device(label='电视剧').click()
             time.sleep(2)
+
             logging.info('点击主页第一个推荐视频')   # 注意有广告情况
-            # SeaOfStarsAW.trace_thread.add_log('微信', '启动微信')
+            SeaOfStarsAW.trace_thread.add_log('腾讯视频', '点击主页第一个推荐视频')
             SeaOfStarsAW.ut_device.click(0.513, 0.268)
-            time.sleep(30)
+            time.sleep(10)
             logging.info('点击屏幕现实横屏标志')
             SeaOfStarsAW.ut_device.click(0.936, 0.281)
             time.sleep(1)
@@ -74,7 +76,7 @@ class PerformanceDynamic_TencentVideo_0010(Case):
             SeaOfStarsAW.ut_device.click(0.936, 0.281)
             time.sleep(1)
             logging.info('退出全屏')
-            SeaOfStarsAW.ut_device(label='返回').click()
+            SeaOfStarsAW.ut_device.click(0.092, 0.043)
             time.sleep(2)
             # SeaOfStarsAW.trace_thread.add_log('腾讯视频', '浏览电视集数)
             logging.info('浏览为你推荐，上滑3次，下滑3次')
@@ -85,7 +87,9 @@ class PerformanceDynamic_TencentVideo_0010(Case):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
             logging.info('返回首页')
-            SeaOfStarsAW.ut_device(label='返回').click()
+            SeaOfStarsAW.ut_device.click(0.06, 0.089)
+
+            # SeaOfStarsAW.ut_device(label='返回').click()
             time.sleep(2)
             # SeaOfStarsAW.trace_thread.add_log('腾讯视频', '浏览视频播放界面)
             logging.info('点击搜索栏')

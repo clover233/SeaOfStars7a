@@ -81,12 +81,13 @@ class PerformanceDynamic_youku_0010(Case):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
                 SeaOfStarsAW.ut_device.swipe_up()
+            SeaOfStarsAW.ut_device.click(0.074, 0.078)
 
 
             step7 = "7、点击设置"
             SeaOfStarsAW.trace_thread.add_log(app_name, step7)
-            SeaOfStarsAW.ut_device.click(0.058, 0.078)
-            SeaOfStarsAW.ut_device.swipe_up()
+            # SeaOfStarsAW.ut_device.click(0.058, 0.078)
+            # SeaOfStarsAW.ut_device.swipe_up()
             SeaOfStarsAW.ut_device(label="设置").click()
             time.sleep(2)
 
