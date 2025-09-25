@@ -43,22 +43,26 @@ class PerformanceDynamic_jrtt_0020(Case):
             SeaOfStarsAW.trace_thread.add_log('今日头条', '启动今日头条，搜索图片')
             SeaOfStarsAW.ut_device.session().app_activate('com.ss.iphone.article.News')
             time.sleep(3)
+
             # 2、搜索“图片”，停留2s
+            logging.info('搜索“图片”')
+            SeaOfStarsAW.trace_thread.add_log('今日头条', '搜索“图片”')
             SeaOfStarsAW.ut_device.click(0.324, 0.093)
             time.sleep(1)
             SeaOfStarsAW.ut_device.send_keys("图片")
             time.sleep(1)
-            SeaOfStarsAW.ut_device(labelContains="搜索").click()
-            time.sleep(1)
-            SeaOfStarsAW.ut_device.click(0.528, 0.147)
+            SeaOfStarsAW.ut_device.click(0.922, 0.091)
             time.sleep(2)
 
             # 3、点击搜索结果第一条图片进行预览，停留2s
-            SeaOfStarsAW.trace_thread.add_log('今日头条', '浏览搜索结果')
+            logging.info('点击搜索结果第一条图片进行预览')
+            SeaOfStarsAW.trace_thread.add_log('今日头条', '点击搜索结果第一条图片进行预览')
             SeaOfStarsAW.ut_device.click(0.24, 0.29)
             time.sleep(2)
 
             # 4、滑动浏览，左滑5次，右滑5次，每次停留2s
+            logging.info('滑动浏览')
+            SeaOfStarsAW.trace_thread.add_log('今日头条', '滑动浏览')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_left()
                 time.sleep(2)
@@ -67,6 +71,8 @@ class PerformanceDynamic_jrtt_0020(Case):
                 time.sleep(2)
 
             # 5、侧滑3次，返回到首页
+            logging.info('侧滑3次')
+            SeaOfStarsAW.trace_thread.add_log('今日头条', '侧滑3次')
             SeaOfStarsAW.ut_device.click(0.121, 0.934)
             time.sleep(2)
             for i in range(2):
@@ -74,11 +80,14 @@ class PerformanceDynamic_jrtt_0020(Case):
                 time.sleep(1)
 
             # 6、点击视频
+            logging.info('浏览视频')
             SeaOfStarsAW.trace_thread.add_log('今日头条', '浏览视频')
             SeaOfStarsAW.ut_device.click(0.372, 0.926)
             time.sleep(2)
 
             # 7、滑动浏览视频，上滑5次，下滑5次，每次停留2s
+            logging.info('滑动浏览视频')
+            SeaOfStarsAW.trace_thread.add_log('今日头条', '滑动浏览视频')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
@@ -87,11 +96,14 @@ class PerformanceDynamic_jrtt_0020(Case):
                 time.sleep(2)
 
             # 8、点击评论按钮
+            logging.info('浏览评论')
             SeaOfStarsAW.trace_thread.add_log('今日头条', '浏览评论')
             SeaOfStarsAW.ut_device.click(0.933, 0.581)
             time.sleep(1)
 
             # 9、滑动浏览评论，上滑5次，下滑5次，每次停留2s
+            logging.info('滑动浏览评论')
+            SeaOfStarsAW.trace_thread.add_log('今日头条', '滑动浏览评论')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
@@ -110,6 +122,5 @@ class PerformanceDynamic_jrtt_0020(Case):
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
             SeaOfStarsAW.stop_trace()
-
 
         logging.info('用例执行结束')
