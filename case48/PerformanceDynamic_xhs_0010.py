@@ -41,16 +41,17 @@ class PerformanceDynamic_xhs_0010(Case):
             step1 = "'1、打开小红书,等待10s'"
             logging.info('启动小红书')
             SeaOfStarsAW.trace_thread.add_log('小红书', step1)
-            SeaOfStarsAW.ut_device.swipe_left()
-            SeaOfStarsAW.ut_device.click(0.149, 0.714)
+            # SeaOfStarsAW.ut_device.swipe_left()
+            # SeaOfStarsAW.ut_device.click(0.149, 0.714)
+            SeaOfStarsAW.ut_device.session().app_activate('com.xingin.discover')
             time.sleep(10)
 
             step2 = "2、点击我的 -进入收藏 - 图片链接"
             SeaOfStarsAW.trace_thread.add_log('小红书', step2)
             SeaOfStarsAW.ut_device.click(0.904, 0.936)
-
+            time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.254, 0.482)
-
+            time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.216, 0.68)
             time.sleep(1)
 
@@ -79,6 +80,7 @@ class PerformanceDynamic_xhs_0010(Case):
             step7 = "7、返回首页 停留1s"
             SeaOfStarsAW.trace_thread.add_log('小红书', step7)
             SeaOfStarsAW.ut_device.click(0.052, 0.093)
+            time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.1, 0.937)
             time.sleep(1)
 
@@ -94,6 +96,7 @@ class PerformanceDynamic_xhs_0010(Case):
             step9 = "9、点击 消息"
             SeaOfStarsAW.trace_thread.add_log('小红书', step9)
             SeaOfStarsAW.ut_device.click(0.706, 0.945)
+            time.sleep(1)
 
             step10 = "10、点击 我"
             SeaOfStarsAW.trace_thread.add_log('小红书', step10)
@@ -103,6 +106,7 @@ class PerformanceDynamic_xhs_0010(Case):
             step11 = "11、点击 消息"
             SeaOfStarsAW.trace_thread.add_log('小红书', step11)
             SeaOfStarsAW.ut_device.click(0.706, 0.945)
+            time.sleep(1)
 
             step12 = "12、点击 首页"
             SeaOfStarsAW.trace_thread.add_log('小红书', step12)
@@ -112,6 +116,7 @@ class PerformanceDynamic_xhs_0010(Case):
             step13 = "13、点击 + 进入相册 停留2s"
             SeaOfStarsAW.trace_thread.add_log('小红书', step13)
             SeaOfStarsAW.ut_device(labelContains="发布标签").click()
+            time.sleep(1)
             SeaOfStarsAW.ut_device(labelContains="相册").click()
             time.sleep(2)
 
@@ -141,7 +146,9 @@ class PerformanceDynamic_xhs_0010(Case):
             step17 = "17、侧滑2次  返回首页"
             SeaOfStarsAW.trace_thread.add_log('小红书', step17)
             SeaOfStarsAW.ut_device.click(0.068, 0.106)
+            time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.068, 0.106)
+            time.sleep(1)
 
             step18 = "18、返回home页面"
             SeaOfStarsAW.trace_thread.add_log('小红书', step18)
