@@ -121,7 +121,7 @@ class PerformanceDynamic_zhongzai_0010(Case):
 
             step15 = "15、返回相机拍摄页面 停留1s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step15)
-            SeaOfStarsAW.ut_device(label="首页").click()
+            SeaOfStarsAW.ut_device(label="返回").click()
             time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.068, 0.083)
             time.sleep(1)
