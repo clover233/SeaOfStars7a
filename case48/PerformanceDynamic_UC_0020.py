@@ -56,7 +56,7 @@ class PerformanceDynamic_UC_0020(Case):
             SeaOfStarsAW.ut_device.send_keys('大话天仙')
             time.sleep(2)
             logging.info('点击搜索')
-            SeaOfStarsAW.ut_device(label='搜索').click()
+            SeaOfStarsAW.ut_device.click(0.764, 0.097)
             time.sleep(2)
             logging.info('上滑5次')
             for _ in range(5):
