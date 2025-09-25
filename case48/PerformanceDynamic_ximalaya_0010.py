@@ -94,7 +94,7 @@ class PerformanceDynamic_ximalaya_0010(Case):
             step9 = "9、点击 活着"
             SeaOfStarsAW.trace_thread.add_log(app_name, step9)
             # 需要提前订阅号活着
-            SeaOfStarsAW.ut_device.click(0.568, 0.767)
+            SeaOfStarsAW.ut_device.click(0.502, 0.553)
             time.sleep(2)
 
             step10 = "10、点击 进行播放"
@@ -104,7 +104,7 @@ class PerformanceDynamic_ximalaya_0010(Case):
 
             step11 = "11、点击评论"
             SeaOfStarsAW.trace_thread.add_log(app_name, step11)
-            SeaOfStarsAW.ut_device(label="评论").click()
+            SeaOfStarsAW.ut_device.click(0.716, 0.611)
 
             step12 = "12、上滑3次 下滑3次 停留2s"
             SeaOfStarsAW.trace_thread.add_log(app_name, step12)
