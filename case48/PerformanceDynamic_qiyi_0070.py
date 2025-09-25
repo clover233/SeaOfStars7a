@@ -56,7 +56,7 @@ class PerformanceDynamic_qiyi_0070(Case):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(1)
             logging.info('点击第1个推荐视频')  # 注意有广告情况)
-            SeaOfStarsAW.ut_device.click(0.166, 0.29)
+            SeaOfStarsAW.ut_device.click(0.272, 0.585)
             time.sleep(10)
             logging.info('上滑2次，下滑2次')
             for _ in range(2):
