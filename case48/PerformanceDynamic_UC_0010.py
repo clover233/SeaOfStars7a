@@ -38,8 +38,8 @@ class PerformanceDynamic_UC_0010(Case):
             SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
                                      self.screenshot_dir_path)
 
-            logging.info('启动UC浏览器')
-            # SeaOfStarsAW.trace_thread.add_log('UC浏览器', '启动UC浏览器')
+            logging.info('1、启动UC浏览器')
+            SeaOfStarsAW.trace_thread.add_log('UC浏览器', '启动UC浏览器')
             # SeaOfStarsAW.ut_device.swipe_left()
             # SeaOfStarsAW.ut_device.click(0.614, 0.491)
             SeaOfStarsAW.ut_device.app_activate("com.ucweb.iphone.lowversion")
@@ -48,60 +48,67 @@ class PerformanceDynamic_UC_0010(Case):
             time.sleep(2)
             SeaOfStarsAW.ut_device.swipe_up()
             time.sleep(2)
-            # SeaOfStarsAW.trace_thread.add_log('UC浏览器', '首页切换浏览')
-            logging.info('左滑5次')
+            SeaOfStarsAW.trace_thread.add_log('UC浏览器', '首页切换浏览')
+            logging.info('2、左滑5次')
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_left()
                 time.sleep(2)
-            logging.info('上滑5次')
+            logging.info('3、上滑5次')
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
-            logging.info('下滑5次')
+            logging.info('4、下滑5次')
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
-            logging.info('右滑5次')
+            logging.info('5、右滑5次')
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_right()
                 time.sleep(2)
-            # SeaOfStarsAW.trace_thread.add_log('UC浏览器', '发现页面浏览)
-            logging.info('点击发现')
+            SeaOfStarsAW.trace_thread.add_log('UC浏览器', '发现页面浏览')
+            logging.info('6、点击发现')
             SeaOfStarsAW.ut_device(label='发现').click()
             time.sleep(1)
-            logging.info('上滑5次')
+
+            logging.info('7、上滑5次')
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
-            logging.info('下滑6次')
+            logging.info('8、下滑6次')
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
-            logging.info('点击推荐')
-            # SeaOfStarsAW.trace_thread.add_log('UC浏览器', '推荐页面新闻浏览')
+
+            logging.info('9、点击推荐')
+            SeaOfStarsAW.trace_thread.add_log('UC浏览器', '推荐页面新闻浏览')
             SeaOfStarsAW.ut_device(label='推荐').click()
             time.sleep(2)
-            logging.info('点击第一条新闻')
-            # SeaOfStarsAW.trace_thread.add_log('UC浏览器', '点击推荐下面第一条新闻滑动浏览')
+
+            logging.info('10、点击第一条新闻')
+            # 可能会点击到游戏等广告内容导致出现问题
+            SeaOfStarsAW.trace_thread.add_log('UC浏览器', '点击推荐下面第一条新闻滑动浏览')
             SeaOfStarsAW.ut_device.click(0.42, 0.199)
             time.sleep(2)
-            logging.info('上滑3次')
+
+            logging.info('11、上滑3次')
             for _ in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
-            logging.info('下滑3次')
+            logging.info('12、下滑3次')
             for _ in range(3):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
-            logging.info('返回首页')
-            SeaOfStarsAW.ut_device(label='首页').click()
+            logging.info('13、返回首页')
+            SeaOfStarsAW.ut_device.click(0.152, 0.931)
+            # SeaOfStarsAW.ut_device(label='首页').click()
             time.sleep(1)
-            # SeaOfStarsAW.trace_thread.add_log('UC浏览器', '首页浏览')
-            logging.info('上滑5次')
+
+            SeaOfStarsAW.trace_thread.add_log('UC浏览器', '首页浏览')
+            logging.info('14、上滑5次')
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
-            logging.info('下滑5次')
+            logging.info('15、下滑5次')
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)

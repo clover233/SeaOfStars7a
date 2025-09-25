@@ -39,14 +39,15 @@ class PerformanceDynamic_qiyi_0070(Case):
                                      self.screenshot_dir_path)
 
             logging.info('启动爱奇艺')
-            # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '启动爱奇艺')
+            SeaOfStarsAW.trace_thread.add_log('爱奇艺', '1、启动爱奇艺')
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.85, 0.145)
             time.sleep(5)
-            logging.info('点击微剧')
-            SeaOfStarsAW.ut_device(label='微剧').click()
+            # logging.info('点击微剧')
+            # SeaOfStarsAW.ut_device(label='微剧').click()
             time.sleep(2)
-            # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '综艺播放浏览')
+
+            SeaOfStarsAW.trace_thread.add_log('爱奇艺', '2、综艺播放浏览')
             logging.info('上滑3次，下滑3次')
             for _ in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -72,7 +73,8 @@ class PerformanceDynamic_qiyi_0070(Case):
             SeaOfStarsAW.ut_device(label='我的').click()
             time.sleep(2)
             logging.info('上滑退出')
-            # SeaOfStarsAW.trace_thread.add_log('爱奇艺', '上滑退出')
+
+            SeaOfStarsAW.trace_thread.add_log('爱奇艺', '3、上滑退出')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
             SeaOfStarsAW.ut_device.app_terminate("com.qiyi.iphone")
