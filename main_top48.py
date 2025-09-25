@@ -479,6 +479,7 @@ Basic1 = [
     # PerformanceDynamic_weixin_0060,
     PerformanceDynamic_zhongzai_0010
 ]
+
 Basic2 = [
     # PerformanceDynamic_Launcher_0020,
     # PerformanceDynamic_Camera_0030,
@@ -870,8 +871,8 @@ Basic5 = [
     PerformanceDynamic_58city_0010,
     PerformanceDynamic_zhongzai_0020,
 ]
-# Basics=[Basic1,Basic2,Basic3,Basic4,Basic5]
-Basics=[Basic5,Basic4,Basic3,Basic2,Basic1]
+Basics=[Basic2,Basic3,Basic4,Basic5]
+# Basics=[Basic5,Basic4,Basic3,Basic2,Basic1]
 # Basics=[Basic1]
 test = [all_cases,]
 

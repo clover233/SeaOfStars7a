@@ -70,7 +70,8 @@ class PerformanceDynamic_Douyin_0010(Case):
             time.sleep(2)
             SeaOfStarsAW.ut_device(labelContains="关注").click()
             time.sleep(2)
-            SeaOfStarsAW.ut_device(labelContains="胡锡进").click()
+            SeaOfStarsAW.ut_device.click(0.434, 0.497)
+            # SeaOfStarsAW.ut_device(labelContains="胡锡进").click()
             time.sleep(2)
 
             # 7、上滑5次、下滑5次，等待2s
