@@ -40,15 +40,17 @@ class PerformanceDynamic_Douyin_0030(Case):
 
             # 1、点击进入抖音，启动5s，等待2s
             logging.info('点击进入抖音，等待3s')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '启动抖音，进入聊天界面，发送华为手机')
+            SeaOfStarsAW.trace_thread.add_log('抖音', '1、点击进入抖音，启动5s，等待2s')
             SeaOfStarsAW.ut_device.session().app_activate('com.ss.iphone.ugc.Aweme')
             time.sleep(5)
 
             # 2、进入消息页面，1s
+            SeaOfStarsAW.trace_thread.add_log('抖音', '2、进入消息页面，1s')
             SeaOfStarsAW.ut_device(labelContains="消息").click()
             time.sleep(1)
 
             # 3、进入测试账号聊天页面，2s
+            SeaOfStarsAW.trace_thread.add_log('抖音', '3、进入测试账号聊天页面，2s')
             SeaOfStarsAW.ut_device(labelContains="动态模型xx").click()
             time.sleep(2)
 
@@ -127,8 +129,6 @@ class PerformanceDynamic_Douyin_0030(Case):
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
             SeaOfStarsAW.stop_trace()
-
-
 
 
         logging.info('用例执行结束')
