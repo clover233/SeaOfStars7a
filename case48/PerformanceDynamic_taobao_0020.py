@@ -69,6 +69,7 @@ class PerformanceDynamic_taobao_0020(Case):
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
+
             logging.info('进入关注页')
             # SeaOfStarsAW.ut_device(label='关注').click()
             SeaOfStarsAW.ut_device.click(0.073, 0.066)
@@ -100,8 +101,9 @@ class PerformanceDynamic_taobao_0020(Case):
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_right()
                 time.sleep(2)
+
             logging.info('点击返回首页')
-            SeaOfStarsAW.ut_device(label='返回').click()
+            SeaOfStarsAW.ut_device.click(0.1, 0.927)
             time.sleep(2)
             logging.info('返回桌面')
             SeaOfStarsAW.ut_device.home()
