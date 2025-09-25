@@ -291,63 +291,63 @@ all_cases = [
     # PerformanceDynamic_Bilibili_0020,
     # PerformanceDynamic_Bilibili_0030,
     # PerformanceDynamic_Bilibili_0040,
-    # PerformanceDynamic_Bilibili_0050,
-    # # 云闪付用例
-    # # 大众点评用例
-    # PerformanceDynamic_Dingding_0010,
-    # PerformanceDynamic_Dingding_0020,
-    # PerformanceDynamic_Dongchedi_0010,
-    # PerformanceDynamic_Dongchedi_0020,
-    # PerformanceDynamic_Douyin_0010,
-    # PerformanceDynamic_Douyin_0030,
-    # PerformanceDynamic_Douyin_0040,
-    # PerformanceDynamic_Douyin_0050,
-    # PerformanceDynamic_fanqie_0010,
-    # PerformanceDynamic_fanqie_0020,
-    # PerformanceDynamic_hanglvzongheng_0010,
-    # PerformanceDynamic_hanglvzongheng_0020,
-    # PerformanceDynamic_HappyAnimal_0010,
-    # PerformanceDynamic_hepingjingying_0030,
-    # PerformanceDynamic_jingdong_0010,
-    # PerformanceDynamic_jingdong_0020,
-    # PerformanceDynamic_jingdong_0030,
-    # PerformanceDynamic_jingdong_0040,
-    # PerformanceDynamic_jrtt_0010,
-    # PerformanceDynamic_jrtt_0020,
-    # PerformanceDynamic_kiwi_0010,
-    # PerformanceDynamic_kiwi_0020,
-    # PerformanceDynamic_kiwi_0030,
-    # PerformanceDynamic_Kuaishou_0010,
-    # PerformanceDynamic_Kuaishou_0020,
-    # PerformanceDynamic_pinduoduo_0010,
-    # PerformanceDynamic_qimao_0010,
-    # PerformanceDynamic_qimao_0020,
-    # PerformanceDynamic_qiyi_0010,
-    # PerformanceDynamic_qiyi_0020,
-    # PerformanceDynamic_qiyi_0030,
-    # PerformanceDynamic_qiyi_0060,
-    # PerformanceDynamic_qiyi_0070,
-    # PerformanceDynamic_qq_0010,
-    # PerformanceDynamic_qq_0020,
-    # PerformanceDynamic_qqliulanqi_0010,
-    # PerformanceDynamic_qqm_0010,
-    # PerformanceDynamic_qqm_0030,
-    # PerformanceDynamic_qunaer_0010,
-    # PerformanceDynamic_qunaer_0020,
-    # PerformanceDynamic_sodamusic_0010,
-    # PerformanceDynamic_taobao_0010,
-    # PerformanceDynamic_taobao_0020,
-    # PerformanceDynamic_tencentnews_0010,
-    # PerformanceDynamic_TencentVideo_0010,
-    # PerformanceDynamic_ths_0040,
-    # PerformanceDynamic_ths_0050,
-    # PerformanceDynamic_tielu12306_0010,
-    # PerformanceDynamic_tielu12306_0020,
-    # PerformanceDynamic_UC_0010,
-    # PerformanceDynamic_UC_0020,
-    # PerformanceDynamic_wangzherongyao_0030,
-    # PerformanceDynamic_mangguoTV_0010,
-    # PerformanceDynamic_meituan_0010,
+    PerformanceDynamic_Bilibili_0050,
+    # 云闪付用例
+    # 大众点评用例
+    PerformanceDynamic_Dingding_0010,
+    PerformanceDynamic_Dingding_0020,
+    PerformanceDynamic_Dongchedi_0010,
+    PerformanceDynamic_Dongchedi_0020,
+    PerformanceDynamic_Douyin_0010,
+    PerformanceDynamic_Douyin_0030,
+    PerformanceDynamic_Douyin_0040,
+    PerformanceDynamic_Douyin_0050,
+    PerformanceDynamic_fanqie_0010,
+    PerformanceDynamic_fanqie_0020,
+    PerformanceDynamic_hanglvzongheng_0010,
+    PerformanceDynamic_hanglvzongheng_0020,
+    PerformanceDynamic_HappyAnimal_0010,
+    PerformanceDynamic_hepingjingying_0030,
+    PerformanceDynamic_jingdong_0010,
+    PerformanceDynamic_jingdong_0020,
+    PerformanceDynamic_jingdong_0030,
+    PerformanceDynamic_jingdong_0040,
+    PerformanceDynamic_jrtt_0010,
+    PerformanceDynamic_jrtt_0020,
+    PerformanceDynamic_kiwi_0010,
+    PerformanceDynamic_kiwi_0020,
+    PerformanceDynamic_kiwi_0030,
+    PerformanceDynamic_Kuaishou_0010,
+    PerformanceDynamic_Kuaishou_0020,
+    PerformanceDynamic_pinduoduo_0010,
+    PerformanceDynamic_qimao_0010,
+    PerformanceDynamic_qimao_0020,
+    PerformanceDynamic_qiyi_0010,
+    PerformanceDynamic_qiyi_0020,
+    PerformanceDynamic_qiyi_0030,
+    PerformanceDynamic_qiyi_0060,
+    PerformanceDynamic_qiyi_0070,
+    PerformanceDynamic_qq_0010,
+    PerformanceDynamic_qq_0020,
+    PerformanceDynamic_qqliulanqi_0010,
+    PerformanceDynamic_qqm_0010,
+    PerformanceDynamic_qqm_0030,
+    PerformanceDynamic_qunaer_0010,
+    PerformanceDynamic_qunaer_0020,
+    PerformanceDynamic_sodamusic_0010,
+    PerformanceDynamic_taobao_0010,
+    PerformanceDynamic_taobao_0020,
+    PerformanceDynamic_tencentnews_0010,
+    PerformanceDynamic_TencentVideo_0010,
+    PerformanceDynamic_ths_0040,
+    PerformanceDynamic_ths_0050,
+    PerformanceDynamic_tielu12306_0010,
+    PerformanceDynamic_tielu12306_0020,
+    PerformanceDynamic_UC_0010,
+    PerformanceDynamic_UC_0020,
+    PerformanceDynamic_wangzherongyao_0030,
+    PerformanceDynamic_mangguoTV_0010,
+    PerformanceDynamic_meituan_0010,
     PerformanceDynamic_Weibo_0010,
     PerformanceDynamic_Weibo_0020,
     PerformanceDynamic_Weibo_0030,
@@ -389,7 +389,8 @@ all_cases = [
     PerformanceDynamic_zhongzai_0020,
 ]
 Basic1 = [
-    PerformanceDynamic_jrtt_0010,
+    # 今日头条在苹果17上运行用例卡顿严重
+    # PerformanceDynamic_jrtt_0010,
     PerformanceDynamic_UC_0010,
     # PerformanceDynamic_Browser_0010,
     PerformanceDynamic_qqliulanqi_0010,
@@ -594,7 +595,7 @@ Basic3 = [
     # PerformanceDynamic_Beiwanglu_AI_0020,
     PerformanceDynamic_weipinhui_0020,
     PerformanceDynamic_Weibo_0040,
-    PerformanceDynamic_jrtt_0010,
+    # PerformanceDynamic_jrtt_0010,
     PerformanceDynamic_jingdong_0040,
     # PerformanceDynamic_Photo_0030,
     # PerformanceDynamic_Launcher_0020,
@@ -715,7 +716,7 @@ Basic4 = [
     PerformanceDynamic_Dongchedi_0010,
     PerformanceDynamic_Douyin_0010,
     # PerformanceDynamic_DHdeepseek_0010,
-    PerformanceDynamic_jrtt_0010,
+    # PerformanceDynamic_jrtt_0010,
     # PerformanceDynamic_Photo_AI_0010,
     # PerformanceDynamic_weixin_0010,
     PerformanceDynamic_Dongchedi_0020,
@@ -869,7 +870,9 @@ Basic5 = [
     PerformanceDynamic_58city_0010,
     PerformanceDynamic_zhongzai_0020,
 ]
-Basics=[Basic1,Basic2,Basic3,Basic4,Basic5,]
+# Basics=[Basic1,Basic2,Basic3,Basic4,Basic5]
+Basics=[Basic5,Basic4,Basic3,Basic2,Basic1]
+# Basics=[Basic1]
 test = [all_cases,]
 
 # 按装订区域中的绿色按钮以运行脚本。
@@ -880,7 +883,11 @@ if __name__ == '__main__':
     try:
         for _ in range(1):
             # for Basic in Basics:
-            for Basic in test:
+            for Basic in Basics:
+                print(Basic)
+                # i = 1
+                # print(f'basic{i}')
+                # i =+ 1
                 for single_case in Basic:
                     try:
                         case = single_case(Result_Dir_Path)
@@ -911,11 +918,15 @@ if __name__ == '__main__':
                         SeaOfStarsAW.stop_trace()
                     finally:
                         # 初始化
+                        try:
+                            for i in range(5):
+                                SeaOfStarsAW.ut_device.swipe_right()
+                            for i in range(2):
+                                SeaOfStarsAW.ut_device.swipe_left()
+                        finally:
+                            pass
                         SeaOfStarsAW.ut_device.home()
-                        for i in range(5):
-                            SeaOfStarsAW.ut_device.swipe_right()
-                        for i in range(2):
-                            SeaOfStarsAW.ut_device.swipe_left()
+
                         try:
                             bundle_name = case_name_bundle_name[single_case.__name__]
                             if type(bundle_name) == list:

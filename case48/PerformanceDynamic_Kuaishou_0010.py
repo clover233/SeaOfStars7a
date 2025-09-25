@@ -40,21 +40,24 @@ class PerformanceDynamic_Kuaishou_0010(Case):
 
             # 1、点击进入快手，启动5s，等待2s
             logging.info('启动快手，等待7s')
-            SeaOfStarsAW.trace_thread.add_log('快手', '浏览视频')
+            SeaOfStarsAW.trace_thread.add_log('快手', '1、浏览视频')
             SeaOfStarsAW.ut_device.session().app_activate('com.jiangjia.gif')
             time.sleep(7)
 
             # 2、浏览并向下滑切换视频，视频浏览10s，下滑切换下一个，浏览三个
+            SeaOfStarsAW.trace_thread.add_log('快手', '2、浏览并向下滑切换视频，视频浏览10s，下滑切换下一个，浏览三个')
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(10)
 
             # 3、点击评论
+            SeaOfStarsAW.trace_thread.add_log('快手', '3、点击评论')
             SeaOfStarsAW.trace_thread.add_log('快手', '评论视频')
-            SeaOfStarsAW.ut_device.click(0.923, 0.57)
+            SeaOfStarsAW.ut_device.click(0.906, 0.62)
             time.sleep(2)
 
             # 4、上滑2次，下滑2次
+            SeaOfStarsAW.trace_thread.add_log('快手', '4、上滑2次，下滑2次')
             for i in range(2):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
@@ -65,20 +68,22 @@ class PerformanceDynamic_Kuaishou_0010(Case):
             time.sleep(2)
 
             # 5、点击“赞”
-            SeaOfStarsAW.trace_thread.add_log('快手', '点赞和收藏')
+            SeaOfStarsAW.trace_thread.add_log('快手', '5、点击“赞”')
             SeaOfStarsAW.ut_device.click(0.926, 0.495)
             time.sleep(2)
 
             # 6、点击“收藏”
+            SeaOfStarsAW.trace_thread.add_log('快手', '6、点击“收藏”')
             SeaOfStarsAW.ut_device.click(0.926, 0.656)
             time.sleep(2)
 
             # 7、点击消息，2s
-            SeaOfStarsAW.trace_thread.add_log('快手', '和测试账号聊天')
+            SeaOfStarsAW.trace_thread.add_log('快手', '7、点击消息，2s')
             SeaOfStarsAW.ut_device(labelContains="消息").click()
             time.sleep(2)
 
             # 8、点击测试账号聊天，2s
+            SeaOfStarsAW.trace_thread.add_log('快手', '8、点击测试账号聊天，2s')
             SeaOfStarsAW.ut_device(labelContains="查找").click()
             time.sleep(2)
             SeaOfStarsAW.ut_device.send_keys('AutoTest')
@@ -87,6 +92,7 @@ class PerformanceDynamic_Kuaishou_0010(Case):
             time.sleep(2)
 
             # 9、发送华为手机给测试账号
+            SeaOfStarsAW.trace_thread.add_log('快手', '9、发送华为手机给测试账号')
             SeaOfStarsAW.ut_device.click(0.287, 0.93)
             time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.301, 0.581)
@@ -97,7 +103,7 @@ class PerformanceDynamic_Kuaishou_0010(Case):
             time.sleep(2)
 
             # 10、返回快手首页，2s
-            SeaOfStarsAW.trace_thread.add_log('快手', '返回桌面')
+            SeaOfStarsAW.trace_thread.add_log('快手', '10、返回桌面')
             SeaOfStarsAW.ut_device.click(0.07, 0.101)
             time.sleep(2)
             SeaOfStarsAW.ut_device.swipe_right()
@@ -106,6 +112,7 @@ class PerformanceDynamic_Kuaishou_0010(Case):
             time.sleep(2)
 
             # 11、返回home界面，2s
+            SeaOfStarsAW.trace_thread.add_log('快手', '11、返回home界面，2s')
             SeaOfStarsAW.ut_device.app_terminate('com.jiangjia.gif')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
