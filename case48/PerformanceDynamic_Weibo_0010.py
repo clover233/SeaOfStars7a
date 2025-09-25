@@ -53,7 +53,7 @@ class PerformanceDynamic_Weibo_0010(Case):
             # 3、点击搜索栏、输入"我和我的祖国视频" 并搜索 等待2s
             SeaOfStarsAW.trace_thread.add_log('微博', '3、点击搜索栏、输入"我和我的祖国视频" 并搜索 等待2s')
             SeaOfStarsAW.ut_device.click(0.391, 0.087)
-            SeaOfStarsAW.ut_device().set_text("我和我的祖国视频")
+            SeaOfStarsAW.ut_device.send_keys("我和我的祖国视频")
             SeaOfStarsAW.ut_device(labelContains="搜索").click()
             time.sleep(2)
             # 4、上滑5次，下滑6次，等待2s

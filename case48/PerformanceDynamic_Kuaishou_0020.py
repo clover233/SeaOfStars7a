@@ -40,7 +40,7 @@ class PerformanceDynamic_Kuaishou_0020(Case):
 
             # 1、点击进入快手，启动5s，等待2s
             logging.info('启动快手，等待5s')
-            SeaOfStarsAW.trace_thread.add_log('快手', '浏览搜索结果')
+            SeaOfStarsAW.trace_thread.add_log('快手', '1、浏览搜索结果')
             SeaOfStarsAW.ut_device.session().app_activate('com.jiangjia.gif')
             time.sleep(5)
 

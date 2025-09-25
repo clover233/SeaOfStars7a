@@ -39,12 +39,12 @@ class PerformanceDynamic_qqliulanqi_0010(Case):
                                      self.screenshot_dir_path)
 
             logging.info('启动QQ浏览器')
-            # SeaOfStarsAW.trace_thread.add_log('QQ浏览器', '启动QQ浏览器')
+            SeaOfStarsAW.trace_thread.add_log('QQ浏览器', '1、启动QQ浏览器')
             SeaOfStarsAW.ut_device.swipe_left()
             SeaOfStarsAW.ut_device.click(0.4, 0.251)
 
             time.sleep(8)
-            # SeaOfStarsAW.trace_thread.add_log('QQ浏览器', '浏览放映厅')
+            SeaOfStarsAW.trace_thread.add_log('QQ浏览器', '2、浏览放映厅')
             logging.info('点击搜索框')
             SeaOfStarsAW.ut_device.click(0.305, 0.394)
             time.sleep(2)
@@ -62,7 +62,8 @@ class PerformanceDynamic_qqliulanqi_0010(Case):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
             logging.info('点击第一个搜索结果，进入优酷官网')
-            # SeaOfStarsAW.trace_thread.add_log('QQ浏览器', '浏览优酷官网')
+
+            SeaOfStarsAW.trace_thread.add_log('QQ浏览器', '3、浏览优酷官网')
             SeaOfStarsAW.ut_device.click(0.268, 0.295, 0.3)
             # SeaOfStarsAW.ut_device(label='- 中国领先视频网站').click()
             time.sleep(1)
@@ -73,10 +74,12 @@ class PerformanceDynamic_qqliulanqi_0010(Case):
             for _ in range(2):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
-            logging.info('点击电视剧')
-            # SeaOfStarsAW.trace_thread.add_log('QQ浏览器', '启动浏览优酷官网电视剧界面')
-            SeaOfStarsAW.ut_device(label='电视剧').click()
-            time.sleep(1)
+
+            # logging.info('点击电视剧')
+            # # SeaOfStarsAW.trace_thread.add_log('QQ浏览器', '启动浏览优酷官网电视剧界面')
+            # SeaOfStarsAW.ut_device(label='电视剧').click()
+            # time.sleep(1)
+
             logging.info('上滑2次，下滑2次')
             for _ in range(2):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -85,7 +88,8 @@ class PerformanceDynamic_qqliulanqi_0010(Case):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
             logging.info('返回')
-            # SeaOfStarsAW.trace_thread.add_log('QQ浏览器', '返回桌面')
+
+            SeaOfStarsAW.trace_thread.add_log('QQ浏览器', '4、返回桌面')
             # SeaOfStarsAW.ut_device.click(0.056, 0.07)
             SeaOfStarsAW.ut_device(label='后退').click()
             time.sleep(2)
