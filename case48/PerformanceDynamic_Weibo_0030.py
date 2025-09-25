@@ -66,6 +66,7 @@ class PerformanceDynamic_Weibo_0030(Case):
             SeaOfStarsAW.trace_thread.add_log('微博', '5、点击 热搜第一条 等待3s')
             SeaOfStarsAW.ut_device.click(0.412, 0.3)
             time.sleep(3)
+
             # 6、点击视频 第一条博文 查看正文 等待3s
             SeaOfStarsAW.trace_thread.add_log('微博', '6、点击视频 第一条博文 查看正文 等待3s')
             SeaOfStarsAW.ut_device(labelContains="视频").click()
@@ -90,7 +91,8 @@ class PerformanceDynamic_Weibo_0030(Case):
             time.sleep(1)
             # 10、点击评论 输入评论 等待2s
             SeaOfStarsAW.trace_thread.add_log('微博', '10、点击评论 输入评论 等待2s')
-            SeaOfStarsAW.ut_device(labelContains="评论").click()
+            SeaOfStarsAW.ut_device.click(0.536, 0.93)
+            # SeaOfStarsAW.ut_device(labelContains="评论").click()
             SeaOfStarsAW.ut_device().set_text("评论")
             time.sleep(2)
 

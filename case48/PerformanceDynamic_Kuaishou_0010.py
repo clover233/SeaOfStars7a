@@ -52,8 +52,7 @@ class PerformanceDynamic_Kuaishou_0010(Case):
 
             # 3、点击评论
             SeaOfStarsAW.trace_thread.add_log('快手', '3、点击评论')
-            SeaOfStarsAW.trace_thread.add_log('快手', '评论视频')
-            SeaOfStarsAW.ut_device.click(0.906, 0.62)
+            SeaOfStarsAW.ut_device(labelContains="评论").click()
             time.sleep(2)
 
             # 4、上滑2次，下滑2次
@@ -69,22 +68,24 @@ class PerformanceDynamic_Kuaishou_0010(Case):
 
             # 5、点击“赞”
             SeaOfStarsAW.trace_thread.add_log('快手', '5、点击“赞”')
-            SeaOfStarsAW.ut_device.click(0.926, 0.495)
+            SeaOfStarsAW.ut_device(labelContains="赞").click()
             time.sleep(2)
 
             # 6、点击“收藏”
             SeaOfStarsAW.trace_thread.add_log('快手', '6、点击“收藏”')
-            SeaOfStarsAW.ut_device.click(0.926, 0.656)
+            SeaOfStarsAW.ut_device(labelContains="收藏").click()
             time.sleep(2)
 
             # 7、点击消息，2s
             SeaOfStarsAW.trace_thread.add_log('快手', '7、点击消息，2s')
-            SeaOfStarsAW.ut_device(labelContains="消息").click()
+            SeaOfStarsAW.ut_device(label="消息").click()
             time.sleep(2)
 
             # 8、点击测试账号聊天，2s
             SeaOfStarsAW.trace_thread.add_log('快手', '8、点击测试账号聊天，2s')
-            SeaOfStarsAW.ut_device(labelContains="查找").click()
+            SeaOfStarsAW.ut_device(labelContains="测试").click()
+            time.sleep(2)
+            SeaOfStarsAW.ut_device.click(0.212, 0.921)
             time.sleep(2)
             SeaOfStarsAW.ut_device.send_keys('AutoTest')
             time.sleep(2)

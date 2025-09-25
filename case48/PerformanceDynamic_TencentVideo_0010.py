@@ -40,14 +40,14 @@ class PerformanceDynamic_TencentVideo_0010(Case):
 
 
             logging.info('启动腾讯视频')
-            SeaOfStarsAW.trace_thread.add_log('微信', '启动微信')
+            SeaOfStarsAW.trace_thread.add_log('腾讯视频', '1、启动腾讯视频')
             # SeaOfStarsAW.ut_device.swipe_left()
             # SeaOfStarsAW.ut_device.click(0.87, 0.37)
             SeaOfStarsAW.ut_device.app_activate("com.tencent.live4iphone")
 
             logging.info('等待8s')
             time.sleep(8)
-            SeaOfStarsAW.trace_thread.add_log('腾讯视频', '主页浏览，上滑5次，下滑2次')
+            SeaOfStarsAW.trace_thread.add_log('腾讯视频', '2、主页浏览，上滑5次，下滑2次')
             logging.info('上滑5次')
             for _ in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -57,13 +57,13 @@ class PerformanceDynamic_TencentVideo_0010(Case):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
 
-            SeaOfStarsAW.trace_thread.add_log('腾讯视频', '浏览电视剧')
+            SeaOfStarsAW.trace_thread.add_log('腾讯视频', '3、浏览电视剧')
             logging.info('点击电视剧')
             SeaOfStarsAW.ut_device(label='电视剧').click()
             time.sleep(2)
 
             logging.info('点击主页第一个推荐视频')   # 注意有广告情况
-            SeaOfStarsAW.trace_thread.add_log('腾讯视频', '点击主页第一个推荐视频')
+            SeaOfStarsAW.trace_thread.add_log('腾讯视频', '4、点击主页第一个推荐视频')
             SeaOfStarsAW.ut_device.click(0.513, 0.268)
             time.sleep(10)
             logging.info('点击屏幕现实横屏标志')
@@ -71,7 +71,7 @@ class PerformanceDynamic_TencentVideo_0010(Case):
             time.sleep(1)
             logging.info('切换到全屏')
             SeaOfStarsAW.ut_device.click(0.936, 0.281)
-            time.sleep(10)
+            time.sleep(2)
             logging.info('点击屏幕现实横屏标志')
             SeaOfStarsAW.ut_device.click(0.936, 0.281)
             time.sleep(1)

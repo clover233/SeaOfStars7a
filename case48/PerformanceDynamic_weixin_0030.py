@@ -64,7 +64,7 @@ class PerformanceDynamic_weixin_0030(Case):
             time.sleep(2)
 
             SeaOfStarsAW.trace_thread.add_log('微信', '进入好友界面')
-            SeaOfStarsAW.ut_device(label="测试 ,").click()
+            SeaOfStarsAW.ut_device(label="测试").click()
             time.sleep(2)
 
             SeaOfStarsAW.trace_thread.add_log('微信', '进入好友 朋友圈')

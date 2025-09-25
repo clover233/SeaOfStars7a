@@ -51,7 +51,7 @@ class PerformanceDynamic_Douyin_0030(Case):
 
             # 3、进入测试账号聊天页面，2s
             SeaOfStarsAW.trace_thread.add_log('抖音', '3、进入测试账号聊天页面，2s')
-            SeaOfStarsAW.ut_device(labelContains="动态模型xx").click()
+            SeaOfStarsAW.ut_device(labelContains="动态模型").click()
             time.sleep(2)
 
             # 4、发送文字华为手机，2s

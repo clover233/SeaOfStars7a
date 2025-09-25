@@ -58,9 +58,9 @@ class PerformanceDynamic_Douyin_0040(Case):
 
             # 4、搜索胡锡进
             SeaOfStarsAW.trace_thread.add_log('抖音', '4、搜索胡锡进')
-            SeaOfStarsAW.ut_device.click(0.936, 0.086)
+            SeaOfStarsAW.ut_device.click(0.932, 0.094)
             time.sleep(1)
-            SeaOfStarsAW.ut_device().set_text("胡锡进")
+            SeaOfStarsAW.ut_device.send_keys('胡锡进')
             time.sleep(2)
             SeaOfStarsAW.ut_device(labelContains="搜索").click()
             time.sleep(2)
@@ -104,10 +104,8 @@ class PerformanceDynamic_Douyin_0040(Case):
 
             # 12、点击商城，2s
             SeaOfStarsAW.trace_thread.add_log('抖音', '12、点击商城，搜索商品，浏览，点击客服，点击店铺')
-            SeaOfStarsAW.ut_device(labelContains="我").click()
+            SeaOfStarsAW.ut_device(labelContains="商场").click()
             time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.102, 0.413)
-            time.sleep(1)
 
             # 13、上滑三次浏览推荐商品，2s
             SeaOfStarsAW.trace_thread.add_log('抖音', '13、上滑三次浏览推荐商品，2s')
@@ -123,9 +121,9 @@ class PerformanceDynamic_Douyin_0040(Case):
 
             # 15、搜索华为P70，2s
             SeaOfStarsAW.trace_thread.add_log('抖音', '15、搜索华为P70，2s')
-            SeaOfStarsAW.ut_device.click(0.356, 0.093)
+            SeaOfStarsAW.ut_device.click(0.204, 0.145)
             time.sleep(1)
-            SeaOfStarsAW.ut_device().set_text("华为P70")
+            SeaOfStarsAW.ut_device.send_keys('华为P70')
             time.sleep(2)
             SeaOfStarsAW.ut_device(labelContains="搜索").click()
             time.sleep(2)

@@ -54,7 +54,8 @@ class PerformanceDynamic_mangguoTV_0010(Case):
 
             # 3、点击综艺，停留1s
             SeaOfStarsAW.trace_thread.add_log('芒果tv', '浏览综艺')
-            SeaOfStarsAW.ut_device(labelContains="综艺").click()
+            SeaOfStarsAW.ut_device.click(0.536, 0.097)
+            # SeaOfStarsAW.ut_device(labelContains="综艺").click()
             time.sleep(2)
 
             # 4、浏览综艺，上滑5次，下滑5次，每次停留2s
@@ -67,7 +68,8 @@ class PerformanceDynamic_mangguoTV_0010(Case):
 
             # 5、点击上方tab栏“电视剧”，切换至电视剧界面，停留1s
             SeaOfStarsAW.trace_thread.add_log('芒果tv', '浏览电视剧')
-            SeaOfStarsAW.ut_device(labelContains="电视剧").click()
+            SeaOfStarsAW.ut_device.click(0.652, 0.098)
+            # SeaOfStarsAW.ut_device(labelContains="电视剧").click()
             time.sleep(2)
 
             # 6、电视剧界面上滑5次，下滑至顶部
