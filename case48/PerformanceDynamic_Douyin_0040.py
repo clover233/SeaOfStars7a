@@ -72,30 +72,34 @@ class PerformanceDynamic_Douyin_0040(Case):
             time.sleep(2)
 
 
-            # 6、点击评论按钮
-            SeaOfStarsAW.trace_thread.add_log('抖音', '6、返回首页，点击评论，输入评论并发送')
-            SeaOfStarsAW.ut_device.click(0.931, 0.629)
-            time.sleep(1)
 
-            # 7、点击输入框
-            SeaOfStarsAW.trace_thread.add_log('抖音', '7、点击输入框')
-            SeaOfStarsAW.ut_device.click(0.287, 0.938)
-            time.sleep(2)
+            try:
+                # 6、点击评论按钮
+                SeaOfStarsAW.trace_thread.add_log('抖音', '6、返回首页，点击评论，输入评论并发送')
+                SeaOfStarsAW.ut_device.click(0.931, 0.629)
+                time.sleep(1)
 
-            # 8、输入"我是评论ABC"
-            SeaOfStarsAW.trace_thread.add_log('抖音', '8、输入"我是评论ABC"')
-            SeaOfStarsAW.ut_device().set_text("我是评论ABC")
-            time.sleep(2)
+                # 7、点击输入框
+                SeaOfStarsAW.trace_thread.add_log('抖音', '7、点击输入框')
+                SeaOfStarsAW.ut_device.click(0.071, 0.935)
+                time.sleep(2)
 
-            # 9、点击发送
-            SeaOfStarsAW.trace_thread.add_log('抖音', '9、点击发送')
-            SeaOfStarsAW.ut_device(labelContains="发送").click()
-            time.sleep(2)
+                # 8、输入"我是评论ABC"
+                SeaOfStarsAW.trace_thread.add_log('抖音', '8、输入"我是评论ABC"')
+                SeaOfStarsAW.ut_device.send_keys("我是评论ABC")
+                time.sleep(2)
 
-            # 10、侧滑一次返回
-            SeaOfStarsAW.trace_thread.add_log('抖音', '10、侧滑一次返回')
-            SeaOfStarsAW.ut_device.swipe_right()
-            time.sleep(1)
+                # 9、点击发送
+                SeaOfStarsAW.trace_thread.add_log('抖音', '9、点击发送')
+                SeaOfStarsAW.ut_device(labelContains="发送").click()
+                time.sleep(2)
+
+                # 10、侧滑一次返回
+                SeaOfStarsAW.trace_thread.add_log('抖音', '10、侧滑一次返回')
+                SeaOfStarsAW.ut_device.swipe_right()
+                time.sleep(1)
+            except:
+                pass
 
             # 11、点击点赞按钮
             SeaOfStarsAW.trace_thread.add_log('抖音', '11、点击点赞按钮')

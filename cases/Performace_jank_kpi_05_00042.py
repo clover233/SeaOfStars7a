@@ -66,7 +66,7 @@ class Performance_jank_kpi_05_000042(Case):
             # 搜索华为手机
             logging.info('搜索华为手机')
             SeaOfStarsAW.trace_thread.add_log('微信', '搜索华为手机')
-            SeaOfStarsAW.ut_device().set_text('华为手机')
+            SeaOfStarsAW.ut_device.send_keys('华为手机')
             time.sleep(2)
             # SeaOfStarsAW.check_status(label="华为手机")
             # time.sleep(2)

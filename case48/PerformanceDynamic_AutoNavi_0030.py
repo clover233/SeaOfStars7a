@@ -48,7 +48,7 @@ class PerformanceDynamic_AutoNavi_0030(Case):
             time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.298, 0.138, 0.2)
             time.sleep(1)
-            SeaOfStarsAW.ut_device().set_text("西安北站")
+            SeaOfStarsAW.ut_device.send_keys("西安北站")
             time.sleep(1)
 
             # 3、切换到“公交地铁”（1s）

@@ -53,7 +53,7 @@ class PerformanceDynamic_AutoNavi_0060(Case):
             SeaOfStarsAW.trace_thread.add_log('高德地图', '输入“西安北站”并搜索')
             SeaOfStarsAW.ut_device.click(0.298, 0.138, 0.2)
             time.sleep(1)
-            SeaOfStarsAW.ut_device().set_text("西安北站")
+            SeaOfStarsAW.ut_device.send_keys("西安北站")
             time.sleep(1)
 
             # 4、点击第一个搜索结果的路线 ，停留2s

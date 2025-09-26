@@ -46,6 +46,8 @@ class PerformanceDynamic_Douyin_0050(Case):
 
             # 2、点击顶部经验，停留1s
             SeaOfStarsAW.trace_thread.add_log('抖音', '2、点击顶部经验，停留1s')
+            for _ in range(8):
+                SeaOfStarsAW.ut_device.swipe_right()
             SeaOfStarsAW.ut_device(labelContains="热点").click()
             time.sleep(1)
             SeaOfStarsAW.ut_device(labelContains="经验").click()
