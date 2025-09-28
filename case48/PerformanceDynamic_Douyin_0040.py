@@ -108,7 +108,7 @@ class PerformanceDynamic_Douyin_0040(Case):
 
             # 12、点击商城，2s
             SeaOfStarsAW.trace_thread.add_log('抖音', '12、点击商城，搜索商品，浏览，点击客服，点击店铺')
-            SeaOfStarsAW.ut_device(labelContains="商场").click()
+            SeaOfStarsAW.ut_device(labelContains="商城").click()
             time.sleep(2)
 
             # 13、上滑三次浏览推荐商品，2s
