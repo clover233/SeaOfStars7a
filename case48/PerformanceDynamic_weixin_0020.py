@@ -38,7 +38,7 @@ class   PerformanceDynamic_weixin_0020(Case):
             # 启动相机
             logging.info('启动微信')
             # SeaOfStarsAW.ut_device.session().app_activate('com.tencent.mqq')
-            SeaOfStarsAW.trace_thread.add_log('微信','应用启动')
+            SeaOfStarsAW.trace_thread.add_log('微信','1、应用启动')
             # pos = SeaOfStarsAW.find_app_from_launcher('QQ')
             # while str(pos) == ('Point(x=0, y=0)'):
             #     SeaOfStarsAW.ut_device.swipe_left()
@@ -51,7 +51,7 @@ class   PerformanceDynamic_weixin_0020(Case):
             SeaOfStarsAW.ut_device.click(0.598, 0.598)
             time.sleep(2)
 
-            SeaOfStarsAW.trace_thread.add_log('微信', '浏览朋友圈')
+            SeaOfStarsAW.trace_thread.add_log('微信', '2、添加好友')
             # SeaOfStarsAW.check_status(label='测试群聊')
             SeaOfStarsAW.ut_device(label="快捷操作").click()
             time.sleep(2)
@@ -70,16 +70,16 @@ class   PerformanceDynamic_weixin_0020(Case):
             SeaOfStarsAW.ut_device(label="返回").click()
             time.sleep(2)
 
-            SeaOfStarsAW.trace_thread.add_log('微信', '点击进入发现')
+            SeaOfStarsAW.trace_thread.add_log('微信', '3、点击进入发现')
             SeaOfStarsAW.ut_device.click(0.623, 0.925)
             time.sleep(2)
 
-            SeaOfStarsAW.trace_thread.add_log('微信', '点击进入朋友圈')
+            SeaOfStarsAW.trace_thread.add_log('微信', '4、点击进入朋友圈')
             SeaOfStarsAW.ut_device(label="朋友圈").click()
             time.sleep(2)
 
             # 返回home
-            SeaOfStarsAW.trace_thread.add_log('微信', '返回home')
+            SeaOfStarsAW.trace_thread.add_log('微信', '5、返回home')
             logging.info('返回home')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
