@@ -222,9 +222,10 @@ class PerformanceDynamic_Douyin_0040(Case):
                 time.sleep(2)
 
             # 27、返回home页，等待2s
-            SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.ugc.Aweme')
+
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
             SeaOfStarsAW.stop_trace()
+            SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.ugc.Aweme')
 
         logging.info('用例执行结束')
