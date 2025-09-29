@@ -69,7 +69,7 @@ class PerformanceDynamic_Douyin_0040(Case):
             SeaOfStarsAW.trace_thread.add_log('抖音', '5、返回首页')
             for i in range(2):
                 SeaOfStarsAW.ut_device.click(0.04, 0.078)
-            time.sleep(2)
+                time.sleep(2)
 
 
 

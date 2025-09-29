@@ -78,12 +78,14 @@ class PerformanceDynamic_Douyin_0050(Case):
 
             # 6、点击查看热榜，停留1s
             SeaOfStarsAW.trace_thread.add_log('抖音', '6、点击查看热榜，停留1s')
-            SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(1)
+            for _ in range(3):
+                SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(1)
 
             # 7、点击完整热榜，停留1s
             SeaOfStarsAW.trace_thread.add_log('抖音', '7、点击完整热榜，停留1s')
-            SeaOfStarsAW.ut_device(labelContains="抖音热榜，完整热榜").click()
+            SeaOfStarsAW.ut_device.click(0.4, 0.245)
+            # SeaOfStarsAW.ut_device(labelContains="抖音热榜，完整热榜").click()
             time.sleep(1)
 
             # 8、向左滑动6次，停留1s
@@ -155,7 +157,7 @@ class PerformanceDynamic_Douyin_0050(Case):
             SeaOfStarsAW.trace_thread.add_log('抖音', '19、向上滑动6次，停留1s')
             for i in range(6):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
 
             # 20、返回首页，停留1s
             SeaOfStarsAW.trace_thread.add_log('抖音', '20、返回首页，停留1s')
@@ -183,7 +185,7 @@ class PerformanceDynamic_Douyin_0050(Case):
             SeaOfStarsAW.trace_thread.add_log('抖音', '24、向上滑动三次浏览，停留1s')
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(1)
+                time.sleep(1)
 
             # 25、返回我页面，停留1s
             SeaOfStarsAW.trace_thread.add_log('抖音', '25、返回我页面，停留1s')
@@ -204,8 +206,11 @@ class PerformanceDynamic_Douyin_0050(Case):
             # 28、退出抖音
             SeaOfStarsAW.trace_thread.add_log('抖音', '28、退出抖音')
             SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.ugc.Aweme')
+            time.sleep(2)
             SeaOfStarsAW.swipe_to_launcher()
+            time.sleep(2)
             SeaOfStarsAW.go_home()
+            time.sleep(2)
             SeaOfStarsAW.stop_trace()
 
 

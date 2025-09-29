@@ -46,20 +46,23 @@ class PerformanceDynamic_Douyin_0030(Case):
 
             # 2、进入消息页面，1s
             SeaOfStarsAW.trace_thread.add_log('抖音', '2、进入消息页面，1s')
-            SeaOfStarsAW.ut_device(labelContains="消息").click()
+            SeaOfStarsAW.ut_device.click(0.698, 0.938)
+            # SeaOfStarsAW.ut_device(labelContains="消息").click()
             time.sleep(1)
 
             # 3、进入测试账号聊天页面，2s
             SeaOfStarsAW.trace_thread.add_log('抖音', '3、进入测试账号聊天页面，2s')
-            SeaOfStarsAW.ut_device(labelContains="动态模型").click()
+            SeaOfStarsAW.ut_device.click(0.462, 0.524)
+            # SeaOfStarsAW.ut_device(labelContains="动态模型").click()
             time.sleep(2)
 
             # 4、发送文字华为手机，2s
             SeaOfStarsAW.ut_device.click(0.287, 0.934)
             time.sleep(1)
-            SeaOfStarsAW.ut_device().set_text("华为手机")
+            SeaOfStarsAW.ut_device.send_keys("华为手机")
             time.sleep(2)
-            SeaOfStarsAW.ut_device(labelContains="发送").click()
+            SeaOfStarsAW.ut_device.click(0.826, 0.88)
+            # SeaOfStarsAW.ut_device(labelContains="发送").click()
             time.sleep(2)
 
             # 5、点击"+"，停留1s
@@ -91,9 +94,10 @@ class PerformanceDynamic_Douyin_0030(Case):
             # 11、上滑3次，下滑3次，停留2s
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
 
             # 12、点击第一张图片，停留1s
             SeaOfStarsAW.ut_device.click(0.154, 0.586)
@@ -115,9 +119,10 @@ class PerformanceDynamic_Douyin_0030(Case):
             # 16、上滑3次，下滑3次，停留2s
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_down()
+                time.sleep(2)
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
-            time.sleep(2)
+                time.sleep(2)
 
 
             # 17、点击首页，返回推荐页面，2s
@@ -127,7 +132,9 @@ class PerformanceDynamic_Douyin_0030(Case):
             # 18、返回home页，等待2s
             SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.ugc.Aweme')
             SeaOfStarsAW.swipe_to_launcher()
+            time.sleep(2)
             SeaOfStarsAW.go_home()
+            time.sleep(2)
             SeaOfStarsAW.stop_trace()
 
 
