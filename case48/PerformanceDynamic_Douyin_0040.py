@@ -41,7 +41,6 @@ class PerformanceDynamic_Douyin_0040(Case):
             # 1、点击进入抖音，启动5s，等待2s
             logging.info('点击进入抖音，等待3s')
             SeaOfStarsAW.trace_thread.add_log('抖音', '启动抖音，上下滑动10次')
-            # todo 微博的坐标地址要改下
             SeaOfStarsAW.ut_device.session().app_activate('com.ss.iphone.ugc.Aweme')
             time.sleep(5)
 
@@ -64,7 +63,7 @@ class PerformanceDynamic_Douyin_0040(Case):
             SeaOfStarsAW.trace_thread.add_log('抖音', '搜索胡锡进')
             SeaOfStarsAW.ut_device.click(0.936, 0.086)
             time.sleep(1)
-            SeaOfStarsAW.ut_device().send_keys("胡锡进")
+            SeaOfStarsAW.ut_device.send_keys("胡锡进")
             time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.919, 0.097)
             time.sleep(2)
@@ -93,7 +92,7 @@ class PerformanceDynamic_Douyin_0040(Case):
             # 8、输入"我是评论ABC"
             logging.info('8、输入"我是评论ABC"')
             SeaOfStarsAW.trace_thread.add_log('抖音', '8、输入"我是评论ABC"')
-            SeaOfStarsAW.ut_device().set_text("我是评论ABC")
+            SeaOfStarsAW.ut_device.send_keys("我是评论ABC")
             time.sleep(2)
 
             # 9、点击发送
