@@ -96,7 +96,8 @@ class PerformanceDynamic_Douyin_0050(Case):
 
             # 9、返回热点，停留1s
             SeaOfStarsAW.trace_thread.add_log('抖音', '9、返回热点，停留1s')
-            SeaOfStarsAW.ut_device(labelContains="返回按钮").click()
+            SeaOfStarsAW.ut_device.click(0.054, 0.084)
+            # SeaOfStarsAW.ut_device(labelContains="返回按钮").click()
             time.sleep(2)
 
             # 10、点击直播，停留1s
