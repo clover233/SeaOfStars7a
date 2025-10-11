@@ -52,7 +52,7 @@ class PerformanceDynamic_jingdong_0040(Case):
 
             # 2、点击底部直播，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '2、点击底部直播，浏览直播')
-            SeaOfStarsAW.ut_device.click(0.625, 0.511)
+            SeaOfStarsAW.ut_device.click(0.292, 0.931)
             time.sleep(2)
 
             # 3、浏览直播页面，上滑5次，下滑5次，每次停留2s
@@ -65,9 +65,9 @@ class PerformanceDynamic_jingdong_0040(Case):
 
             # 4、点击第一个直播间进去，等待2s
             SeaOfStarsAW.trace_thread.add_log('京东', '4、点击第一个直播间进去，等待2s')
-            SeaOfStarsAW.ut_device(labelContains="关注").click()
-            time.sleep(1)
-            SeaOfStarsAW.ut_device.click(0.264, 0.238)
+            # SeaOfStarsAW.ut_device(labelContains="关注").click()
+            # time.sleep(1)
+            SeaOfStarsAW.ut_device.click(0.27, 0.275)
             time.sleep(2)
 
             # 5、点击底部输入框，等待2s

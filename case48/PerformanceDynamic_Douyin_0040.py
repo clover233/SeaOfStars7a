@@ -139,7 +139,7 @@ class PerformanceDynamic_Douyin_0040(Case):
             SeaOfStarsAW.trace_thread.add_log('抖音', '15、搜索华为P70')
             SeaOfStarsAW.ut_device.click(0.356, 0.093)
             time.sleep(1)
-            SeaOfStarsAW.ut_device().set_text("华为P70")
+            SeaOfStarsAW.ut_device.send_keys("华为P70")
             time.sleep(2)
             SeaOfStarsAW.ut_device.click(0.922, 0.097)
             time.sleep(2)
@@ -222,9 +222,10 @@ class PerformanceDynamic_Douyin_0040(Case):
                 time.sleep(2)
 
             # 27、返回home页，等待2s
-            SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.ugc.Aweme')
+
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
             SeaOfStarsAW.stop_trace()
+            SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.ugc.Aweme')
 
         logging.info('用例执行结束')
