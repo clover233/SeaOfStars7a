@@ -60,6 +60,7 @@ class PerformanceDynamic_qiyi_0010(Case):
             SeaOfStarsAW.ut_device.click(0.05, 0.075)
             time.sleep(2)
             logging.info('点击热点')
+            SeaOfStarsAW.trace_thread.add_log('爱奇艺', '点击热点')
             SeaOfStarsAW.ut_device(label='热点').click()
             time.sleep(3)
             logging.info('点击首页')  # 右滑无法切换tab

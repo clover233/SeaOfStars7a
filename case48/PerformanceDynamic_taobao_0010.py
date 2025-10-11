@@ -89,9 +89,14 @@ class PerformanceDynamic_taobao_0010(Case):
             logging.info('点击输入框，输入你好')
             SeaOfStarsAW.ut_device.click(0.376, 0.92)
             time.sleep(1)
+
+            SeaOfStarsAW.trace_thread.add_log('淘宝', '输入你好')
             SeaOfStarsAW.ut_device.send_keys('你好')
             time.sleep(2)
-            SeaOfStarsAW.ut_device(label='发送').click()
+
+            SeaOfStarsAW.trace_thread.add_log('淘宝', '发送信息')
+            SeaOfStarsAW.ut_device.click(0.912, 0.892)
+            # SeaOfStarsAW.ut_device(label='发送').click()
             time.sleep(2)
             logging.info('点击加号')
             SeaOfStarsAW.ut_device.click(0.926, 0.585)

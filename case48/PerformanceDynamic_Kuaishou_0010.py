@@ -109,8 +109,8 @@ class PerformanceDynamic_Kuaishou_0010(Case):
             time.sleep(2)
             SeaOfStarsAW.ut_device.swipe_right()
             time.sleep(2)
-            SeaOfStarsAW.ut_device(labelContains="精选").click()
-            time.sleep(2)
+            # SeaOfStarsAW.ut_device(labelContains="精选").click()
+            # time.sleep(2)
 
             # 11、返回home界面，2s
             SeaOfStarsAW.trace_thread.add_log('快手', '11、返回home界面，2s')
