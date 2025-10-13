@@ -67,12 +67,11 @@ class PerformanceDynamic_qiyi_0070(Case):
                 time.sleep(1)
 
             logging.info('返回首页')
-            SeaOfStarsAW.ut_device.click(0.052, 0.088)
-            # SeaOfStarsAW.ut_device(label='返回').click()
-            # time.sleep(2)
-            # logging.info('点击我的')
-            # SeaOfStarsAW.ut_device(label='我的').click()
-            # time.sleep(2)
+            SeaOfStarsAW.ut_device.swipe(0.010, 0.809, 0.933, 0.805, 0.2)
+            time.sleep(2)
+            logging.info('点击我的')
+            SeaOfStarsAW.ut_device.click(0.893, 0.938, 0.20)
+            time.sleep(2)
             logging.info('上滑退出')
 
             SeaOfStarsAW.trace_thread.add_log('爱奇艺', '3、上滑退出')
