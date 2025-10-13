@@ -35,7 +35,7 @@ from case48.PerformanceDynamic_Bilibili_0050 import PerformanceDynamic_Bilibili_
 # from case48.PerformanceDynamic_Browser_0020 import PerformanceDynamic_Browser_0020
 # from case48.PerformanceDynamic_Call_0010 import PerformanceDynamic_Call_0010
 # from case48.PerformanceDynamic_Call_0020 import PerformanceDynamic_Call_0020
-# 云闪付
+from case48.PerformanceDynamic_CloudFlashPay_0010 import PerformanceDynamic_CloudFlashPay_0010
 # 大众点评
 from case48.PerformanceDynamic_Dingding_0010 import PerformanceDynamic_Dingding_0010
 from case48.PerformanceDynamic_Dingding_0020 import PerformanceDynamic_Dingding_0020
@@ -507,7 +507,7 @@ Basic2 = [
     # PerformanceDynamic_dazhongdianping_0010,
     # PerformanceDynamic_dazhongdianping_0020,
     # PerformanceDynamic_Photo_0030,
-    # PerformanceDynamic_CloudFlashPay_0010,
+    PerformanceDynamic_CloudFlashPay_0010,
     # PerformanceDynamic_Launcher_0020,
     PerformanceDynamic_weixin_0050,
     # PerformanceDynamic_Beiwanglu_AI_0010,
@@ -529,7 +529,7 @@ Basic2 = [
     # PerformanceDynamic_weather_0010,
     # PerformanceDynamic_huaweiRiLi_0010,
     # PerformanceDynamic_DHshuiyinCamera_0010,
-    # PerformanceDynamic_CloudFlashPay_0010,
+    PerformanceDynamic_CloudFlashPay_0010,
     PerformanceDynamic_weixin_0020,
     PerformanceDynamic_qunaer_0020,
     PerformanceDynamic_xiechengTrip_0020,
@@ -887,10 +887,9 @@ test_case =[
 ]
 
 
-Basics=[test_case]
+# Basics=[test_case]
 # Basics=[Basic5,Basic4,Basic3,Basic2,Basic1]
-# Basics=[Basic1]
-# test = [all_cases,]
+Basics=[Basic2]
 
 
 # 按装订区域中的绿色按钮以运行脚本。
