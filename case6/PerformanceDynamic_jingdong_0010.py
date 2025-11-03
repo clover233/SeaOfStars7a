@@ -35,19 +35,22 @@ class PerformanceDynamic_jingdong_0010(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            # todo 后续放开log
             SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
                                      self.screenshot_dir_path)
+            logging.info('静置')
+            SeaOfStarsAW.trace_thread.add_log('京东', '静置')
+            time.sleep(5)
+
 
             # 1、启动京东，等待3s
             logging.info('启动京东')
             SeaOfStarsAW.trace_thread.add_log('京东', '启动京东，等待3s')
-            # todo 微博的坐标地址要改下
             SeaOfStarsAW.ut_device.session().app_activate('com.360buy.jdmobile')
             time.sleep(3)
             time.sleep(2)
 
             # 2、首页浏览，上滑5次，下滑5次，每次停留2s
+            logging.info('2、首页浏览，上滑5次，下滑5次')
             SeaOfStarsAW.trace_thread.add_log('京东', '首页浏览，上滑5次，下滑5次，每次停留2s')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -57,23 +60,30 @@ class PerformanceDynamic_jingdong_0010(Case):
                 time.sleep(2)
 
             # 3、点击顶部手机数码，等待2s
+            logging.info('3、点击顶部手机数码')
             SeaOfStarsAW.trace_thread.add_log('京东', '点击顶部手机数码，等待2s-浏览')
             SeaOfStarsAW.ut_device(labelContains="首页").click()
             time.sleep(1)
             SeaOfStarsAW.ut_device.click(0.399, 0.188)
             time.sleep(2)
+
             # 4、手机数码界面浏览，上滑5次，下滑5次，每次停留2s
+            logging.info('4、手机数码界面浏览')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
 
             # 5、点击底部分类，等待2s
+            logging.info('5、点击底部分类')
             SeaOfStarsAW.trace_thread.add_log('京东', '点击底部分类，等待2s-浏览')
             SeaOfStarsAW.ut_device(labelContains="分类").click()
             time.sleep(2)
+
             # 6、分类页面浏览，上滑5次，下滑5次，每次停留2s
+            logging.info('6、分类页面浏览，上滑5次，下滑5次')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
@@ -82,32 +92,44 @@ class PerformanceDynamic_jingdong_0010(Case):
                 time.sleep(2)
 
             # 7、点击左侧电脑，等待2s
+            logging.info('7、点击左侧电脑')
             SeaOfStarsAW.trace_thread.add_log('京东', '点击左侧电脑，等待2s-浏览')
             SeaOfStarsAW.ut_device.click(0.138, 0.535)
             time.sleep(2)
+
             # 8、电脑页面浏览，上滑5次、下滑5次，等待2s
+            logging.info('8、电脑页面浏览，上滑5次、下滑5次')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
+                time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
-            time.sleep(2)
+                time.sleep(2)
+
             # 9、点击第一类商品进入，等待2s
+            logging.info('9、点击第一类商品进入')
             SeaOfStarsAW.trace_thread.add_log('京东', '点击第一类商品进入，等待2s-浏览')
             SeaOfStarsAW.ut_device.click(0.633, 0.587)
             time.sleep(2)
+
             # 10、浏览商品页，上滑5次，下滑5次，每次停留2s
+            logging.info('10、浏览商品页，上滑5次，下滑5次，每次停留2s')
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
             for i in range(5):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
+
             # 11、返回首页等待2s
+            logging.info('11、返回首页等待2s')
             SeaOfStarsAW.trace_thread.add_log('京东', '返回首页等待2s')
             for i in range(3):
                 SeaOfStarsAW.ut_device.swipe(0.005, 0.585, 0.999, 0.585, 1.0)
-            time.sleep(2)
+                time.sleep(2)
+
             # 12、返回home页，等待2s
+            logging.info('返回home页')
             SeaOfStarsAW.ut_device.home()
             SeaOfStarsAW.ut_device.app_terminate('com.360buy.jdmobile')
             time.sleep(2)
