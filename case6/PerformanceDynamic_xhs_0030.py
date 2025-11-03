@@ -37,13 +37,15 @@ class PerformanceDynamic_xhs_0030(Case):
             step = 0
             SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
                                      self.screenshot_dir_path)
+            logging.info('静置')
+            SeaOfStarsAW.trace_thread.add_log('小红书', '静置')
+            time.sleep(5)
 
             step1 = "'1、打开小红书,等待10s'"
             logging.info('启动小红书')
             SeaOfStarsAW.trace_thread.add_log('小红书', step1)
-            SeaOfStarsAW.ut_device.swipe_left()
-            SeaOfStarsAW.ut_device.click(0.149, 0.714)
-            time.sleep(6)
+            SeaOfStarsAW.ut_device.session().app_activate('com.xingin.discover')
+            time.sleep(10)
 
             step2 = "2、点击右上角 搜索"
             SeaOfStarsAW.trace_thread.add_log('小红书', step2)
