@@ -37,6 +37,10 @@ class PerformanceDynamic_Douyin_0010(Case):
             step = 0
             SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
                                      self.screenshot_dir_path)
+            logging.info('静置')
+            SeaOfStarsAW.trace_thread.add_log('抖音', '静置')
+            time.sleep(5)
+
 
             # 1、点击进入抖音，启动5s，等待2s
             logging.info('点击进入抖音，启动5s，等待2s')
@@ -44,177 +48,61 @@ class PerformanceDynamic_Douyin_0010(Case):
             SeaOfStarsAW.ut_device.session().app_activate('com.ss.iphone.ugc.Aweme')
             time.sleep(5)
 
-            # 2、浏览推荐视频10s
-            logging.info('浏览推荐视频10s')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '浏览推荐视频10s')
-            time.sleep(10)
-
-            # 3、上下切换视频，切换2s，切换5次
-            logging.info('')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '')
-            for i in range(5):
+            # 2、浏览推荐视频3次
+            logging.info('浏览推荐视频3次')
+            for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
-                time.sleep(2)
+                time.sleep(10)
 
-            # 4、点击当前视频的up主头像进入主页
-            logging.info('')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '')
-            SeaOfStarsAW.ut_device.click(0.927, 0.502)
-            time.sleep(2)
-
-            # 5、返回抖音首页
-            logging.info('')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '')
-            SeaOfStarsAW.ut_device.swipe(0.010, 0.809, 0.933, 0.805, 0.5)
-            time.sleep(2)
-
-            # 6、点击我-关注，点击胡锡进头像查看博主主页信息，等待2s
-            logging.info('6、点击我-关注，点击胡锡进头像查看博主主页信息')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '点击关注，查看胡锡进主页')
-            SeaOfStarsAW.ut_device.click(0.904, 0.933, 0.2)
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.349, 0.358, 0.2)
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.117, 0.447, 0.2)
-            time.sleep(2)
-
-            # 7、上滑5次、下滑5次，等待2s
-            logging.info('7、上滑5次、下滑5次')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '7、上滑5次、下滑5次')
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe_up()
-                time.sleep(2)
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe_down()
-                time.sleep(2)
-
-            # 8、点击播放博主的第一个视频，浏览15s
-            logging.info('8、点击播放博主的第一个视频')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '点击播放博主第一个视频，浏览评论')
-            SeaOfStarsAW.ut_device.click(0.178, 0.692)
-            time.sleep(15)
-
-            # 9、点击视频评论按钮
-            logging.info('9、点击视频评论按钮')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '9、点击视频评论按钮')
+            # 3、点击视频评论按钮
+            logging.info('3、点击视频评论按钮')
+            SeaOfStarsAW.trace_thread.add_log('抖音', '3、点击视频评论按钮')
             SeaOfStarsAW.ut_device.click(0.93, 0.603)
             time.sleep(2)
 
-            # 10、滑动浏览评论，上滑5次，下滑5次，每次停留2s
-            logging.info('10、滑动浏览评论，上滑5次，下滑5次')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '10、滑动浏览评论，上滑5次，下滑5次')
-            for i in range(5):
+            # 4、浏览推荐视频3次，2s
+            logging.info('4、浏览推荐视频评论')
+            SeaOfStarsAW.trace_thread.add_log('抖音', '4、浏览推荐视频评论')
+            SeaOfStarsAW.ut_device.click(0.494, 0.212)
+            for i in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
                 time.sleep(2)
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe_down()
-                time.sleep(2)
 
-            # 11、左滑返回博主主页，1s
-            logging.info('11、左滑返回博主主页')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '11、左滑返回博主主页')
-            for i in range(2):
-                SeaOfStarsAW.ut_device.swipe(0.010, 0.809, 0.933, 0.805, 0.5)
-                time.sleep(2)
-
-            # 12、点击播放第二个视频，浏览15s
-            SeaOfStarsAW.trace_thread.add_log('抖音', '点击播放博主第二个视频，浏览评论')
-            SeaOfStarsAW.ut_device.click(0.501, 0.687)
-            time.sleep(15)
-
-            # 13、点击视频评论按钮
-            logging.info('13、点击视频评论按钮')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '13、点击视频评论按钮')
+            # 5、点击评论按钮浏览
+            logging.info('5、点击评论按钮浏览')
+            SeaOfStarsAW.trace_thread.add_log('抖音', '5、点击评论按钮浏览')
             SeaOfStarsAW.ut_device.click(0.93, 0.603)
             time.sleep(2)
 
-            # 14、滑动浏览评论，上滑5次，下滑5次，每次停留2s
-            logging.info('14、滑动浏览评论，上滑5次，下滑5次')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '14、滑动浏览评论，上滑5次，下滑5次')
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe_up()
-                time.sleep(2)
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe_down()
-                time.sleep(2)
-
-            # 15、左滑返回博主主页，1s
-            logging.info('15、左滑返回博主主页')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '15、左滑返回博主主页')
-            for i in range(2):
-                SeaOfStarsAW.ut_device.swipe_right()
-                time.sleep(2)
-
-            # 16、点击播放第三个视频，浏览15s
-            logging.info('16、点击播放第三个视频')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '点击播放博主第三个视频，浏览评论')
-            SeaOfStarsAW.ut_device.click(0.833, 0.684)
-            time.sleep(15)
-
-            # 17、点击视频评论按钮
-            logging.info('17、点击视频评论按钮')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '17、点击视频评论按钮')
-            SeaOfStarsAW.ut_device.click(0.93, 0.603)
+            # 6、点击输入框
+            logging.info('6、点击输入框')
+            SeaOfStarsAW.trace_thread.add_log('抖音', '6、点击输入框')
+            SeaOfStarsAW.ut_device.click(0.221, 0.929)
             time.sleep(2)
 
-            # 18、滑动浏览评论，上滑5次，下滑5次，每次停留2s
-            logging.info('18、滑动浏览评论，上滑5次，下滑5次')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '18、滑动浏览评论，上滑5次，下滑5次')
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe_up()
-                time.sleep(2)
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe_down()
-                time.sleep(2)
-
-            # 19、左滑返回博主主页，1s
-            logging.info('19、左滑返回博主主页')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '19、左滑返回博主主页')
-            for i in range(2):
-                SeaOfStarsAW.ut_device.swipe_right()
-                time.sleep(2)
-
-            # 20、左滑两次返回"我的"主页，等待2s
-            logging.info('20、左滑两次返回"我的"主页，等待2s')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '20、左滑两次返回"我的"主页，等待2s')
-            for i in range(2):
-                SeaOfStarsAW.ut_device.swipe_right()
-                time.sleep(2)
-
-            # 21、点击右上方拓展按钮，点击进入观看历史
-            logging.info('21、点击右上方拓展按钮，点击进入观看历史')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '21、点击右上方拓展按钮，点击进入观看历史')
-            SeaOfStarsAW.ut_device.click(0.924, 0.089)
-            time.sleep(1)
-            SeaOfStarsAW.ut_device.click(0.383, 0.251)
+            # 7、输入“我是评论ABC”
+            logging.info('7、输入“我是评论ABC”')
+            SeaOfStarsAW.trace_thread.add_log('抖音', '7、输入“我是评论ABC”')
+            SeaOfStarsAW.ut_device().set_text("我是评论ABC")
             time.sleep(1)
 
-            # 22、浏览观看历史，上滑5次，下滑5次，每次停留2s
-            logging.info('22、浏览观看历史，上滑5次，下滑5次，每次停留2s')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '22、浏览观看历史，上滑5次，下滑5次，每次停留2s')
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe_up()
-                time.sleep(2)
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe_down()
-                time.sleep(2)
-
-            # 23、点击首页，返回推荐页面，2s
-            logging.info('23、点击首页，返回推荐页面')
-            SeaOfStarsAW.trace_thread.add_log('抖音', '23、点击首页，返回推荐页面')
-            for i in range(2):
-                SeaOfStarsAW.ut_device.swipe_right()
-                time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.097, 0.934)
+            # 8、点击发送
+            logging.info('8、点击发送')
+            SeaOfStarsAW.trace_thread.add_log('抖音', '8、点击发送')
+            SeaOfStarsAW.ut_device.click(0.91, 0.532)
             time.sleep(2)
 
-            # 24、返回home页，等待2s
+            # 9、返回推荐视频
+            logging.info('9、返回推荐视频')
+            SeaOfStarsAW.trace_thread.add_log('抖音', '9、返回推荐视频')
+            time.sleep(1)
+
+            # 10、返回home页，等待2s
+            logging.info('10、返回home页')
+            SeaOfStarsAW.trace_thread.add_log('抖音', '10、返回home页')
             SeaOfStarsAW.ut_device.app_terminate('com.ss.iphone.ugc.Aweme')
             SeaOfStarsAW.swipe_to_launcher()
             SeaOfStarsAW.go_home()
             SeaOfStarsAW.stop_trace()
-
-
 
         logging.info('用例执行结束')
