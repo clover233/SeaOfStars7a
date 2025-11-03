@@ -36,6 +36,9 @@ class PerformanceDynamic_Alipay_0010(Case):
             step = 0
             SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
                                      self.screenshot_dir_path)
+            logging.info('静置')
+            SeaOfStarsAW.trace_thread.add_log('支付宝', '静置')
+            time.sleep(5)
 
             # 1、启动支付宝
             logging.info('1、启动支付宝')
@@ -95,7 +98,7 @@ class PerformanceDynamic_Alipay_0010(Case):
             # 9、转账
             logging.info('9、转账')
             SeaOfStarsAW.trace_thread.add_log('支付宝', '转账')
-            SeaOfStarsAW.ut_device.click(0.261, 0.875, 0.2)
+            SeaOfStarsAW.ut_device.click(0.473, 0.791, 0.2)
             time.sleep(1)
 
             # 10、转到银行卡
