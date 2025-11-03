@@ -37,15 +37,16 @@ class PerformanceDynamic_weixin_0090(Case):
             step = 0
             SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
                                      self.screenshot_dir_path)
-
+            logging.info('静置')
+            SeaOfStarsAW.trace_thread.add_log('微信', '静置')
+            time.sleep(5)
 
             logging.info('启动微信')
             SeaOfStarsAW.trace_thread.add_log('微信', '启动微信')
-            SeaOfStarsAW.ut_device.swipe_left()
-            time.sleep(2)
-            SeaOfStarsAW.ut_device.click(0.598, 0.598)
+            SeaOfStarsAW.ut_device.session().app_activate('com.tencent.xin')
             logging.info('等待5s')
             time.sleep(5)
+
             SeaOfStarsAW.trace_thread.add_log('微信', '搜索华为手机')
             logging.info('点击搜索框')
             SeaOfStarsAW.ut_device.click(0.473, 0.125)
@@ -54,21 +55,26 @@ class PerformanceDynamic_weixin_0090(Case):
             time.sleep(2)
             SeaOfStarsAW.ut_device(label='搜索').click()
             time.sleep(2)
+
             logging.info('返回')
             SeaOfStarsAW.ut_device.click(0.052, 0.103)
             time.sleep(2)
             SeaOfStarsAW.trace_thread.add_log('微信', '扫一扫')
+
             logging.info('点击右上角+号')
             SeaOfStarsAW.ut_device.click(0.933, 0.075)
             time.sleep(2)
+
             logging.info('点击扫一扫')
             SeaOfStarsAW.ut_device.click(0.772, 0.27)
             # SeaOfStarsAW.ut_device(label='扫一扫').click()
             time.sleep(2)
+
             logging.info('点击相册')
             SeaOfStarsAW.ut_device.click(0.883, 0.817)
             time.sleep(2)
             SeaOfStarsAW.trace_thread.add_log('微信', '扫一扫相册浏览')
+
             logging.info('上滑3次，下滑3次')
             for _ in range(3):
                 SeaOfStarsAW.ut_device.swipe_up()
@@ -76,16 +82,20 @@ class PerformanceDynamic_weixin_0090(Case):
             for _ in range(3):
                 SeaOfStarsAW.ut_device.swipe_down()
                 time.sleep(2)
+
             logging.info('侧滑返回')
             SeaOfStarsAW.ut_device(label='关闭').click()
             time.sleep(2)
+
             logging.info('侧滑返回首页')
             SeaOfStarsAW.ut_device(label='关闭').click()
             time.sleep(2)
             SeaOfStarsAW.trace_thread.add_log('微信', '收付款')
+
             logging.info('点击右上角+号')
             SeaOfStarsAW.ut_device.click(0.933, 0.075)
             time.sleep(2)
+
             logging.info('点击收付款')
             SeaOfStarsAW.ut_device(label='收付款').click()
             time.sleep(2)
@@ -95,10 +105,12 @@ class PerformanceDynamic_weixin_0090(Case):
             logging.info('侧滑返回')
             SeaOfStarsAW.ut_device(label='返回').click()
             time.sleep(2)
+
             logging.info('侧滑返回首页')
             SeaOfStarsAW.trace_thread.add_log('微信', '返回桌面')
             # SeaOfStarsAW.ut_device(label='返回').click()
             time.sleep(2)
+
             logging.info('返回桌面')
             SeaOfStarsAW.ut_device.home()
             time.sleep(2)
