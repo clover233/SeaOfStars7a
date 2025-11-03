@@ -33,10 +33,8 @@ class PerformanceDynamic_58city_0020(Case):
 
         for test_time in range(0, self.TEST_TIME):
             step = 0
-            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
-                                     self.screenshot_dir_path)
-
-            # 1.启动58同城
+            SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),self.screenshot_dir_path)
+               # 1.启动58同城
             logging.info('1、应用启动')
             SeaOfStarsAW.trace_thread.add_log('58同城', '应用启动')
             SeaOfStarsAW.ut_device.session().app_activate('com.taofang.iphone')
