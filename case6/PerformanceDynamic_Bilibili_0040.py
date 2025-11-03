@@ -34,11 +34,16 @@ class PerformanceDynamic_Bilibili_0040(Case):
             step = 0
             SeaOfStarsAW.start_trace(self.trace_dir_path, self.__class__.__name__, 'step_' + str(step),
                                      self.screenshot_dir_path)
+            logging.info('静置')
+            SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '静置')
+            time.sleep(5)
+
 
             # 1、启动哔哩哔哩
             logging.info('1、应用启动')
             SeaOfStarsAW.trace_thread.add_log('哔哩哔哩', '应用启动')
             SeaOfStarsAW.ut_device.session().app_activate('tv.danmaku.bilianime')
+            time.sleep(5)
 
             # 2、点击搜索框
             logging.info('点击搜索框')
