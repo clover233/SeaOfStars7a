@@ -5,7 +5,9 @@ import re
 import shlex
 import shutil
 import subprocess
+import threading
 import time
+import json
 from functools import wraps
 import chardet
 from threading import Timer
@@ -24,21 +26,80 @@ class SeaOfStarsAW:
         EMUI = 1
         XIAOMI = 2
 
+    class PerfettoThread(threading.Thread):
+
+        def __init__(self, ):
+            threading.Thread.__init__(self)
+            self.isLetPerfettoRun = False
+            self.isPerfettoRunning = False
+
+        def start_perfetto(self, trace_dir, trace_name):
+            self.save_path = trace_dir
+            self.save_name = trace_name
+            self.isLetPerfettoRun = True
+
+        def stop_perfetto(self):
+            self.isLetPerfettoRun = False
+            while self.isPerfettoRunning:
+                time.sleep(1)
+                logging.info("等待trace抓取结束中...")
+
+        def run(self):
+            logging.info("trace线程开始运行")
+            while 1:
+                while self.isLetPerfettoRun:
+                    self.isPerfettoRunning = True
+                    # 开始抓取trace
+                    logging.info("trace线程开始抓取trace")
+                    SeaOfStarsAW.adb_cmd(r'adb shell "setprop persist.traced.enable 1"')
+                    SeaOfStarsAW.adb_cmd(r'adb shell "echo 0 > /d/tracing/tracing_on"')
+                    time.sleep(1)
+                    SeaOfStarsAW.adb_cmd(r'adb shell rm /data/misc/perfetto-traces/trace')
+                    SeaOfStarsAW.trace_start_timestamp = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+                    SeaOfStarsAW.adb_cmd(
+                        "adb push {} {}".format(os.path.join("Resources", "perfetto.pbtxt"), "/data/local/tmp/"))
+                    SeaOfStarsAW.adb_cmd(
+                        'adb shell "cat /data/local/tmp/perfetto.pbtxt | perfetto --txt -c - -o /data/misc/perfetto-traces/trace --detach=perf_debug"')
+                    # 抓取15秒的trace
+                    for i in range(30):
+                        time.sleep(0.5)
+                        if not self.isLetPerfettoRun:
+                            break
+                    # 抓取trace完成,导出trace
+                    SeaOfStarsAW.adb_cmd(r'adb shell "perfetto --attach=perf_debug --stop"')
+                    time.sleep(1)
+                    time_stamp = time.strftime("%H%M%S", time.localtime())
+                    trace_name = "{}-{}_{}.trace".format(self.save_name, SeaOfStarsAW.trace_start_timestamp,
+                                                            time_stamp)
+                    SeaOfStarsAW.adb_cmd(r'adb pull /data/misc/perfetto-traces/trace ' + self.save_path,
+                                         is_print_return=False)
+                    time.sleep(1)
+                    os.rename(os.path.join(self.save_path, "trace"), os.path.join(self.save_path, trace_name))
+                    time.sleep(1)
+                    logging.info("{}抓取结束,当前温度:{}℃".format(trace_name, SeaOfStarsAW.get_current_tempreture()))
+                    self.isPerfettoRunning = False
+                time.sleep(0.5)
+
+
     SN = '9a08f'
-    ut_device: Device = u2.connect(r'9a08f')
+    ut_device:Device = u2.connect(r'9a08f')
+    ADB_PROC = None
     shell_temp_path = None
     device_type = DeviceType.HISI
     device_info = {}
     trace_start_timestamp = None
     public_screen_shot_dir = None
+    # 用于抓取非关键场景的perfetto trace, 用于统计丢帧数
+    perfetto_thread: PerfettoThread = PerfettoThread()
+
 
     @staticmethod
     def function_log(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            logging.info("{0:=^40}".format(" " + func.__name__ + " 开始执行 "))
+            logging.debug("{0:=^40}".format(" " + func.__name__ + " 开始执行 "))
             res = func(*args, **kwargs)
-            logging.info("{0:=^40}".format(" " + func.__name__ + " 执行结束 "))
+            logging.debug("{0:=^40}".format(" " + func.__name__ + " 执行结束 "))
             return res
 
         return wrapper
@@ -136,6 +197,18 @@ class SeaOfStarsAW:
         SeaOfStarsAW.adb_cmd(r'adb install {}'.format(os.path.join(".", "Resources", "ADBKeyboard.apk")))
         SeaOfStarsAW.adb_cmd(r'adb shell ime enable com.android.adbkeyboard/.AdbIME')
         SeaOfStarsAW.adb_cmd(r'adb shell ime set com.android.adbkeyboard/.AdbIME')
+        # 空闲Perfetto线程开始执行,但未开始抓取
+        SeaOfStarsAW.perfetto_thread.setDaemon(True)
+        SeaOfStarsAW.perfetto_thread.start()
+        # 初始化hiperfetto - 抓取温度信息
+        SeaOfStarsAW.adb_cmd(
+            r"adb push {} {}".format(os.path.join(".", "Resources", "hiperfetto"), "/data/local/tmp"),
+            is_print_return=False)
+        SeaOfStarsAW.adb_cmd(r'adb shell "chmod 777 /data/local/tmp/*"')
+        # 初始化adb窗口供swipe命令复用
+        if not SeaOfStarsAW.ADB_PROC:
+            SeaOfStarsAW.ADB_PROC = subprocess.Popen("adb -s " + SeaOfStarsAW.SN +" shell", stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
         return True
 
     @staticmethod
@@ -159,7 +232,7 @@ class SeaOfStarsAW:
         str_cmd = str_cmd.replace("adb", "adb -s " + SeaOfStarsAW.SN)
         while time_count < time_out:
             try:
-                logging.info(str_cmd)
+                logging.debug(str_cmd)
                 if platform.system() == "Windows":
                     proc = subprocess.Popen(str_cmd, stdout=subprocess.PIPE,
                                             stderr=subprocess.PIPE)
@@ -197,9 +270,9 @@ class SeaOfStarsAW:
                                 if stdout:
                                     cmd_return += str(stderr)
                                 if is_print_return:
-                                    logging.info("执行返回值:\n" + cmd_return)
+                                    logging.debug("执行返回值:\n" + cmd_return)
                                 # 正常结束
-                                logging.info("cmd takes %s Seconds.", str(float('%.1f' % (time_end - time_start))))
+                                logging.debug("cmd takes %s Seconds.", str(float('%.1f' % (time_end - time_start))))
                                 time_count = time_out
                     except Exception as err:
                         logging.error(err)
@@ -238,7 +311,7 @@ class SeaOfStarsAW:
         str_cmd = " ".join(cmd)
         while time_count < time_out:
             try:
-                logging.info(str_cmd)
+                logging.debug(str_cmd)
                 if platform.system() == "Windows":
                     proc = subprocess.Popen(str_cmd, stdout=subprocess.PIPE,
                                             stderr=subprocess.PIPE)
@@ -275,9 +348,9 @@ class SeaOfStarsAW:
                             if stdout:
                                 cmd_return += str(stderr)
                             if is_print_return:
-                                logging.info("执行返回值:\n" + cmd_return)
+                                logging.debug("执行返回值:\n" + cmd_return)
                             # 正常结束
-                            logging.info("cmd takes %s Seconds.", str(float('%.1f' % (time_end - time_start))))
+                            logging.debug("cmd takes %s Seconds.", str(float('%.1f' % (time_end - time_start))))
                             time_count = time_out
                 except Exception as err:
                     logging.error(err)
@@ -461,8 +534,8 @@ class SeaOfStarsAW:
         :return:
             None
         """
-        SeaOfStarsAW.adb_cmd('adb shell settings put system screen_off_timeout 1800000')
-        # SeaOfStarsAW.adb_cmd('adb shell settings put system screen_off_timeout 6000000')
+        # SeaOfStarsAW.adb_cmd('adb shell settings put system screen_off_timeout 1800000')
+        SeaOfStarsAW.adb_cmd('adb shell settings put system screen_off_timeout 6000000')
         SeaOfStarsAW.adb_cmd('adb shell settings get system screen_off_timeout')
         time.sleep(1)
 
@@ -610,7 +683,8 @@ class SeaOfStarsAW:
 
     @staticmethod
     @Device_Init_Check
-    def screen_shot(save_dir_path, case_name, scene_name, time_stamp):
+    def screen_shot(save_dir_path,
+                    case_name, scene_name, time_stamp):
         """
         截图
 
@@ -636,6 +710,8 @@ class SeaOfStarsAW:
         :return:
             None
         """
+        # 停止空闲perfetto抓取
+        SeaOfStarsAW.perfetto_thread.stop_perfetto()
         # 初始化trace抓取
         SeaOfStarsAW.adb_cmd(r'adb shell "setprop persist.traced.enable 1"')
         SeaOfStarsAW.adb_cmd(r'adb shell "echo 0 > /d/tracing/tracing_on"')
@@ -655,7 +731,7 @@ class SeaOfStarsAW:
 
     @staticmethod
     @Device_Init_Check
-    def stop_and_get_perfetto_trace(trace_path, case_name, scene_name, screenshot_dir_path, is_screen_shot=True):
+    def stop_and_get_perfetto_trace(trace_path, case_name, scene_name, next_scene_name, screenshot_dir_path, is_screen_shot=True):
         """
         结束抓取perfetto trace
 
@@ -678,6 +754,12 @@ class SeaOfStarsAW:
         logging.info("{}抓取结束,当前温度:{}℃".format(trace_name, SeaOfStarsAW.get_current_tempreture()))
         if is_screen_shot and screenshot_dir_path:
             SeaOfStarsAW.screen_shot(screenshot_dir_path, case_name, scene_name, time_stamp)
+        # 开始抓取空闲Perfetto thread
+
+        if "-LAST" not in next_scene_name:
+            SeaOfStarsAW.perfetto_thread.start_perfetto(trace_path, "{}-{}-PRE".format(case_name, next_scene_name))
+        else:
+            SeaOfStarsAW.perfetto_thread.start_perfetto(trace_path, "{}-{}".format(case_name, next_scene_name))
 
     @staticmethod
     @Device_Init_Check
@@ -718,7 +800,6 @@ class SeaOfStarsAW:
     @staticmethod
     @Device_Init_Check
     def find_app_from_launcher(app_chinese_name, time_out=60):
-    # def find_app_from_launcher(app_chinese_name, time_out=30):
         """
         在launcher的应用程序抽屉找到app图标，注意: 需要系统语言为中文
 
@@ -730,7 +811,7 @@ class SeaOfStarsAW:
         # 回到桌面主页
         print(SeaOfStarsAW.ut_device.exists(text=app_chinese_name))
         SeaOfStarsAW.return_launcher()
-        # SeaOfStarsAW.return_launcher()
+        SeaOfStarsAW.return_launcher()
         logging.info("桌面启动{}应用".format(app_chinese_name))
         if SeaOfStarsAW.device_type == SeaOfStarsAW.DeviceType.HISI:
             SeaOfStarsAW.ut_device(scrollable=True).fling()
@@ -751,8 +832,8 @@ class SeaOfStarsAW:
             time_start = time.time()
             while not SeaOfStarsAW.ut_device.exists(text=app_chinese_name) and (time.time() - time_start) < time_out:
                 SeaOfStarsAW.swipe_right()
-                time_stamp = time.strftime("%H%M%S", time.localtime())
-                SeaOfStarsAW.screen_shot(SeaOfStarsAW.public_screen_shot_dir, app_chinese_name, "find_app_from_launcher", time_stamp)
+                # time_stamp = time.strftime("%H%M%S", time.localtime())
+                # SeaOfStarsAW.screen_shot(SeaOfStarsAW.public_screen_shot_dir, app_chinese_name, "find_app_from_launcher", time_stamp)
             time.sleep(1)
             if SeaOfStarsAW.ut_device.exists(text=app_chinese_name):
                 return SeaOfStarsAW.ut_device(text=app_chinese_name).center()
@@ -781,14 +862,30 @@ class SeaOfStarsAW:
         SeaOfStarsAW.ut_device.swipe(300, 1500, 600, 1500, 0.03)
         time.sleep(sleep_time)
 
-
-
     @staticmethod
     @Device_Init_Check
     def swipe_right(sleep_time=5):
         logging.info("右滑{}秒".format(sleep_time))
         SeaOfStarsAW.ut_device.swipe(600, 1500, 300, 1500, 0.03)
         time.sleep(sleep_time)
+
+    @staticmethod
+    @Device_Init_Check
+    def adb_swipe(x1, y1, x2, y2, speed):
+        """
+        向设备发送adb swipe命令, 共用一个shell窗口, 避免频繁启动adb
+
+        :param
+            x1:        起点坐标x
+            y1:        起点坐标y
+            x2:        终点坐标x
+            y2:        终点坐标y
+            speed:     单位:毫秒
+        :return:
+        """
+        cmd = "input swipe {} {} {} {} {} \n".format(x1, y1, x2, y2, speed)
+        SeaOfStarsAW.ADB_PROC.stdin.write(cmd.encode())
+        SeaOfStarsAW.ADB_PROC.stdin.flush()
 
     @staticmethod
     @Device_Init_Check
@@ -801,7 +898,7 @@ class SeaOfStarsAW:
     @Device_Init_Check
     def scroll_down(sleep_time=5):
         logging.info("下滑{}秒".format(sleep_time))
-        SeaOfStarsAW.ut_device.swipe(550, 2000, 550, 500, 0.05)
+        SeaOfStarsAW.ut_device.swipe(550, 2000, 550, 500, 0.04)
         time.sleep(sleep_time)
 
     @staticmethod
@@ -872,7 +969,7 @@ class SeaOfStarsAW:
 
     @staticmethod
     @Device_Init_Check
-    def wait_tempreture_clam_down(dst_tempreture, is_screen_off=True, time_out=60*10):
+    def wait_tempreture_clam_down(dst_tempreture,is_screen_off=True, time_out=60*10):
         """
         等待手机battery温度降到指定温度,会一直sleep阻塞,超时时间60*10秒
 
@@ -935,6 +1032,42 @@ class SeaOfStarsAW:
         time.sleep(sleep_time)
 
     @staticmethod
+    def start_hiperfetto_monitor(func=None):
+        if func:
+            @wraps(func)
+            def wrapper(*args, **kwargs):
+                logging.info("开始hiperfetto注入trace")
+                SeaOfStarsAW.adb_cmd('adb remount', is_print_return=False)
+                SeaOfStarsAW.adb_cmd('adb shell "pkill hiperfetto"')
+                SeaOfStarsAW.adb_cmd(
+                    'adb shell "nohup /data/local/tmp/hiperfetto > /sdcard/hiperfetto.log"',
+                    is_nohup=True)
+                res = func(*args, **kwargs)
+                return res
+            return wrapper
+        else:
+            logging.info("开始hiperfetto注入trace")
+            SeaOfStarsAW.adb_cmd('adb remount', is_print_return=False)
+            SeaOfStarsAW.adb_cmd('adb shell "pkill hiperfetto"')
+            SeaOfStarsAW.adb_cmd(
+                'adb shell "nohup /data/local/tmp/hiperfetto > /sdcard/hiperfetto.log"',
+                is_nohup=True)
+
+    @staticmethod
+    def stop_hiperfetto_monitor(func=None):
+        if func:
+            @wraps(func)
+            def wrapper(*args, **kwargs):
+                logging.info("停止hiperfetto注入trace")
+                SeaOfStarsAW.adb_cmd('adb shell "pkill hiperfetto"')
+                res = func(*args, **kwargs)
+                return res
+            return wrapper
+        else:
+            logging.info("停止hiperfetto注入trace")
+            SeaOfStarsAW.adb_cmd('adb shell "pkill hiperfetto"')
+
+    @staticmethod
     @Device_Init_Check
     def start_hikitsbin_monitor():
         logging.info("开始记录hizee数据")
@@ -974,3 +1107,25 @@ class SeaOfStarsAW:
         SeaOfStarsAW.adb_cmd('adb shell "pkill sh /data/local/tmp/ddr.sh"')
         time.sleep(1)
         SeaOfStarsAW.adb_cmd('adb pull /data/local/tmp/ddr_info.txt {}'.format(result_dir_path))
+
+    @staticmethod
+    def check_status(**kw):
+        try:
+            for i in range(10):
+                if SeaOfStarsAW.ut_device(**kw).exists:
+                    return True
+                time_stamp = time.strftime('%H%M%S', time.localtime())
+                SeaOfStarsAW.ut_device.screenshot(
+                    SeaOfStarsAW.error_screenshot_path + '/' + SeaOfStarsAW.current_running_class_name + '_' + time_stamp + '.png')
+                raise ElementNotFoundError('未找到元素-' + json.dumps(kw, ensure_ascii=False))
+        except u2.exceptions.JSONRPCError as e:
+            logging.error(e)
+
+
+class ElementNotFoundError(Exception):
+    def __init__(self, error_info):
+        super().__init__(self)
+        self.errorInfo = error_info
+
+    def __str__(self):
+        return self.errorInfo
