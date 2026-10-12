@@ -70,8 +70,7 @@ class PerformanceDynamic_jingdong_0030(Case):
         # 解锁屏幕
         if SeaOfStarsAW.is_locked():
             SeaOfStarsAW.unlock_device()
-        # 清空后台
-        SeaOfStarsAW.stop_apps(self.all_app_package_list)
+        # 保留已有应用后台
         logging.info("测试环境准备完成!")
 
     @SeaOfStarsAW.function_log
@@ -314,7 +313,6 @@ class PerformanceDynamic_jingdong_0030(Case):
 
     @SeaOfStarsAW.function_log
     def clean_up(self):
-        logging.info("开始恢复环境!")
-        SeaOfStarsAW.stop_apps(self.all_app_package_list)
+        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
         logger = logging.getLogger()
         logger.removeHandler(self.fh)
