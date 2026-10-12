@@ -24,8 +24,8 @@ class SeaOfStarsAW:
         EMUI = 1
         XIAOMI = 2
 
-    SN = '9a08f'
-    ut_device: Device = u2.connect(r'9a08f')
+    SN = 'cff0cbff'
+    ut_device: Device = u2.connect(SN)
     shell_temp_path = None
     device_type = DeviceType.HISI
     device_info = {}
