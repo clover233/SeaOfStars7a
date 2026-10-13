@@ -9,6 +9,7 @@ from aw_new import ElementNotFoundError
 from Cases.Top48.PerformanceDynamic_fuzai import PerformanceDynamic_fuzai
 from Cases.Top48.PerformanceDynamic_alipay_0010 import PerformanceDynamic_alipay_0010
 from Cases.Top48.PerformanceDynamic_alipay_0020 import PerformanceDynamic_alipay_0020
+from Cases.Top48.PerformanceDynamic_alipay_0030 import PerformanceDynamic_alipay_0030
 from Cases.Top48.PerformanceDynamic_alipay_0070 import PerformanceDynamic_alipay_0070
 from Cases.Top48.PerformanceDynamic_autonavi_0010 import PerformanceDynamic_autonavi_0010
 from Cases.Top48.PerformanceDynamic_autonavi_0030 import PerformanceDynamic_autonavi_0030
@@ -706,7 +707,7 @@ if __name__ == "__main__":
                 case.run_case()
                 # case.clean_up()
                 succ_num += 1
-            except (ElementNotFoundError, u2.exceptions.UiObjectNotFoundError, u2.exceptions.XPathElementNotFoundError, AttributeError) as e:
+            except (ElementNotFoundError, u2.exceptions.UiObjectNotFoundError, u2.exceptions.XPathElementNotFoundError, AttributeError, RuntimeError) as e:
                 # traceback.format_exc()是整个错误的堆栈信息
                 logging.error("\n{}".format(traceback.format_exc()))
                 fail_num += 1
