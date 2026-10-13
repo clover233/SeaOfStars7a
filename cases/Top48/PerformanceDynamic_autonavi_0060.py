@@ -11,7 +11,7 @@ class PerformanceDynamic_autonavi_0060(AutonaviDynamicCase):
 
     def station_route(self):
         self.result_route('西安北站')
-        self.start_navigation()
+        self.drive()
 
     def xhs_home(self):
         self.xhs_tab('首页')
@@ -42,7 +42,7 @@ class PerformanceDynamic_autonavi_0060(AutonaviDynamicCase):
             ('启动高德地图', lambda: (self.launch(), self.amap_home()), 3),
             ('点击搜索框', self.search_page, 1),
             ('输入西安北站并搜索', self.station_search, 2),
-            ('点击第一个搜索结果的路线', lambda: self.result_route('西安北站'), 2),
+            ('点击第一个搜索结果的路线', self.station_route, 2),
             ('点击开始导航', self.start_navigation, 2),
             ('滑动返回Home页', self.home_gesture, 1),
             ('启动小红书', lambda: self.launch(self.XHS), 3),

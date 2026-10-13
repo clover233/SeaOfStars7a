@@ -204,12 +204,25 @@ class AutonaviDynamicCase(BaiduDynamicCase):
                          point(.46, .35), point(.54, .35), steps=30)
 
     def home_gesture(self):
-        self.launcher_gesture()
+        self.foreground()
+        for start, end, duration in ((.995, .62, .25), (.965, .5, .35)):
+            self.swipe_ratio(.5, start, .5, end, duration)
+            deadline = time.monotonic() + 3
+            while time.monotonic() < deadline:
+                if 'launcher' in self.current_app()['activity'].lower():
+                    return
+                time.sleep(.3)
+        # 小红书会吞掉系统边缘手势；用系统 Home 键保持返回桌面的结果。
+        self.d.press('home')
+        self.wait_for(lambda: 'launcher' in self.current_app()['activity'].lower(),
+                      '未返回系统桌面')
 
     def xhs_tab(self, title):
         self.PACKAGE = self.XHS
+        ready = (lambda: self.has(desc='首页', class_name='android.view.ViewGroup') and
+                 self.has(text='发现')) if title == '首页' else lambda: self.has(desc='已选定' + title)
         self.transition(lambda: self.click_node(text=title, class_name='android.widget.TextView'),
-                        lambda: self.has(desc='已选定' + title),
+                        ready,
                         '小红书未进入 {}'.format(title))
 
     def douyin_tab(self, title):
