@@ -1,62 +1,95 @@
-# -*- coding: utf-8 -*-
-
+"""陌陌首页、直播浏览和底部导航切换（表格第 1129～1139 行）。"""
 import logging
-import os
-import shutil
 import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
 
-class PerformanceDynamic_momo_0010(Case):
-
-    all_app_package_list = ["com.xingin.xhs"]
-
-    def __init__(self, result_path):
-        super().__init__(result_path)
-
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 判断手机上是否已安装好TOP30应用,未安装则用例失败
-        phone_app_list = SeaOfStarsAW.get_app_list()
-        for per_app in self.all_app_package_list:
-            if per_app not in phone_app_list:
-                return False
-        # 设置系统语言为中文
-        SeaOfStarsAW.set_system_language_cn()
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 设置屏幕锁定时间为10min
-        SeaOfStarsAW.set_screen_lock_long_time()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
+from Cases.Top48.dynamic_apps_common import DynamicAppCase
 
 
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        """
-        测试用例执行
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例开始执行!")
-        # SeaOfStarsAW.init_device()
-        #  todo
+class PerformanceDynamic_momo_0010(DynamicAppCase):
+    PACKAGE = 'com.immomo.momo'
+    all_app_package_list = [PACKAGE]
+    TABS = ('首页', '直播', '消息', '小宇宙', '更多')
 
-        logging.info("用例执行结束!")
+    def live_list(self):
+        return self.has(rid='live_center_layout') and not self.has(rid='phone_live_iv_quit')
 
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        """
-        清理日志，保留应用后台
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+    def tab_ready(self, name):
+        if name == '直播':
+            return self.live_list()
+        return any(n.get('selected') == 'true'
+                   for n in self.nodes(text=name, rid='tab_item_tv_label'))
+
+    def switch_tab(self, name):
+        def tap_tab():
+            if self.has(text=name, rid='tab_item_tv_label'):
+                self.click(text=name, rid='tab_item_tv_label')
+            elif self.live_list():
+                # weditor dump + 截图核对：直播列表底栏可见，但控件树缺失底栏。
+                # 五个等宽入口；点击屏幕底部 95% 处的图标，随当前分辨率换算。
+                logging.info('直播列表底栏未暴露控件，使用比例点击：%s', name)
+                self.pct((self.TABS.index(name) + .5) / len(self.TABS), .95)
+            else:
+                raise RuntimeError('陌陌导航栏不可用：{}'.format(name))
+        self.transition(tap_tab, lambda: self.tab_ready(name),
+                        '陌陌未切换到{}页'.format(name))
+
+    def launch(self):
+        self.start()
+        # 启动广告自然结束后再操作，不点击广告或聊天邀请浮层。
+        self.wait_for(lambda: self.has(rid='tab_item_tv_label') or self.live_list() or
+                      self.has(rid='phone_live_iv_quit'),
+                      '陌陌导航未就绪，请确认已登录并关闭启动弹窗', timeout=45)
+        if self.has(rid='phone_live_iv_quit'):
+            self.exit_live()
+        self.switch_tab('首页')
+        self.wait_for(lambda: self.has(text='动态', rid='tab_title'), '陌陌首页未加载')
+
+    def open_live(self):
+        self.require(rid='live_center_layout')
+        # 取当前列表从上到下、从左到右的首个完整卡片，主播名称动态变化。
+        width, height = self.d.window_size()
+        cards = [n for n in self.nodes(rid='live_center_layout')
+                 if self.bounds(n)[1] >= height * .1
+                 and self.bounds(n)[3] <= height * .92
+                 and self.bounds(n)[2] - self.bounds(n)[0] > width * .3
+                 and self.bounds(n)[3] - self.bounds(n)[1] > height * .12]
+        if not cards:
+            raise RuntimeError('直播列表没有可观看的完整卡片')
+        first = min(cards, key=lambda n: (self.bounds(n)[1], self.bounds(n)[0]))
+        self.transition(lambda: self.click_node(first),
+                        lambda: self.has(rid='phone_live_iv_quit') and self.has(rid='live_tv_star_name'),
+                        '首个直播间未打开，可能已下播')
+        time.sleep(15)
+        self.require(rid='phone_live_iv_quit')
+        self.require(rid='live_tv_star_name')
+
+    def exit_live(self):
+        def leave():
+            if self.has(text='忽略', rid='dilaog_button1'):
+                self.click(text='忽略', rid='dilaog_button1')
+            elif self.has(rid='phone_live_iv_quit'):
+                self.click(rid='phone_live_iv_quit')
+            else:
+                self.back()
+        # 首次退出可能弹“悬浮窗权限”提示，忽略即可，不进入系统授权页。
+        for _ in range(5):
+            if self.live_list():
+                return
+            leave()
+            time.sleep(1)
+        self.wait_for(self.live_list, '退出直播后未返回直播列表')
+
+    def steps(self):
+        return [
+            ('启动陌陌', self.launch, 3),
+            ('首页浏览，上滑5次，下滑5次', lambda: self.browse(5, 5), 0),
+            ('点击直播，切换到直播页', lambda: self.switch_tab('直播'), 3),
+            ('直播页浏览，上滑5次，下滑5次', lambda: self.browse(5, 5), 0),
+            ('点击第一个直播观看，等待15s', self.open_live, 0),
+            ('返回直播列表页面', self.exit_live, 2),
+            ('点击消息tab，切换到消息页', lambda: self.switch_tab('消息'), 2),
+            ('点击小宇宙tab，切换到小宇宙tab页', lambda: self.switch_tab('小宇宙'), 2),
+            ('点击更多tab，切换到更多tab页', lambda: self.switch_tab('更多'), 2),
+            ('点击首页，返回陌陌首页', lambda: self.switch_tab('首页'), 2),
+            ('上滑返回home页面', self.home, 1),
+        ]

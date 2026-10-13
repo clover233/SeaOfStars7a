@@ -1,62 +1,78 @@
-# -*- coding: utf-8 -*-
-
+"""DeepSeek 三轮对话；等待实际回答完成后再浏览。"""
 import logging
-import os
-import shutil
-import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
 
-class PerformanceDynamic_deepseek_0010(Case):
+from Cases.Top48.dynamic_apps_common import DynamicAppCase
 
-    all_app_package_list = ["com.xingin.xhs"]
 
-    def __init__(self, result_path):
-        super().__init__(result_path)
+class PerformanceDynamic_deepseek_0010(DynamicAppCase):
+    PACKAGE = 'com.deepseek.chat'
+    all_app_package_list = [PACKAGE]
+    QUESTIONS = ('什么是AI', '华为终端的主要产品有哪些', '介绍几款市面上主流的手机')
 
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 判断手机上是否已安装好TOP30应用,未安装则用例失败
-        phone_app_list = SeaOfStarsAW.get_app_list()
-        for per_app in self.all_app_package_list:
-            if per_app not in phone_app_list:
+    def launch(self):
+        self.start()
+        self.wait_for(lambda: self.has(text='发消息或按住说话') or
+                      self.d(className='android.widget.EditText', packageName=self.PACKAGE).exists,
+                      'DeepSeek 对话页未就绪，请确认已登录')
+        self.wait_for(lambda: not self.has(desc='停止'), '上一轮回答尚未完成', timeout=120)
+
+    def send_question(self, question):
+        self.foreground()
+        edit = self.d(className='android.widget.EditText', packageName=self.PACKAGE)
+        if not edit.exists:
+            self.open_control(lambda: edit.exists, 'DeepSeek 输入框不可用', text='发消息或按住说话')
+        edit.set_text(question)
+        self.wait_for(lambda: self.has(desc='发送'), '发送按钮未就绪')
+        # 不以输入框内的相同文本判断发送成功，避免输入未发送时误通过。
+        self.transition(lambda: self.click(desc='发送'),
+                        lambda: not self.has(desc='发送') and self.has(text=question),
+                        '问题未发送')
+        for attempt in range(3):
+            busy_seen = self.has(desc='停止')
+            network_error = False
+
+            def answered():
+                nonlocal busy_seen, network_error
+                nodes = self.nodes()
+                if any(n.get('content-desc') == '停止' for n in nodes):
+                    busy_seen = True
+                    return False
+                questions = [i for i, n in enumerate(nodes) if n.get('text') == question and
+                             n.get('class') != 'android.widget.EditText']
+                tail = nodes[questions[-1] + 1:] if questions else (nodes if busy_seen else [])
+                if any('请检查网络后重试' in n.get('text', '') for n in tail):
+                    network_error = True
+                    return True
+                if any(n.get('content-desc') == '复制' for n in tail):
+                    return True
+                # 长回答结束后操作栏可能在屏幕下方。
+                if busy_seen and any(n.get('content-desc') == '转至底部' for n in nodes):
+                    self.click(desc='转至底部')
                 return False
-        # 设置系统语言为中文
-        SeaOfStarsAW.set_system_language_cn()
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 设置屏幕锁定时间为10min
-        SeaOfStarsAW.set_screen_lock_long_time()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
 
+            self.wait_for(answered, 'DeepSeek 回答未完成或网络异常', timeout=120)
+            if not network_error:
+                return
+            if attempt == 2:
+                raise RuntimeError('DeepSeek 网络错误，两次重试后仍未获得回答')
+            logging.warning('DeepSeek 网络错误，重试本轮回答 %s/2', attempt + 1)
+            def retry():
+                buttons = self.nodes(desc='重试')
+                if not buttons:
+                    raise RuntimeError('DeepSeek 网络异常且未找到本轮重试按钮')
+                self.click_node(buttons[-1])
+            self.transition(retry,
+                            lambda: self.has(desc='停止') or not self.has(text='请检查网络后重试'),
+                            'DeepSeek 重试按钮未响应')
 
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        """
-        测试用例执行
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例开始执行!")
-        # SeaOfStarsAW.init_device()
-        #  todo
-
-        logging.info("用例执行结束!")
-
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        """
-        清理日志，保留应用后台
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+    def steps(self):
+        return [
+            ('启动DeepSeek', self.launch, 3),
+            ('点击对话框，输入什么是AI', lambda: self.send_question(self.QUESTIONS[0]), 1),
+            ('浏览搜索结果，上下滑动3次', lambda: self.browse(3, 3, 1), 0),
+            ('点击对话框，输入华为终端的主要产品有哪些', lambda: self.send_question(self.QUESTIONS[1]), 1),
+            ('浏览搜索结果，上下滑动3次', lambda: self.browse(3, 3, 1), 0),
+            ('点击对话框，输入介绍几款市面上主流的手机', lambda: self.send_question(self.QUESTIONS[2]), 1),
+            ('浏览搜索结果，上下滑动3次', lambda: self.browse(3, 3, 1), 0),
+            ('滑动返回Home页', self.home, 1),
+        ]

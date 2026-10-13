@@ -1,62 +1,20 @@
-# -*- coding: utf-8 -*-
-
-import logging
-import os
-import shutil
-import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
-
-class PerformanceDynamic_bilibili_0040(Case):
-
-    all_app_package_list = ["com.xingin.xhs"]
-
-    def __init__(self, result_path):
-        super().__init__(result_path)
-
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 判断手机上是否已安装好TOP30应用,未安装则用例失败
-        phone_app_list = SeaOfStarsAW.get_app_list()
-        for per_app in self.all_app_package_list:
-            if per_app not in phone_app_list:
-                return False
-        # 设置系统语言为中文
-        SeaOfStarsAW.set_system_language_cn()
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 设置屏幕锁定时间为10min
-        SeaOfStarsAW.set_screen_lock_long_time()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
+"""对应动态性能模型测试用例7.xlsx：哔哩哔哩 0040。"""
+from Cases.Top48.bilibili_common import BilibiliDynamicCase
 
 
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        """
-        测试用例执行
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例开始执行!")
-        # SeaOfStarsAW.init_device()
-        #  todo
-
-        logging.info("用例执行结束!")
-
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        """
-        清理日志，保留应用后台
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+class PerformanceDynamic_bilibili_0040(BilibiliDynamicCase):
+    def steps(self):
+        return [
+            ('启动哔哩哔哩', self.launch, 3),
+            ('点击搜索框', self.search_box, 1),
+            ('输入华为终端并搜索', self.search_huawei, 1),
+            ('上滑5次浏览搜索结果', lambda: self.browse(up=5, down=0), 1),
+            ('下滑5次浏览搜索结果', lambda: self.browse(up=0, down=5), 1),
+            ('点击一个视频播放', self.video, 1),
+            ('观看10秒视频', self.playing_video, 10),
+            ('点击UP头像进入主页', self.up_page, 1),
+            ('上滑5次浏览UP主页', lambda: self.browse(up=5, down=0), 1),
+            ('下滑5次浏览UP主页', lambda: self.browse(up=0, down=5), 1),
+            ('返回哔哩哔哩主界面', self.home, 1),
+            ('滑动返回Home页', self.launcher_gesture, 1),
+        ]

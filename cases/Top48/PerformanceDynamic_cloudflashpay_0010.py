@@ -1,199 +1,93 @@
-import logging
-import os
-import shutil
+"""云闪付浏览场景，适配新版优惠页“生活”分类。"""
 import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
 
-action_perf_on = 0
-"""
-#!+======================================================================================
-# 版权 (C) 海思半导体有限公司 2025 海思Kirin解决方案集成与验证部用户体验组
-# Copyright (C) Hisilicon Technologies Co., Ltd. 2025. All rights reserved.
-#========================================================================================
-#   @FileName:      PerformanceDynamic_cloudflashpay_0010.py
-#   @Description:   该文件是用例的具体实现，请按用例描述编写用例脚本！
-#   @场景类型描述:    
-#                   
-#   @预置条件:
-#                   去除弹窗
-#   @详细场景:        
-#                   云闪付主页浏览
-#   @用例动态负载预置: 
-#                   
-#   @测试操作步骤:    
-#                 1、启动云闪付（3s）
-#                 2、主页浏览（上下各滑动1次，循环5次，每次停留2s）
-#                 3、点击收付款（停留1s）
-#                 4、点击扫一扫（停留1s）
-#                 5、返回首页，点击扫一扫（停留1s）
-#                 6、点击优惠（停留1s）
-#                 7、浏览优惠页（上下各滑动1次，循环5次，每次停留2s）
-#                 8、点击惠生活（停留1s）
-#                 9、浏览惠生活（上下各滑动1次，循环5次，每次停留2s）
-#                 10、返回上一层，点击享美食（停留1s）
-#                 11、返回首页（停留1s）
-#                 12、返回Home界面（停留1s）
-#   @性能指标采集场景: 
-#                   
-#   @Author:        wangzijian w00854976
-#   @Date:          2025-10-20
-#   @History:       created by w00854976 at 2025-10-20
-#   @Environment:   Python3.8
-#!!======================================================================================
-"""
+from Cases.Top48.dynamic_apps_common import DynamicAppCase
 
 
-class PerformanceDynamic_cloudflashpay_0010(Case):
-    all_app_package_list = ["com.autonavi.minimap"]
-    TEST_TIME = 1
+class PerformanceDynamic_cloudflashpay_0010(DynamicAppCase):
+    PACKAGE = 'com.unionpay'
+    all_app_package_list = [PACKAGE]
+    PERMISSIONS = ('CAMERA',)
 
-    def __init__(self, result_path):
-        super().__init__(result_path)
+    def on_home(self):
+        return self.has(rid='firstItem') and self.has(rid='thirdItem')
 
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
-
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        logging.info("用例开始执行!")
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        time.sleep(2)
-        for test_time in range(0, self.TEST_TIME):
-            # 1、启动云闪付（3s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("1、启动云闪付")
-            SeaOfStarsAW.ut_device.app_start('com.unionpay', use_monkey=True)
-            time.sleep(3)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "1、启动云闪付", "",
-                                                     self.screenshot_dir_path)
-
-            # 2、主页浏览（上下各滑动1次，循环5次，每次停留2s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("2、主页浏览")
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe(550, 1500, 550, 1000, 0.04)
-                time.sleep(2)
-                SeaOfStarsAW.ut_device.swipe(550, 1000, 550, 1500, 0.05)
-                time.sleep(2)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "2、主页浏览", "",
-                                                     self.screenshot_dir_path)
-
-            # 3、点击收付款（停留1s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("3、点击收付款")
-            SeaOfStarsAW.ut_device.click(135, 430)
+    def app_home(self):
+        self.return_to(lambda: self.has(rid='tv_tab_name', text='首页'), '未返回云闪付主界面')
+        self.open_control(lambda: any(n.get('selected') == 'true' for n in
+                                      self.nodes(rid='tv_tab_name', text='首页')),
+                          '未切换回云闪付首页', rid='tv_tab_name', text='首页')
+        for _ in range(8):
+            if self.on_home():
+                return
+            self.swipe(y1=.32, y2=.78)
             time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "3、点击收付款", "",
-                                                     self.screenshot_dir_path)
+        self.wait_for(self.on_home, '未恢复云闪付首页顶部')
 
-            # 4、返回首页（停留1s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("4、返回首页")
-            SeaOfStarsAW.ut_device.swipe(0, 1500, 600, 1500, 0.5)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "4、点击扫一扫", "",
-                                                     self.screenshot_dir_path)
+    def launch(self):
+        self.start()
+        self.app_home()
 
-            # 5、点击扫一扫（停留1s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("5、返回首页，点击扫一扫")
-            SeaOfStarsAW.ut_device.click(670, 430)
-            time.sleep(1)
-            SeaOfStarsAW.ut_device.swipe(0, 1500, 600, 1500, 0.5)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "5、返回首页，点击扫一扫", "",
-                                                     self.screenshot_dir_path)
+    def pay(self):
+        self.app_home()
+        self.open_control(lambda: self.has(rid='tv_title', text='收付款'),
+                          '未进入收付款页', rid='firstItem')
 
-            # 6、点击优惠（停留1s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("6、点击优惠")
-            SeaOfStarsAW.ut_device.click(340, 2230)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "6、点击优惠", "",
-                                                     self.screenshot_dir_path)
+    def scan(self):
+        if self.has(rid='tv_upper_skid', text='扫一扫'):
+            self.open_control(lambda: self.has(rid='tv_scan_help_tip'),
+                              '未进入扫一扫页，请检查相机权限', rid='tv_upper_skid')
+        else:
+            # 部分版本/账户的收付款页不提供扫码入口。
+            if not self.on_home():
+                self.app_home()
+            self.open_control(lambda: self.has(rid='tv_scan_help_tip'),
+                              '未进入扫一扫页，请检查相机权限', rid='thirdItem')
 
-            # 7、浏览优惠页（上下各滑动1次，循环5次，每次停留2s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("7、浏览优惠页")
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe(550, 1500, 550, 1000, 0.04)
-                time.sleep(2)
-                SeaOfStarsAW.ut_device.swipe(550, 1000, 550, 1500, 0.05)
-                time.sleep(2)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "7、浏览优惠页", "",
-                                                     self.screenshot_dir_path)
+    def rescan(self):
+        self.app_home()
+        self.scan()
 
-            # 8、点击惠生活（停留1s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("8、点击惠生活")
-            SeaOfStarsAW.ut_device.click(179, 1744)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "8、点击惠生活", "",
-                                                     self.screenshot_dir_path)
+    def offer(self):
+        self.app_home()
+        self.open_control(lambda: self.has(rid='recommend_label'), '未进入优惠页',
+                          rid='tv_tab_name', text='优惠')
 
-            # 9、浏览惠生活（上下各滑动1次，循环5次，每次停留2s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("9、浏览惠生活")
-            for i in range(5):
-                SeaOfStarsAW.ut_device.swipe(550, 1500, 550, 1000, 0.04)
-                time.sleep(2)
-                SeaOfStarsAW.ut_device.swipe(550, 1000, 550, 1500, 0.05)
-                time.sleep(2)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "9、浏览惠生活", "",
-                                                     self.screenshot_dir_path)
+    def life(self):
+        if self.has(text='惠生活'):
+            self.click(text='惠生活')
+            self.wait_for(lambda: not self.has(rid='recommend_label'), '未打开惠生活')
+        else:
+            self.reveal('未找到优惠生活分类', rid='tv_recommend_classify_title', text='生活')
+            self.select_category('生活')
+            self.wait_for(lambda: self.has(rid='ticket_name'), '生活优惠未加载')
 
-            # 10、返回上一层，点击享美食（停留1s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("10、返回上一层，点击享美食")
-            SeaOfStarsAW.ut_device.swipe(0, 1500, 600, 1500, 0.5)
-            time.sleep(1)
-            SeaOfStarsAW.ut_device.click(312, 518)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "10、返回上一层，点击享美食", "",
-                                                     self.screenshot_dir_path)
+    def select_category(self, label):
+        self.open_control(lambda: any(n.get('selected') == 'true' for n in
+                                      self.nodes(rid='tv_recommend_classify_title', text=label)),
+                          '优惠分类未切换至{}'.format(label),
+                          rid='tv_recommend_classify_title', text=label)
 
-            # 11、返回首页（停留1s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("11、返回首页")
-            SeaOfStarsAW.ut_device.click(135, 2230)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "11、返回首页", "",
-                                                     self.screenshot_dir_path)
+    def food(self):
+        # 生活为页内分类时不按返回，否则会离开优惠页。
+        if not self.has(rid='tv_tab_name', text='优惠'):
+            self.back()
+        self.reveal('未返回优惠页的美食分类', rid='tv_recommend_classify_title', text='美食')
+        self.select_category('美食')
+        self.wait_for(lambda: self.has(rid='ticket_name'), '美食优惠未加载')
 
-            # 12、返回Home界面（停留1s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("12、返回Home界面")
-            SeaOfStarsAW.return_launcher()
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "12、返回Home界面", "",
-                                                     self.screenshot_dir_path)
-
-        logging.info("用例执行结束!")
-
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+    def steps(self):
+        return [
+            ('启动云闪付', self.launch, 3),
+            ('主页浏览，上下各滑动1次，循环5次', lambda: self.alternating(5), 0),
+            ('点击收付款', self.pay, 1),
+            ('点击扫一扫', self.scan, 1),
+            ('返回云闪付首页，点击扫一扫', self.rescan, 1),
+            ('点击优惠', self.offer, 1),
+            ('浏览优惠页，上下各滑动1次，循环5次', lambda: self.alternating(5), 0),
+            ('点击惠生活', self.life, 1),
+            ('浏览惠生活，上下各滑动1次', lambda: self.browse(1, 1), 0),
+            ('返回优惠页，点击美食', self.food, 1),
+            ('返回云闪付主界面', self.app_home, 1),
+            ('滑动返回Home页', self.home, 1),
+        ]

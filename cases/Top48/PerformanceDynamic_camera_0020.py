@@ -1,62 +1,31 @@
-# -*- coding: utf-8 -*-
-
-import logging
-import os
-import shutil
-import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
-
-class PerformanceDynamic_camera_0020(Case):
-
-    all_app_package_list = ["com.xingin.xhs"]
-
-    def __init__(self, result_path):
-        super().__init__(result_path)
-
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 判断手机上是否已安装好TOP30应用,未安装则用例失败
-        phone_app_list = SeaOfStarsAW.get_app_list()
-        for per_app in self.all_app_package_list:
-            if per_app not in phone_app_list:
-                return False
-        # 设置系统语言为中文
-        SeaOfStarsAW.set_system_language_cn()
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 设置屏幕锁定时间为10min
-        SeaOfStarsAW.set_screen_lock_long_time()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
+"""对应动态性能模型测试用例7.xlsx：相机 0020。"""
+from Cases.Top48.camera_common import CameraDynamicCase
 
 
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        """
-        测试用例执行
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例开始执行!")
-        # SeaOfStarsAW.init_device()
-        #  todo
-
-        logging.info("用例执行结束!")
-
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        """
-        清理日志，保留应用后台
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+class PerformanceDynamic_camera_0020(CameraDynamicCase):
+    def steps(self):
+        return [
+            ('启动相机', self.launch, 3),
+            ('点击广角W并拍照', lambda: self.zoom_photo(.7), 1),
+            ('点击1X并拍照', lambda: self.zoom_photo(1), 1),
+            ('点击2X并拍照', lambda: self.zoom_photo(2), 1),
+            ('点击10X并拍照', lambda: self.zoom_photo(10), 1),
+            ('点击箭头拉起设置菜单', self.open_menu, 1),
+            ('点击设置', self.settings, 1),
+            ('设置页面上滑1次下滑1次，重复3次', self.browse_settings, 1),
+            ('点击照片比例（MIUI画幅）', self.photo_ratio, 1),
+            ('取消照片比例选择', self.cancel_ratio, 1),
+            ('点击照片格式', self.photo_format, 1),
+            ('取消照片格式选择', self.cancel_format, 1),
+            ('点击声控拍照', self.voice_shutter, 1),
+            ('取消声控拍照弹框', self.cancel_voice, 1),
+            ('侧滑返回预览框', self.side_to_preview, 1),
+            ('点击小艺视觉（没有则跳过）', self.visual, 1),
+            ('小艺视觉点击拍照', self.visual_photo, 1),
+            ('侧滑返回扫一扫', self.visual_back, 1),
+            ('点击左侧图库（没有则跳过）', self.visual_gallery, 1),
+            ('图库上滑3次下滑3次', self.browse_visual_gallery, 1),
+            ('侧滑返回扫一扫', self.visual_gallery_back, 1),
+            ('返回相机主界面', self.return_preview, 1),
+            ('滑动返回Home页', self.launcher_gesture, 1),
+        ]
