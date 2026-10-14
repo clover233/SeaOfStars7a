@@ -1,62 +1,22 @@
-# -*- coding: utf-8 -*-
-
-import logging
-import os
-import shutil
-import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
-
-class PerformanceDynamic_hwvmall_0010(Case):
-
-    all_app_package_list = ["com.xingin.xhs"]
-
-    def __init__(self, result_path):
-        super().__init__(result_path)
-
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 判断手机上是否已安装好TOP30应用,未安装则用例失败
-        phone_app_list = SeaOfStarsAW.get_app_list()
-        for per_app in self.all_app_package_list:
-            if per_app not in phone_app_list:
-                return False
-        # 设置系统语言为中文
-        SeaOfStarsAW.set_system_language_cn()
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 设置屏幕锁定时间为10min
-        SeaOfStarsAW.set_screen_lock_long_time()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
+"""华为商城浏览商品页面；Excel 新-7.0.2模型测试步骤第 818～831 行。"""
+from Cases.Top48.hwvmall_common import HwVmallDynamicCase
 
 
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        """
-        测试用例执行
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例开始执行!")
-        # SeaOfStarsAW.init_device()
-        #  todo
-
-        logging.info("用例执行结束!")
-
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        """
-        清理日志，保留应用后台
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+class PerformanceDynamic_hwvmall_0010(HwVmallDynamicCase):
+    def steps(self):
+        return [
+            ('启动华为商城', self.launch, 3),
+            ('点击第一个轮播图进入详情', lambda: self.group('轮播图1', lambda: self.open_banner(1)), 2),
+            ('浏览第一个轮播图上滑3次下滑3次', lambda: self.within('轮播图1', lambda: self.browse(3, 3)), 0),
+            ('点击第二个轮播图进入详情', lambda: self.group('轮播图2', lambda: self.open_banner(2)), 2),
+            ('浏览第二个轮播图上滑3次下滑3次', lambda: self.within('轮播图2', lambda: self.browse(3, 3)), 0),
+            ('点击第三个轮播图进入详情', lambda: self.group('轮播图3', lambda: self.open_banner(3)), 2),
+            ('浏览第三个轮播图上滑3次下滑3次', lambda: self.within('轮播图3', lambda: self.browse(3, 3)), 0),
+            ('点击搜索框搜索p60', self.search_p60, 2),
+            ('浏览搜索结果上滑5次下滑5次', lambda: self.browse(5, 5), 0),
+            ('进入商品详情', self.first_product, 2),
+            ('浏览商品详情上滑6次下滑6次', lambda: self.browse(6, 6), 0),
+            ('返回华为商城主界面', self.main_page, 2),
+            ('首页上滑6次下滑6次', lambda: self.browse(6, 6), 0),
+            ('滑动返回Home页', self.home, 2),
+        ]
