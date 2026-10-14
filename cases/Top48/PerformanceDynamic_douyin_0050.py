@@ -1,373 +1,50 @@
-import logging
-import os
-import shutil
-import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
-
-action_perf_on = 0
-"""
-#!+======================================================================================
-# 版权 (C) 海思半导体有限公司 2025 海思Kirin解决方案集成与验证部用户体验组
-# Copyright (C) Hisilicon Technologies Co., Ltd. 2025. All rights reserved.
-#========================================================================================
-#   @FileName:      PerformanceDynamic_douyin_0050.py
-#   @Description:   该文件是用例的具体实现，请按用例描述编写用例脚本！
-#   @场景类型描述:    
-#                   
-#   @预置条件:
-#                   1、登录
-#                   2、收藏胡锡进的前三个作品
-#   @详细场景:        
-#                   抖音tab页浏览
-#   @用例动态负载预置: 
-#                   
-#   @测试操作步骤:    
-#                 1、点击进入抖音（停留3s）
-#                 2、点击顶部经验，停留1s
-#                 3、上滑3次，下滑3次，停留1s
-#                 4、点击热点，，停留1s
-#                 5、上滑3次，下滑3次，停留1s
-#                 6、点击查看热榜，停留1s
-#                 7、点击完整热榜，停留1s
-#                 8、向左滑动6次，停留1s
-#                 9、返回热点，停留1s
-#                 10、点击直播，停留1s
-#                 11、向上滑动6次，停留1s
-#                 12、点击长视频，停留1s
-#                 13、上滑3次，下滑3次，停留1s
-#                 14、点击+号，停留1s
-#                 15、点击相册，停留1s
-#                 16、上滑3次，下滑3次，停留1s
-#                 17、返回上一层，停留1s
-#                 18、点击选择音乐，停留1s
-#                 19、向上滑动6次，停留1s
-#                 20、返回首页，停留1s
-#                 21、点击我，停留1s
-#                 22、点击收藏，停留1s
-#                 23、点第一个收藏的作品，停留1s
-#                 24、向上滑动3次浏览，停留1s
-#                 25、返回我页面，停留1s
-#                 26、点击我的钱包，停留1s
-#                 27、返回首页，停留1s
-#                 28、退出抖音
-#   @性能指标采集场景: 
-#                   
-#   @Author:        wangzijian w00854976
-#   @Date:          2025-10-20
-#   @History:       created by w00854976 at 2025-10-20
-#   @Environment:   Python3.8
-#!!======================================================================================
-"""
+"""抖音创作页、Test 会话和视频分享（表格第 577～609 行）。"""
+from Cases.Top48.douyin_common import DouyinDynamicCase
 
 
-class PerformanceDynamic_douyin_0050(Case):
-    all_app_package_list = ["com.autonavi.minimap"]
-    TEST_TIME = 1
+class PerformanceDynamic_douyin_0050(DouyinDynamicCase):
+    all_app_package_list = [DouyinDynamicCase.PACKAGE]
 
-    def __init__(self, result_path):
-        super().__init__(result_path)
+    def chat_media(self, action):
+        return self.unavailable_chat_media(action)
 
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
+    def browse_album(self):
+        if self.chat_media('相册'):
+            self.browse(3, 3)
 
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        logging.info("用例开始执行!")
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        time.sleep(2)
-        for test_time in range(0, self.TEST_TIME):
-            # 1、点击进入抖音（停留3s）
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("1、点击进入抖音")
-            SeaOfStarsAW.ut_device.app_start('com.ss.android.ugc.aweme', use_monkey=True)
-            time.sleep(3)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "1、点击进入抖音", "",
-                                                     self.screenshot_dir_path)
-
-            # 2、点击顶部经验，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("2、点击顶部经验，停留1s")
-            SeaOfStarsAW.ut_device.click(234, 219)
-            time.sleep(1)
-            SeaOfStarsAW.ut_device.click(234, 219)
-            time.sleep(1)
-            SeaOfStarsAW.ut_device.click(234, 219)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "2、点击顶部经验，停留1s", "",
-                                                     self.screenshot_dir_path)
-
-            # 3、上滑3次，下滑3次，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("3、上滑3次，下滑3次，停留1s")
-            for i in range(3):
-                SeaOfStarsAW.ut_device.swipe(550, 1500, 550, 1000, 0.04)
-                time.sleep(1)
-            for i in range(3):
-                SeaOfStarsAW.ut_device.swipe(550, 1000, 550, 1500, 0.05)
-                time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "3、上滑3次，下滑3次，停留1s", "",
-                                                     self.screenshot_dir_path)
-
-            # 4、点击热点，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("4、点击热点")
-            SeaOfStarsAW.ut_device.click(550, 228)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "4、点击热点", "",
-                                                     self.screenshot_dir_path)
-
-            # 5、上滑3次，下滑3次，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("5、上滑3次，下滑3次")
-            for i in range(3):
-                SeaOfStarsAW.ut_device.swipe(550, 1500, 550, 1000, 0.04)
-                time.sleep(1)
-            for i in range(3):
-                SeaOfStarsAW.ut_device.swipe(550, 1000, 550, 1500, 0.05)
-                time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "5、上滑3次，下滑3次", "",
-                                                     self.screenshot_dir_path)
-
-            # 6、点击查看热榜，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("6、点击查看热榜")
-            SeaOfStarsAW.ut_device.click(870, 600)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "6、点击查看热榜", "",
-                                                     self.screenshot_dir_path)
-
-            # 7、点击完整热榜，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("7、点击完整热榜")
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "7、点击完整热榜", "",
-                                                     self.screenshot_dir_path)
-
-            # 8、向左滑动6次，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("8、向左滑动6次")
-            for i in range(6):
-                SeaOfStarsAW.ut_device.swipe(600, 1500, 300, 1500, 0.03)
-                time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "8、向左滑动6次", "",
-                                                     self.screenshot_dir_path)
-
-            # 9、返回热点，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("9、返回热点")
-            SeaOfStarsAW.ut_device.swipe(0, 1500, 600, 1500, 0.5)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "9、返回热点", "",
-                                                     self.screenshot_dir_path)
-
-            # 10、点击直播，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("10、点击直播")
-            SeaOfStarsAW.ut_device.click(800, 219)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "10、点击直播", "",
-                                                     self.screenshot_dir_path)
-
-            # 11、向上滑动6次，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("11、向上滑动6次")
-            for i in range(6):
-                SeaOfStarsAW.ut_device.swipe(550, 1500, 550, 1000, 0.04)
-                time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "11、向上滑动6次", "",
-                                                     self.screenshot_dir_path)
-
-            # 12、点击长视频，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("12、点击长视频")
-            SeaOfStarsAW.ut_device.click(585, 1480)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "12、点击长视频", "",
-                                                     self.screenshot_dir_path)
-
-            # 13、上滑3次，下滑3次，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("13、上滑3次，下滑3次")
-            for i in range(3):
-                SeaOfStarsAW.ut_device.swipe(550, 1500, 550, 1000, 0.04)
-                time.sleep(1)
-            for i in range(3):
-                SeaOfStarsAW.ut_device.swipe(550, 1000, 550, 1500, 0.05)
-                time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "13、上滑3次，下滑3次", "",
-                                                     self.screenshot_dir_path)
-
-            # 14、点击+号，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("14、点击+号")
-            SeaOfStarsAW.ut_device.swipe(0, 1500, 600, 1500, 0.5)
-            time.sleep(1)
-            SeaOfStarsAW.ut_device.click(540, 2270)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "14、点击+号", "",
-                                                     self.screenshot_dir_path)
-
-            # 15、点击相册，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("15、点击相册")
-            SeaOfStarsAW.ut_device.click(868, 1903)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "15、点击相册", "",
-                                                     self.screenshot_dir_path)
-
-            # 16、上滑3次，下滑3次，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("16、上滑3次，下滑3次")
-            for i in range(3):
-                SeaOfStarsAW.ut_device.swipe(550, 1500, 550, 1000, 0.04)
-                time.sleep(1)
-            for i in range(3):
-                SeaOfStarsAW.ut_device.swipe(550, 1000, 550, 1500, 0.05)
-                time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "16、上滑3次，下滑3次", "",
-                                                     self.screenshot_dir_path)
-
-            # 17、返回上一层，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("17、返回上一层")
-            SeaOfStarsAW.ut_device.swipe(0, 1500, 600, 1500, 0.5)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "17、返回上一层", "",
-                                                     self.screenshot_dir_path)
-
-            # 18、点击选择音乐，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("18、点击选择音乐")
-            SeaOfStarsAW.ut_device.click(571, 235)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "18、点击选择音乐", "",
-                                                     self.screenshot_dir_path)
-
-            # 19、向上滑动6次，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("19、向上滑动6次")
-            for i in range(6):
-                SeaOfStarsAW.ut_device.swipe(550, 1500, 550, 1000, 0.04)
-                time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "19、向上滑动6次", "",
-                                                     self.screenshot_dir_path)
-
-            # 20、返回首页，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("20、返回首页")
-            SeaOfStarsAW.ut_device.swipe(0, 1500, 600, 1500, 0.5)
-            time.sleep(1)
-            SeaOfStarsAW.ut_device.swipe(0, 1500, 600, 1500, 0.5)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "20、返回首页", "",
-                                                     self.screenshot_dir_path)
-
-            # 21、点击我，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("21、点击我")
-            SeaOfStarsAW.ut_device.click(971, 2269)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "21、点击我", "",
-                                                     self.screenshot_dir_path)
-
-            # 22、点击收藏，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("22、点击收藏")
-            SeaOfStarsAW.ut_device.click(675, 1426)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "22、点击收藏", "",
-                                                     self.screenshot_dir_path)
-
-            # 23、点第一个收藏的作品，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("23、点第一个收藏的作品")
-            SeaOfStarsAW.ut_device.click(179, 2037)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "23、点第一个收藏的作品", "",
-                                                     self.screenshot_dir_path)
-
-            # 24、向上滑动3次浏览，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("24、向上滑动3次浏览")
-            for i in range(3):
-                SeaOfStarsAW.ut_device.swipe(550, 1500, 550, 1000, 0.04)
-                time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "24、向上滑动3次浏览", "",
-                                                     self.screenshot_dir_path)
-
-            # 25、返回我页面，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("25、返回我页面")
-            SeaOfStarsAW.ut_device.swipe(0, 1500, 600, 1500, 0.5)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "25、返回我页面", "",
-                                                     self.screenshot_dir_path)
-
-            # 26、点击我的钱包，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("26、点击我的钱包")
-            SeaOfStarsAW.ut_device.click(520, 1193)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "26、点击我的钱包", "",
-                                                     self.screenshot_dir_path)
-
-            # 27、返回首页，停留1s
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("27、返回首页")
-            SeaOfStarsAW.ut_device.swipe(0, 1500, 600, 1500, 0.5)
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "27、返回首页", "",
-                                                     self.screenshot_dir_path)
-
-            # 28、退出抖音
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("28、退出抖音")
-            SeaOfStarsAW.return_launcher()
-            time.sleep(1)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "28、退出抖音", "",
-                                                     self.screenshot_dir_path)
-        logging.info("用例执行结束!")
-
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+    def steps(self):
+        return [
+            ('启动抖音', self.launch, 3),
+            ('点击加号进入创作页', self.open_create, 2),
+            ('点击相册', lambda: self.create_click('相册'), 2),
+            ('返回加号页', self.back, 1),
+            ('点击照片', lambda: self.create_click('照片'), 1),
+            ('点击拍照', lambda: self.create_click('拍照'), 2),
+            ('点击选择音乐', lambda: self.create_click('选择音乐'), 2),
+            ('选择音乐页面上滑6次', lambda: self.browse(6, 0), 0),
+            ('返回照片编辑页面', self.back, 1),
+            ('点击下一步', lambda: self.create_click('下一步'), 2),
+            ('点击预览', lambda: self.create_click('预览'), 2),
+            ('返回抖音首页', self.return_feed, 2),
+            ('点击消息页面', self.open_messages, 1),
+            ('进入Test聊天界面并向下滑动3次', lambda: (self.open_test_chat(), self.browse(0, 3)), 2),
+            ('发送文字华为手机', self.send_chat_text, 2),
+            ('发送一个动态表情包', self.send_dynamic_emoji, 2),
+            ('点击聊天加号', self.open_chat_media, 1),
+            ('点击拍摄', lambda: self.chat_media('拍摄'), 2),
+            ('拍摄图片', lambda: self.chat_media('拍摄图片'), 2),
+            ('发送图片', lambda: self.chat_media('发送图片'), 2),
+            ('点击拍摄', lambda: self.chat_media('拍摄'), 2),
+            ('拍摄视频', lambda: self.chat_media('拍摄视频'), 2),
+            ('发送视频', lambda: self.chat_media('发送视频'), 2),
+            ('点击聊天加号', self.open_chat_media, 1),
+            ('点击相册', lambda: self.chat_media('相册'), 1),
+            ('相册页面上滑3次、下滑3次', self.browse_album, 0),
+            ('点击第一张图片', lambda: self.chat_media('选择第一张图片'), 1),
+            ('点击发送', lambda: self.chat_media('发送相册图片'), 2),
+            ('返回抖音首页', self.return_feed, 2),
+            ('点击分享并选择Test账号', self.share_to_test, 2),
+            ('点击发送', self.confirm_share, 2),
+            ('返回抖音主界面', self.return_feed, 2),
+            ('滑动返回Home页', self.home, 1),
+        ]

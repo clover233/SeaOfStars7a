@@ -1,85 +1,55 @@
-import logging
-import os
-import shutil
-import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
-
-"""
-#!+======================================================================================
-# 版权 (C) 海思半导体有限公司 2025 海思Kirin解决方案集成与验证部用户体验组
-# Copyright (C) Hisilicon Technologies Co., Ltd. 2025. All rights reserved.
-#========================================================================================
-#   @FileName:      PerformanceDynamic_dingding_0010.py
-#   @Description:   该文件是用例的具体实现，请按用例描述编写用例脚本！
-#   @场景类型描述:    
-#                   
-#   @预置条件:
-#                   1、登陆账号
-#                   2、关闭弹窗
-#   @详细场景:        
-#                   58同城搜索浏览租房信息
-#   @用例动态负载预置: 
-#                   
-#   @测试操作步骤:    
-#                   1、启动58同城
-#                   2、向上抛滑5次，浏览首页
-#                   3、向下抛滑5次，浏览首页
-#                   4、点击“租房”按钮，进入租房页面
-#                   5、向上滑动5次
-#                   6、向下滑动5次
-#                   7、点击搜索框，进入搜索页面
-#                   8、输入“西研所”，点击搜索
-#                   9、点击第一个租房信息
-#                   10、向上抛滑5次，浏览详细信息
-#                   11、向下抛滑5次，浏览详细信息
-#                   12、侧滑2次返回主页面
-#                   13、上滑返回桌面
-#   @性能指标采集场景: 
-#                   
-#   @Author:        wangzijian w00854976
-#   @Date:          2025-10-20
-#   @History:       created by w00854976 at 2025-10-20
-#   @Environment:   Python3.8
-#!!======================================================================================
-"""
-
-class PerformanceDynamic_dingding_0010(Case):
-    all_app_package_list = ['']
-    TEST_TIME = 1
-
-    def __init__(self, result_path):
-        super().__init__(result_path)
-
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
-
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        logging.info("用例开始执行!")
-        for test_time in range(0, self.TEST_TIME):
-            # 1、启动
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("1、启动")
-            SeaOfStarsAW.ut_device.app_start('', use_monkey=True)
-            time.sleep(5)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "", "",
-                                                     self.screenshot_dir_path)
+"""钉钉消息页、群消息和群设置页浏览（表格第 441～449 行）。"""
+from Cases.Top48.dingding_common import DingTalkDynamicCase
 
 
-        logging.info("用例执行结束!")
+class PerformanceDynamic_dingding_0010(DingTalkDynamicCase):
+    all_app_package_list = [DingTalkDynamicCase.PACKAGE]
+    GROUP_NAME = '欢迎试用钉钉群'
 
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+    def group_ready(self):
+        return self.has(text=self.GROUP_NAME, rid='tv_title') and self.has(rid='rich_edit_text')
+
+    def open_trial_group(self):
+        self.messages_page()
+        self.open_control(self.group_ready, '未打开欢迎试用钉钉群',
+                          text=self.GROUP_NAME, rid='session_title')
+
+    def group_member_is_self_only(self):
+        return any(node.get('text') == '1位成员'
+                   for node in self.nodes(rid='tv_group_member_count'))
+
+    def send_greeting(self):
+        self.require(text=self.GROUP_NAME, rid='tv_title')
+        # 仅允许在已核验的单人成员群中发送，避免把测试消息投递给其他会话。
+        if not self.group_member_is_self_only():
+            raise RuntimeError('欢迎试用钉钉群成员数不是 1，停止发送测试消息')
+        editor = self.d(resourceId=self.PACKAGE + ':id/rich_edit_text')
+        editor.set_text('你好')
+        self.wait_for(lambda: self.has(text='发送'), '输入消息后未显示发送按钮')
+        before = len(self.nodes(text='你好', rid='tv_dup_text'))
+        self.transition(lambda: self.click(text='发送'),
+                        lambda: len(self.nodes(text='你好', rid='tv_dup_text')) > before
+                        or not self.has(text='你好', rid='rich_edit_text'),
+                        '群消息发送后未得到界面反馈')
+
+    def group_info(self):
+        self.open_control(lambda: self.has(text='群设置')
+                          and self.has(text=self.GROUP_NAME, rid='tv_header_conversation_title'),
+                          '群聊信息页未打开', desc='群聊信息')
+
+    def messages_home(self):
+        self.return_to(self.navigation_ready, '未返回钉钉主界面')
+        self.switch_tab('消息')
+
+    def steps(self):
+        return [
+            ('启动钉钉', self.launch, 3),
+            ('点击消息图标，切换到消息页', self.messages_page, 2),
+            ('点击欢迎试用钉钉群', self.open_trial_group, 2),
+            ('群消息页面上滑2次、下滑2次', lambda: self.browse(2, 2), 0),
+            ('输入你好并发送', self.send_greeting, 2),
+            ('点击右上角更多，切换到更多页面', self.group_info, 2),
+            ('更多页面上滑1次、下滑1次', lambda: self.browse(1, 1), 0),
+            ('返回钉钉主界面', self.messages_home, 2),
+            ('滑动返回Home页', self.home, 1),
+        ]

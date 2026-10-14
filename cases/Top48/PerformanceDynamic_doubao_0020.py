@@ -1,62 +1,51 @@
-# -*- coding: utf-8 -*-
-
-import logging
-import os
-import shutil
+"""豆包拍照修图、相册选图合成视频和实时通话（表格第 500～515 行）。"""
 import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
 
-class PerformanceDynamic_doubao_0020(Case):
-
-    all_app_package_list = ["com.xingin.xhs"]
-
-    def __init__(self, result_path):
-        super().__init__(result_path)
-
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 判断手机上是否已安装好TOP30应用,未安装则用例失败
-        phone_app_list = SeaOfStarsAW.get_app_list()
-        for per_app in self.all_app_package_list:
-            if per_app not in phone_app_list:
-                return False
-        # 设置系统语言为中文
-        SeaOfStarsAW.set_system_language_cn()
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 设置屏幕锁定时间为10min
-        SeaOfStarsAW.set_screen_lock_long_time()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
+from Cases.Top48.doubao_common import DoubaoDynamicCase
 
 
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        """
-        测试用例执行
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例开始执行!")
-        # SeaOfStarsAW.init_device()
-        #  todo
+class PerformanceDynamic_doubao_0020(DoubaoDynamicCase):
+    all_app_package_list = [DoubaoDynamicCase.PACKAGE]
 
-        logging.info("用例执行结束!")
+    def photo_for_retouch(self):
+        self.camera_photo()
 
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        """
-        清理日志，保留应用后台
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+    def retouch(self):
+        self.enter_text('帮我修图')
+
+    def photo_for_video(self):
+        self.camera_photo()
+
+    def choose_album_photos(self):
+        self.choose_two_photos()
+
+    def make_video(self):
+        self.enter_text('合成视频')
+
+    def wait_in_call(self):
+        # 表格指定停留 15 秒，逐秒确认界面没有意外退出。
+        for second in range(15):
+            package = self.current_package()
+            if package == self.PACKAGE and not (self.has(desc='挂断') or self.has(text='结束通话')):
+                raise RuntimeError('豆包通话在第 {} 秒前已退出'.format(second))
+            time.sleep(1)
+
+    def steps(self):
+        return [
+            ('启动豆包', self.launch, 3),
+            ('点击拍照，进行拍摄并确认', self.photo_for_retouch, 2),
+            ('输入帮我修图', self.retouch, 2),
+            ('点击发送', self.send_pending, 2),
+            ('点击拍照，进行拍摄并确认', self.photo_for_video, 2),
+            ('点击加号', self.open_media_menu, 2),
+            ('选择从相册选择', self.choose_from_album, 2),
+            ('上滑3次浏览所有图片', lambda: self.browse_external(3, 0, pause=1), 0),
+            ('下滑3次浏览所有图片', lambda: self.browse_external(0, 3, pause=1), 0),
+            ('选择2张照片后点完成', self.choose_two_photos, 2),
+            ('在输入框输入合成视频', self.make_video, 2),
+            ('点击发送', self.send_pending, 2),
+            ('点击右上角电话图标', self.call, 2),
+            ('在与豆包通话界面停留15s', self.wait_in_call, 0),
+            ('退出通话界面', self.exit_call, 2),
+            ('滑动返回Home页', self.home, 1),
+        ]
