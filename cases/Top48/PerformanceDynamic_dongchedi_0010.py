@@ -64,9 +64,14 @@ class PerformanceDynamic_dongchedi_0010(DynamicAppCase):
             self.click(text='图集', rid='tv_tab')
             time.sleep(1)
         self.wait_for(
-            lambda: self.tab_selected('图集') or self.has(rid='d26'),
+            self.gallery_ready,
             '车型图集标签未切换',
         )
+
+    def gallery_ready(self):
+        return (self.tab_selected('图集') or self.has(rid='d26')
+                or (self.has(text='全部车型', rid='tv_title')
+                    and self.has(text='外观', rid='e53')))
 
     def viewer_ready(self):
         return any(re.fullmatch(r'\d+\s*/\s*\d+', node.get('text', ''))
@@ -76,11 +81,17 @@ class PerformanceDynamic_dongchedi_0010(DynamicAppCase):
         photos = sorted(self.nodes(rid='bnv'), key=lambda node: (self.bounds(node)[1], self.bounds(node)[0]))
         if photos:
             opener = lambda: self.click_node(photos[0])
-        elif self.has(rid='d26'):
+        else:
+            heroes = self.nodes(rid='d26')
+        if not photos and heroes:
             # 新版图集以顶部大图替代“全部车型”缩略图列表。
             logging.info('替代：新版懂车帝点击图集顶部大图进入图片查看器')
-            opener = lambda: self.click(rid='d26')
-        else:
+            opener = lambda: self.click_node(heroes[0])
+        elif not photos and self.gallery_ready():
+            # 当前版本的车型缩略图网格完全自绘；只在已核验图集页内按比例点首图。
+            logging.info('替代：按图集页比例点击第一张车型缩略图')
+            opener = lambda: self.pct(.16, .55)
+        elif not photos:
             raise RuntimeError('车型图集中没有可打开的图片')
         self.transition(opener, self.viewer_ready,
                         '第一张车型图片未打开')
@@ -128,7 +139,7 @@ class PerformanceDynamic_dongchedi_0010(DynamicAppCase):
             ('点击查看第一张图片', self.open_first_photo, 2),
             ('图片页左滑3次、右滑3次', self.browse_photos, 0),
             ('返回图片界面', lambda: self.return_to(
-                lambda: self.tab_selected('图集') or self.has(rid='d26'),
+                self.gallery_ready,
                 '未返回图片界面',
             ), 2),
             ('返回搜索界面', self.return_search_page, 2),

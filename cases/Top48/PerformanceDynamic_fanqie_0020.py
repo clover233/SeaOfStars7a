@@ -1,85 +1,25 @@
-import logging
-import os
-import shutil
-import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
-
-"""
-#!+======================================================================================
-# 版权 (C) 海思半导体有限公司 2025 海思Kirin解决方案集成与验证部用户体验组
-# Copyright (C) Hisilicon Technologies Co., Ltd. 2025. All rights reserved.
-#========================================================================================
-#   @FileName:      PerformanceDynamic_fanqie_0020.py
-#   @Description:   该文件是用例的具体实现，请按用例描述编写用例脚本！
-#   @场景类型描述:    
-#                   
-#   @预置条件:
-#                   1、登陆账号
-#                   2、关闭弹窗
-#   @详细场景:        
-#                   58同城搜索浏览租房信息
-#   @用例动态负载预置: 
-#                   
-#   @测试操作步骤:    
-#                   1、启动58同城
-#                   2、向上抛滑5次，浏览首页
-#                   3、向下抛滑5次，浏览首页
-#                   4、点击“租房”按钮，进入租房页面
-#                   5、向上滑动5次
-#                   6、向下滑动5次
-#                   7、点击搜索框，进入搜索页面
-#                   8、输入“西研所”，点击搜索
-#                   9、点击第一个租房信息
-#                   10、向上抛滑5次，浏览详细信息
-#                   11、向下抛滑5次，浏览详细信息
-#                   12、侧滑2次返回主页面
-#                   13、上滑返回桌面
-#   @性能指标采集场景: 
-#                   
-#   @Author:        wangzijian w00854976
-#   @Date:          2025-10-20
-#   @History:       created by w00854976 at 2025-10-20
-#   @Environment:   Python3.8
-#!!======================================================================================
-"""
-
-class PerformanceDynamic_fanqie_0020(Case):
-    all_app_package_list = ['']
-    TEST_TIME = 1
-
-    def __init__(self, result_path):
-        super().__init__(result_path)
-
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
-
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        logging.info("用例开始执行!")
-        for test_time in range(0, self.TEST_TIME):
-            # 1、启动
-            SeaOfStarsAW.start_perfetto_trace()
-            logging.info("1、启动")
-            SeaOfStarsAW.ut_device.app_start('', use_monkey=True)
-            time.sleep(5)
-            SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                     'step_' + "", "",
-                                                     self.screenshot_dir_path)
+"""番茄免费小说听书和榜单浏览场景；步骤对应 Excel 第 673–685 行。"""
+from Cases.Top48.fanqie_common import FanqieDynamicCase
 
 
-        logging.info("用例执行结束!")
+class PerformanceDynamic_fanqie_0020(FanqieDynamicCase):
+    def back_to_main(self):
+        self.switch_bottom('书城')
+        self.select_channel('推荐')
 
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+    def steps(self):
+        return [
+            ('启动番茄免费小说', self.launch, 3),
+            ('主页浏览，上滑3次，下滑3次', lambda: self.browse(3, 3), 0),
+            ('点击听书，进入听书页面', lambda: self.select_channel('听书'), 2),
+            ('听书页浏览，上滑5次，下滑5次', lambda: self.browse(5, 5), 0),
+            ('点击推荐进入首页（可能需要左滑）', lambda: self.select_channel('推荐'), 2),
+            ('点击完本榜，进入完本榜页面', lambda: self.select_rank('完本榜'), 2),
+            ('左滑2次，右滑2次，浏览完本榜单', self.browse_rank, 0),
+            ('点击巅峰榜，进入巅峰榜页面', lambda: self.select_rank('巅峰榜'), 2),
+            ('左滑2次，右滑2次，浏览口碑榜单', self.browse_rank, 0),
+            ('点击新书榜，进入新书榜页面', lambda: self.select_rank('新书榜'), 2),
+            ('左滑2次，右滑2次，浏览高分榜单', self.browse_rank, 0),
+            ('返回番茄免费小说主界面', self.back_to_main, 2),
+            ('滑动返回Home页', self.home, 1),
+        ]

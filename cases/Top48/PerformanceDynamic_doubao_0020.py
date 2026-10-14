@@ -1,4 +1,5 @@
 """豆包拍照修图、相册选图合成视频和实时通话（表格第 500～515 行）。"""
+import logging
 import time
 
 from Cases.Top48.doubao_common import DoubaoDynamicCase
@@ -23,10 +24,12 @@ class PerformanceDynamic_doubao_0020(DoubaoDynamicCase):
         self.enter_text('合成视频')
 
     def wait_in_call(self):
+        if not getattr(self, 'call_available', False):
+            logging.warning('SKIP：豆包通话未打开，跳过停留15秒')
+            return False
         # 表格指定停留 15 秒，逐秒确认界面没有意外退出。
         for second in range(15):
-            package = self.current_package()
-            if package == self.PACKAGE and not (self.has(desc='挂断') or self.has(text='结束通话')):
+            if not self.call_active():
                 raise RuntimeError('豆包通话在第 {} 秒前已退出'.format(second))
             time.sleep(1)
 

@@ -17,11 +17,14 @@ class DouyinDynamicCase(DynamicAppCase):
         self.d.click(round(x), round(y))
 
     def contains_nodes(self, text=None, desc=None, rid=None):
+        def normalized(value):
+            return value.replace('\u200b', '').replace('\ufeff', '')
+
         result = []
         for node in self.nodes(rid=rid):
-            if text is not None and text not in node.get('text', ''):
+            if text is not None and normalized(text) not in normalized(node.get('text', '')):
                 continue
-            if desc is not None and desc not in node.get('content-desc', ''):
+            if desc is not None and normalized(desc) not in normalized(node.get('content-desc', '')):
                 continue
             result.append(node)
         return result
@@ -69,14 +72,21 @@ class DouyinDynamicCase(DynamicAppCase):
         return any('已选中' in node.get('content-desc', '') for node in self.top_tabs(name))
 
     def reveal_top_tab(self, name):
-        for _ in range(3):
+        directions = ((.83, .25), (.25, .83), (.25, .83), (.83, .25))
+        for start, end in directions:
             if self.top_tabs(name):
                 return True
-            self.swipe(.83, .08, .25, .08, 350)
+            self.swipe(start, .08, end, .08, 350)
             time.sleep(.6)
         return bool(self.top_tabs(name))
 
     def switch_top(self, name, substitutes=()):
+        if name == '推荐':
+            shortcut = self.first_contains(desc='返回推荐页')
+            if shortcut is not None:
+                self.click_node(shortcut)
+                time.sleep(2)
+                return self.wait_feed(5)
         target = name
         if not self.reveal_top_tab(target):
             for candidate in substitutes:
@@ -92,28 +102,43 @@ class DouyinDynamicCase(DynamicAppCase):
         return True
 
     def feed_ready(self):
-        return self.top_selected('推荐') and (
-            self.has(rid='user_avatar') or self.has(rid='comment_container')
-            or bool(self.contains_nodes(desc='评论')))
+        nodes = self.nodes()
+        selected = any('已选中' in node.get('content-desc', '')
+                       and '推荐' in node.get('content-desc', '')
+                       for node in nodes)
+        video_controls = any(
+            node.get('resource-id', '').endswith((':id/user_avatar', ':id/comment_container'))
+            or '评论' in node.get('content-desc', '')
+            for node in nodes)
+        return selected and video_controls
 
     def dismiss_known_popup(self):
-        if self.has(text='取消', rid='b4y'):
-            self.click(text='取消', rid='b4y')
+        nodes = self.nodes()
+
+        def first_node(predicate):
+            return next((node for node in nodes if predicate(node)), None)
+
+        node = first_node(lambda item: item.get('text') == '取消'
+                          and item.get('resource-id', '').endswith(':id/b4y'))
+        if node is not None:
+            self.click_node(node)
             time.sleep(1)
             return True
-        if self.has(text='不感兴趣'):
-            self.click(text='不感兴趣')
+        node = first_node(lambda item: item.get('text') == '不感兴趣')
+        if node is not None:
+            self.click_node(node)
             time.sleep(1)
             return True
-        if self.has(rid='iv_close'):
+        if first_node(lambda item: item.get('resource-id', '').endswith(':id/iv_close')) is not None:
             # “完善账号安全设置”在此版本只响应系统返回键。
             self.back()
             return True
-        if self.has(rid='c=-'):
-            self.click(rid='c=-')
+        node = first_node(lambda item: item.get('resource-id', '').endswith(':id/c=-'))
+        if node is not None:
+            self.click_node(node)
             time.sleep(1)
             return True
-        close_nodes = self.contains_nodes(desc='关闭')
+        close_nodes = [node for node in nodes if '关闭' in node.get('content-desc', '')]
         close_nodes = [node for node in close_nodes
                        if (self.bounds(node)[2] - self.bounds(node)[0]) < self.d.window_size()[0] * .25]
         if close_nodes:
@@ -123,12 +148,34 @@ class DouyinDynamicCase(DynamicAppCase):
         return False
 
     def return_feed(self):
-        for _ in range(10):
+        for _ in range(12):
+            if self.feed_ready():
+                return
+            # 聊天、商品、作者等二级页可能仍把底部导航保留在无障碍树中；
+            # 优先处理当前页真正可见的返回按钮，避免点击被上层页面拦截。
+            if any(node.get('content-desc') == '返回' for node in self.nodes()):
+                self.back()
+                continue
             self.dismiss_known_popup()
-            if self.nodes(text='首页', rid='0py'):
-                self.bottom_tab('首页')
-                if self.switch_top('推荐') and self.wait_feed(5):
+            home_nodes = self.nodes(text='首页', rid='0py')
+            if home_nodes:
+                self.click_node(home_nodes[0])
+                time.sleep(2)
+                if self.feed_ready():
                     return
+                shortcut = self.first_contains(desc='返回推荐页')
+                if shortcut is not None:
+                    self.click_node(shortcut)
+                    time.sleep(2)
+                    if self.feed_ready():
+                        return
+                recommend = self.top_tabs('推荐')
+                if recommend:
+                    self.click_node(recommend[0])
+                    time.sleep(2)
+                    if self.feed_ready():
+                        return
+                continue
             self.back()
         self.wait_for(self.feed_ready, '未返回抖音推荐页', timeout=5)
 
@@ -141,6 +188,13 @@ class DouyinDynamicCase(DynamicAppCase):
 
     def launch(self):
         self.start()
+        try:
+            # 冷/热启动后视频画面先出现，Accessibility 树通常稍晚才挂载底栏。
+            self.wait_for(lambda: bool(self.nodes(text='首页', rid='0py')),
+                          '抖音底栏尚未加载', timeout=12)
+        except RuntimeError:
+            # 可能恢复在二级页，交给统一返回逻辑逐层回退。
+            pass
         self.return_feed()
 
     # 推荐视频和评论
@@ -150,15 +204,17 @@ class DouyinDynamicCase(DynamicAppCase):
             time.sleep(2)
 
     def open_comments(self):
-        if self.has(rid='comment_container'):
-            self.click(rid='comment_container')
-        else:
-            node = self.first_contains(desc='评论')
-            if node is None:
-                raise RuntimeError('当前视频没有评论入口')
-            self.click_node(node)
-        self.wait_for(lambda: self.has(rid='e19') and self.contains_nodes(text='评论'),
-                      '评论面板未打开')
+        node = self.first_any(
+            {'rid': 'comment_container'}, {'rid': 'e3z'}, {'rid': 'e9l'}, {'desc': '评论'})
+        if node is None:
+            raise RuntimeError('当前视频没有评论入口')
+
+        def ready():
+            nodes = self.nodes()
+            return (any(item.get('resource-id', '').endswith(':id/e19') for item in nodes)
+                    and any('评论' in item.get('text', '') for item in nodes))
+
+        self.transition(lambda: self.click_node(node), ready, '评论面板未打开')
 
     def browse_comments(self):
         self.swipe(.5, .78, .5, .48, 350)
@@ -188,6 +244,7 @@ class DouyinDynamicCase(DynamicAppCase):
 
     def enter_live_room(self):
         if not self.has(rid='qbc'):
+            self.live_room_open = False
             return self.skip('直播频道没有可进入的直播间')
         self.click(rid='qbc')
         time.sleep(2)
@@ -197,6 +254,7 @@ class DouyinDynamicCase(DynamicAppCase):
             self.click(rid='qbc')
         self.wait_for(lambda: self.has(rid='h7l') or bool(self.contains_nodes(desc='关闭 按钮')),
                       '直播间未打开')
+        self.live_room_open = True
         return True
 
     def browse_live_rooms(self, count=3):
@@ -206,6 +264,9 @@ class DouyinDynamicCase(DynamicAppCase):
         return True
 
     def open_live_cart(self):
+        if not getattr(self, 'live_room_open', False):
+            self.live_cart_open = False
+            return self.skip('未进入直播间，跳过小黄车入口')
         words = ('小黄车', '购物车', '购物袋', '商品')
         candidates = []
         for node in self.nodes():
@@ -241,23 +302,25 @@ class DouyinDynamicCase(DynamicAppCase):
         node = self.first_contains(desc='搜索 按钮')
         if node is None:
             raise RuntimeError('商城搜索框不可用')
-        self.click_node(node)
-        self.wait_for(lambda: self.has(rid='yy6'), '商城搜索页未打开')
+        self.transition(lambda: self.click_node(node), lambda: self.has(rid='yy6'),
+                        '商城搜索页未打开')
 
     def search_product(self):
         self.d(resourceId=self.PACKAGE + ':id/yy6').set_text(self.QUERY)
-        self.click(rid='yzs')
-        self.wait_for(lambda: self.has(rid='yy6') and bool(self.contains_nodes(desc='华为')),
-                      '华为 P70 搜索结果未加载')
+        self.transition(
+            lambda: self.click(rid='yzs'),
+            lambda: self.has(text='全部', rid='x7p') and bool(self.contains_nodes(desc='华为')),
+            '华为 P70 搜索结果未加载',
+        )
 
     def open_first_product(self):
         if not self.contains_nodes(desc='华为'):
+            self.product_open = False
             return self.skip('商城搜索结果没有华为商品')
         # 搜索结果商品图是自绘列表；在已核验结果页内按屏幕比例点击首项图片区。
-        self.pct(.18, .27)
-        self.wait_for(lambda: bool(self.contains_nodes(desc='购物车'))
-                      and bool(self.contains_nodes(desc='返回')),
-                      '首个商品详情未打开')
+        self.transition(lambda: self.pct(.18, .27), self.product_ready,
+                        '首个商品详情未打开')
+        self.product_open = True
         return True
 
     def product_ready(self):
@@ -337,9 +400,13 @@ class DouyinDynamicCase(DynamicAppCase):
         self.return_feed()
         avatars = self.nodes(rid='user_avatar')
         if not avatars:
+            self.author_profile_available = False
             return self.skip('当前视频未暴露作者头像')
         self.click_node(avatars[0])
         time.sleep(3)
+        self.author_profile_available = self.profile_page()
+        if not self.author_profile_available:
+            return self.skip('作者主页未公开稳定的作品控件')
         return True
 
     def profile_page(self):
@@ -366,9 +433,13 @@ class DouyinDynamicCase(DynamicAppCase):
     def open_followed_author(self):
         node = self.first_any({'text': self.AUTHOR}, {'desc': self.AUTHOR})
         if node is None:
+            self.author_profile_available = False
             return self.skip('关注列表没有“{}”，保留关注列表浏览'.format(self.AUTHOR))
         self.click_node(node)
         time.sleep(3)
+        self.author_profile_available = self.profile_page()
+        if not self.author_profile_available:
+            return self.skip('“{}”主页未公开稳定的作品控件'.format(self.AUTHOR))
         return True
 
     def profile_video_candidates(self):
@@ -383,6 +454,8 @@ class DouyinDynamicCase(DynamicAppCase):
         return sorted(result, key=lambda node: (self.bounds(node)[1], self.bounds(node)[0]))
 
     def play_profile_video(self, index):
+        if not getattr(self, 'author_profile_available', False):
+            return self.skip('未进入作者主页，跳过第 {} 个作品'.format(index + 1))
         videos = self.profile_video_candidates()
         if len(videos) <= index:
             return self.skip('作者主页没有第 {} 个可播放作品'.format(index + 1))
@@ -400,19 +473,46 @@ class DouyinDynamicCase(DynamicAppCase):
                                   for node in self.nodes()), '抖音搜索框未打开')
         editors = [node for node in self.nodes() if node.get('class') == 'android.widget.EditText']
         editor = editors[0]
-        self.d(resourceId=editor.get('resource-id')).set_text(self.AUTHOR)
+        editor_id = editor.get('resource-id')
+        if editor_id:
+            self.d(resourceId=editor_id).set_text(self.AUTHOR)
+        else:
+            self.click_node(editor)
+            self.d.send_keys(self.AUTHOR, clear=True)
         button = self.first_any({'text': '搜索'}, {'desc': '搜索'})
         if button is not None:
             self.click_node(button)
         time.sleep(4)
+        user_tabs = self.nodes(text='用户', rid='android:id/text1')
+        if not user_tabs:
+            self.author_results_open = False
+            return self.skip('搜索结果没有“用户”分类')
+        self.transition(
+            lambda: self.click_node(user_tabs[0]),
+            lambda: bool(self.contains_nodes(desc='关注按钮')),
+            '作者用户搜索结果未加载',
+        )
+        self.author_results_open = True
         return True
 
     def open_searched_author(self):
-        node = self.first_any({'text': self.AUTHOR}, {'desc': self.AUTHOR})
-        if node is None:
-            return self.skip('搜索结果没有“{}”'.format(self.AUTHOR))
-        self.click_node(node)
+        if not getattr(self, 'author_results_open', False):
+            self.author_profile_available = False
+            return self.skip('未进入作者用户搜索结果')
+        follow_nodes = (self.contains_nodes(desc='已关注按钮')
+                        or self.contains_nodes(desc='关注按钮'))
+        if not follow_nodes:
+            self.author_profile_available = False
+            return self.skip('用户搜索结果没有可打开的作者')
+        first = min(follow_nodes, key=lambda node: self.bounds(node)[1])
+        width, _ = self.d.window_size()
+        _, top, _, bottom = self.bounds(first)
+        # 用户卡片仅公开右侧关注按钮；按该按钮的纵向中心点击同卡片左侧作者区域。
+        self.point(width * .25, (top + bottom) / 2)
         time.sleep(3)
+        self.author_profile_available = self.profile_page()
+        if not self.author_profile_available:
+            return self.skip('搜索结果作者主页未公开稳定的作品控件')
         return True
 
     # 消息和创作
@@ -471,6 +571,27 @@ class DouyinDynamicCase(DynamicAppCase):
     def unavailable_chat_media(self, action):
         if not getattr(self, 'chat_media_available', False):
             return self.skip('当前版本聊天页无“{}”功能'.format(action))
+        aliases = {
+            '拍摄': ('拍摄',),
+            '拍摄图片': ('拍照', '拍摄照片'),
+            '发送图片': ('发送',),
+            '拍摄视频': ('录像', '录制视频'),
+            '发送视频': ('发送',),
+            '相册': ('相册',),
+            '发送相册图片': ('发送',),
+        }
+        labels = aliases.get(action)
+        if not labels:
+            return self.skip('“{}”页面是自绘控件，未找到稳定语义定位'.format(action))
+        node = None
+        for label in labels:
+            node = self.first_any({'text': label}, {'desc': label})
+            if node is not None:
+                break
+        if node is None:
+            return self.skip('当前聊天媒体流程没有“{}”控件'.format(action))
+        self.click_node(node)
+        time.sleep(2)
         return True
 
     def open_create(self):
@@ -485,6 +606,14 @@ class DouyinDynamicCase(DynamicAppCase):
         if not self.create_available:
             logging.warning('SKIP：创作页未公开照片/相册控件')
         return self.create_available
+
+    def back_in_create(self):
+        if self.feed_ready():
+            return self.skip('创作子页面未打开，无需返回')
+        if self.current_app()['package'] != self.PACKAGE:
+            return self.skip('当前不在抖音创作流程，跳过返回')
+        self.back()
+        return True
 
     def create_click(self, label):
         if not getattr(self, 'create_available', False):
@@ -505,12 +634,16 @@ class DouyinDynamicCase(DynamicAppCase):
         time.sleep(2)
         target = self.first_any({'text': 'Test'}, {'desc': 'Test'})
         if target is None:
+            self.share_target_selected = False
             return self.skip('分享面板没有 Test 联系人')
         self.click_node(target)
         time.sleep(1)
+        self.share_target_selected = True
         return True
 
     def confirm_share(self):
+        if not getattr(self, 'share_target_selected', False):
+            return self.skip('未选择 Test 联系人，跳过分享发送')
         send = self.first_any({'text': '发送'}, {'desc': '发送'})
         if send is None:
             return self.skip('分享面板没有发送按钮')
@@ -567,28 +700,61 @@ class DouyinDynamicCase(DynamicAppCase):
     def open_food(self):
         node = self.first_any({'desc': '附近美食'}, {'text': '附近美食'})
         if node is None:
+            self.food_open = False
             return self.skip('团购页没有附近美食入口')
         self.click_node(node)
         time.sleep(4)
+        for _ in range(2):
+            if not self.dismiss_known_popup():
+                break
+        self.food_open = True
         return True
 
     def open_first_merchant(self):
-        # 美食列表由自绘卡片组成；在已经核验的美食页点击第一条商家卡片。
+        # 美食列表由自绘卡片组成。价格符号可从控件树读取，以首个价格行
+        # 向上偏移 10% 屏高定位对应商家标题，兼容地址栏高度和首屏卡片变化。
+        if not getattr(self, 'food_open', False):
+            self.merchant_open = False
+            return self.skip('未进入美食页，跳过商家卡片')
         if self.contains_nodes(desc='立即抢购'):
+            self.merchant_open = True
             return True
-        self.pct(.28, .34)
-        time.sleep(3)
+        width, height = self.d.window_size()
+        prices = [node for node in self.nodes(desc='¥')
+                  if self.bounds(node)[1] > height * .2]
+        if not prices:
+            self.merchant_open = False
+            return self.skip('美食页未公开首个商家的价格锚点')
+        first_price_top = min(self.bounds(node)[1] for node in prices)
+        target_y = max(height * .23, first_price_top - height * .10)
+        for _ in range(2):
+            self.point(width * .45, target_y)
+            time.sleep(3)
+            if self.contains_nodes(desc='立即抢购'):
+                self.merchant_open = True
+                break
+        else:
+            self.merchant_open = False
+        if not self.merchant_open:
+            return self.skip('首个商家页没有公开团购套餐')
         return True
 
     def open_first_deal(self):
+        if not getattr(self, 'merchant_open', False):
+            self.deal_open = False
+            return self.skip('未进入商家页，跳过团购套餐')
         deals = self.contains_nodes(desc='立即抢购')
         if not deals:
+            self.deal_open = False
             return self.skip('商家页没有团购套餐')
         self.click_node(deals[0])
         time.sleep(2)
+        self.deal_open = True
         return True
 
     def buy_deal(self):
+        if not getattr(self, 'deal_open', False):
+            return self.skip('未进入套餐页，跳过购买入口')
         buy = self.first_any(
             {'text': '购买'}, {'desc': '购买'},
             {'text': '立即抢购'}, {'desc': '立即抢购'})
