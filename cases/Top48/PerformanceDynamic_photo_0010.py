@@ -1,62 +1,26 @@
-# -*- coding: utf-8 -*-
-
-import logging
-import os
-import shutil
-import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
-
-class PerformanceDynamic_photo_0010(Case):
-
-    all_app_package_list = ["com.xingin.xhs"]
-
-    def __init__(self, result_path):
-        super().__init__(result_path)
-
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 判断手机上是否已安装好TOP30应用,未安装则用例失败
-        phone_app_list = SeaOfStarsAW.get_app_list()
-        for per_app in self.all_app_package_list:
-            if per_app not in phone_app_list:
-                return False
-        # 设置系统语言为中文
-        SeaOfStarsAW.set_system_language_cn()
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 设置屏幕锁定时间为10min
-        SeaOfStarsAW.set_screen_lock_long_time()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
+"""图库浏览照片；用例表1140～1158行（原表无第10步）。"""
+from Cases.Top48.photo_common import PhotoDynamicCase
 
 
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        """
-        测试用例执行
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例开始执行!")
-        # SeaOfStarsAW.init_device()
-        #  todo
+class PerformanceDynamic_photo_0010(PhotoDynamicCase):
+    STEP_NUMBERS = tuple(range(1,10)) + tuple(range(11,18))
 
-        logging.info("用例执行结束!")
-
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        """
-        清理日志，保留应用后台
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+    def steps(self):
+        return [
+            ('启动相册',self.launch,3),
+            ('点击照片进入照片tab',self.photos,1),
+            ('双指捏合捏开切换视图重复5次',self.zoom_cycle,1),
+            ('日视图上抛5次下抛5次',lambda:self.scroll_grid(fling=True),0),
+            ('日视图向上跟手滑5次向下跟手滑5次',self.scroll_grid,0),
+            ('日视图上下滚动条滑动各5次',self.scrollbar,0),
+            ('点击第一张照片进入大图',self.open_first,1),
+            ('底部预览条向右滑动3次',lambda:self.preview_strip(right=True),1),
+            ('底部预览条向左滑动3次',self.preview_strip,1),
+            ('点击左上角退出照片页',self.leave_viewer,1),
+            ('第一张照片大图与左上角返回重复5次',self.repeat_open,1),
+            ('第一张照片大图与侧滑退出重复5次',lambda:self.repeat_open(side=True),1),
+            ('点击第一张照片查看大图',self.open_first,1),
+            ('左滑5次右滑5次查看大图',lambda:self.full_swipes(left=5,right=5),1),
+            ('返回相册主界面',self.photos,1),
+            ('滑动返回Home页',self.home,1),
+        ]
