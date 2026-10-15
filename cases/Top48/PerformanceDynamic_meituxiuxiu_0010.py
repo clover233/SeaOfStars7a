@@ -1,62 +1,27 @@
-# -*- coding: utf-8 -*-
-
-import logging
-import os
-import shutil
-import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
-
-class PerformanceDynamic_meituxiuxiu_0010(Case):
-
-    all_app_package_list = ["com.xingin.xhs"]
-
-    def __init__(self, result_path):
-        super().__init__(result_path)
-
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 判断手机上是否已安装好TOP30应用,未安装则用例失败
-        phone_app_list = SeaOfStarsAW.get_app_list()
-        for per_app in self.all_app_package_list:
-            if per_app not in phone_app_list:
-                return False
-        # 设置系统语言为中文
-        SeaOfStarsAW.set_system_language_cn()
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 设置屏幕锁定时间为10min
-        SeaOfStarsAW.set_screen_lock_long_time()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
+"""美图秀秀图片编辑和相机拍照；Excel 第 1094～1112 行。"""
+from Cases.Top48.meituxiuxiu_common import MeituXiuxiuDynamicCase
 
 
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        """
-        测试用例执行
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例开始执行!")
-        # SeaOfStarsAW.init_device()
-        #  todo
-
-        logging.info("用例执行结束!")
-
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        """
-        清理日志，保留应用后台
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+class PerformanceDynamic_meituxiuxiu_0010(MeituXiuxiuDynamicCase):
+    def steps(self):
+        return [
+            ('启动美图秀秀', self.launch, 2),
+            ('点击导入图片，切换到图片页面', self.import_page, 2),
+            ('选择第一张图片，点击滤镜', self.first_image_and_filter, 2),
+            ('选中第一种滤镜格式并确认', self.first_filter, 2),
+            ('点击调色，将亮度设置为100%并确认', self.brightness_100, 2),
+            ('点击保存', self.save, 2),
+            ('点击再修一张，切换到图片页面', self.edit_another, 2),
+            ('返回美图秀秀主界面', self.main_page, 2),
+            ('点击相机', self.camera, 2),
+            ('点击滤镜', self.camera_filter, 2),
+            ('切换一次滤镜', self.switch_camera_filter, 2),
+            ('点击右下角箭头收起滤镜弹框', self.collapse_camera_filter, 2),
+            ('点击快门进行拍照', self.shutter, 2),
+            ('点击编辑', self.edit_photo, 2),
+            ('点击调色，将亮度设置为100%并确认', self.brightness_100, 2),
+            ('点击保存', self.save, 2),
+            ('点击再修一张，切换到图片页面', self.edit_another, 2),
+            ('返回美图秀秀主界面', self.main_page, 2),
+            ('滑动桌面', self.home, 2),
+        ]

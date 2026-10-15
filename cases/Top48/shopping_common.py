@@ -22,11 +22,9 @@ class ShoppingDynamicCase(DynamicAppCase):
         return nodes
 
     def point(self, x, y):
-        # 双屏 Android 设备的默认注入屏幕可能变化，显式指定主屏。
-        self.foreground()
-        result = self.d.shell('input -d 0 tap {} {}'.format(round(x), round(y)))
-        if result.exit_code:
-            raise RuntimeError('主屏点击失败：' + result.output)
+        # 显式指定主屏，且维持 250ms 按下。本机部分商城按钮会过滤
+        # adb tap 的过短触摸；同点 swipe 不产生位移，也不会触发长按。
+        super().point(x, y)
 
     def back(self):
         self.foreground()
@@ -142,8 +140,9 @@ class ShoppingDynamicCase(DynamicAppCase):
                                 'step_{}、{}{}'.format(index, name,
                                     '' if record['status'] == 'PASS' else '_' + record['status']),
                                 '', self.screenshot_dir_path)
-                        except Exception:
+                        except Exception as error:
                             if not failed:
+                                record.update(status='FAIL', reason='trace 导出失败：' + str(error))
                                 raise
                             logging.exception('失败步骤的 trace 导出失败')
         finally:

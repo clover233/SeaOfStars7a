@@ -74,10 +74,7 @@ class HwVmallDynamicCase(ShoppingDynamicCase):
         self.first_product()
 
     def reveal_reviews(self):
-        self.click_node(self.reveal_label('查看全部评价', '用户评价'))
-        time.sleep(1)
-        if not self.activity_has('ProductCommentActivity'):
-            self.label('查看全部评价', optional=True)
+        self.click_node(self.reveal_label('查看全部评价'))
         self.wait_for(lambda: self.activity_has('ProductCommentActivity'), '商品评价未打开')
 
     def all_reviews(self):

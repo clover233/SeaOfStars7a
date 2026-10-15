@@ -17,7 +17,7 @@ class PerformanceDynamic_jingdong_0040(JingdongDynamicCase):
             ('点击我的', lambda: self.group('我的', self.mine), 2),
             ('打开全部订单', lambda: self.within('我的', lambda: self.group('订单', self.orders)), 2),
             ('订单上滑2次下滑2次', lambda: self.within('订单', lambda: self.browse(2, 2)), 0),
-            ('点击待收货', lambda: self.within('订单', lambda: self.label('待收货', optional=True)), 2),
+            ('点击待收货', lambda: self.within('订单', self.receiving_orders), 2),
             ('返回京东主界面', self.main_page, 2),
             ('滑动返回Home页', self.home, 2),
         ]

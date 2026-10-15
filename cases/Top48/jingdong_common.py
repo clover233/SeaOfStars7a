@@ -1,5 +1,6 @@
 """京东当前版本的首页、商品、超市、秒送及直播操作。"""
 import logging
+import re
 import time
 
 from Cases.Top48.shopping_common import ShoppingDynamicCase, StepUnavailable
@@ -91,7 +92,12 @@ class JingdongDynamicCase(ShoppingDynamicCase):
 
     def input_query(self, text):
         self.foreground()
-        self.d.send_keys(text, clear=True)
+        self._query = text
+        channel_input = 'com.jd.lib.omnichannelsearch.feature:id/o3'
+        if self.has(rid=channel_input):
+            self.d(resourceId=channel_input).set_text(text)
+        else:
+            self.d.send_keys(text, clear=True)
 
     def query(self, text):
         self.input_query(text)
@@ -101,9 +107,12 @@ class JingdongDynamicCase(ShoppingDynamicCase):
         self.label('搜索')
         time.sleep(1)
         self.check_access()
-        self.wait_for(lambda: self.activity_has('ProductListActivity', 'SearchResult')
+        self.wait_for(lambda: self.activity_has('ProductListActivity', 'SearchResult', 'AllChannelsListActivity')
                       or self.find_label('综合排序', prefix=True) is not None,
                       '搜索结果未加载', timeout=20)
+        if self.find_label('在秒送频道下暂未找到相关商品') is not None:
+            raise StepUnavailable('当前地区秒送频道没有“{}”搜索结果'.format(
+                getattr(self, '_query', '该关键词')))
 
     def sales(self):
         self.label('销量', optional=True)
@@ -175,7 +184,7 @@ class JingdongDynamicCase(ShoppingDynamicCase):
 
     def buy(self):
         self.return_product()
-        self.label('立即购买', optional=True)
+        self.label('立即购买', '立即抢购', '领券购买', optional=True)
         self.wait_for(lambda: self.checkout_ready() or self.find_label('确认') is not None,
                       '购买规格/订单确认页未打开')
 
@@ -206,17 +215,44 @@ class JingdongDynamicCase(ShoppingDynamicCase):
             self.query('食用油')
 
     def add_grocery(self):
-        if self.activity_has('ProductListActivity'):
+        if self.product_ready():
+            logging.warning('替代：粮油入口直接打开商品详情，在当前商品页加购')
+        elif self.activity_has('ProductListActivity'):
             self.first_product()
         else:
             self.open_first_grocery_product()
+        before = self.product_cart_quantity()
         self.label('加入购物车', optional=True)
         time.sleep(1)
         # 只确认加入购物车的规格弹窗，绝不点击支付/提交订单。
         node = self.find_label('确定', '确认')
-        if node is not None:
+        if self.has(rid='lib_pd_style_right_root'):
+            # 16.1.0 部分规格弹窗只暴露根节点。已核对“确定”整行和
+            # “加入购物车/立即购买”双按钮两种布局，左侧 1/4 处均为加购。
+            self.pct(.25, .935)
+            self.wait_for(lambda: not self.has(rid='lib_pd_style_right_root'),
+                          '加入购物车后规格弹窗未关闭')
+        elif node is not None:
             self.click_node(node)
             time.sleep(1)
+        elif self.find_label('规格') is not None:
+            buttons = self.nodes(text='加入购物车')
+            if not buttons:
+                raise StepUnavailable('规格弹窗没有加入购物车按钮')
+            # 弹窗在基础页面之后绘制，最后一个同名按钮属于弹窗。
+            self.click_node(buttons[-1])
+        self.wait_for(lambda: self.product_cart_quantity() > before,
+                      '商品未成功加入购物车', timeout=15)
+
+    def product_cart_quantity(self):
+        height = self.d.window_size()[1]
+        counts = []
+        for node in self.nodes():
+            desc = node.get('content-desc', '')
+            if desc.startswith('购物车') and self.bounds(node)[1] > height*.85:
+                values = re.findall(r'\d+', desc)
+                counts.extend(int(value) for value in values)
+        return max(counts, default=0)
 
     def open_first_grocery_product(self):
         width, height = self.d.window_size()
@@ -236,13 +272,26 @@ class JingdongDynamicCase(ShoppingDynamicCase):
         time.sleep(2)
 
     def checkout(self):
-        self.label('去结算', '结算', prefix=True, optional=True)
+        node = self.find_label('去结算', '结算', prefix=True)
+        if node is not None:
+            self.click_node(node)
+        elif self.activity_has('ShoppingCartNewActivity'):
+            # 新购物车页不暴露按钮文字，截图确认底部固定“去结算”位置。
+            # 只在购物车 Activity 内使用此比例，绝不用于订单确认/支付页。
+            self.relative_click(.85, .925)
+        elif self.activity_has('MainFrameActivity') and self.has(rid='cart_taro_container'):
+            # 带主界面底栏的购物车，结算栏位于底栏上方。
+            self.relative_click(.85, .89)
+        else:
+            raise StepUnavailable('当前页面没有结算入口')
         self.wait_for(self.checkout_ready, '购物车未进入结算页', timeout=20)
 
     def grocery_checkout(self):
         if self.product_ready():
             self.label('购物车', prefix=True, optional=True)
-            time.sleep(1)
+            self.wait_for(lambda: self.activity_has('ShoppingCartNewActivity'),
+                          '商品页购物车未打开')
+            time.sleep(2)
         self.checkout()
 
     def new_address(self):
@@ -251,6 +300,12 @@ class JingdongDynamicCase(ShoppingDynamicCase):
 
     def instant_ready(self):
         return self.has(rid='hourly_go_mvp_address_text_view')
+
+    def dismiss_instant_busy(self):
+        if self.find_label('非常火爆，请稍后再试') is not None:
+            self.label('不等了')
+            self.wait_for(lambda: self.find_label('非常火爆，请稍后再试') is None,
+                          '秒送繁忙弹窗未关闭')
 
     def instant(self):
         self.main_page()
@@ -263,19 +318,35 @@ class JingdongDynamicCase(ShoppingDynamicCase):
             self.click_node(node)
         self.wait_for(lambda: self.instant_ready() or self.activity_has('HourlyGo'),
                       '秒送页未打开', timeout=20)
+        self.dismiss_instant_busy()
 
     def food(self):
-        if self.activity_has('HourlyGoMulTabActivity'):
-            return
-        self.label('外卖', optional=True)
-        self.wait_for(lambda: self.activity_has('HourlyGoMulTabActivity'), '外卖页未打开')
-        self.wait_for(lambda: self.has(rid='hourly_go_new_search_bar'), '外卖列表未加载')
+        self.dismiss_instant_busy()
+        if not self.activity_has('HourlyGoMulTabActivity'):
+            self.transition(lambda: self.label('外卖', optional=True),
+                            lambda: self.activity_has('HourlyGoMulTabActivity'),
+                            '外卖页未打开')
+        busy_count = 0
+        deadline = time.monotonic() + 15
+        while time.monotonic() < deadline:
+            if self.find_label('非常火爆，请稍后再试') is not None:
+                if busy_count >= 2:
+                    raise StepUnavailable('京东外卖频道反复提示“非常火爆，请稍后再试”')
+                self.dismiss_instant_busy()
+                busy_count += 1
+            elif self.has(rid='hourly_go_new_search_bar'):
+                return
+            time.sleep(.5)
+        raise RuntimeError('外卖列表未加载；当前页面 {}'.format(self.current_app()))
 
     def first_merchant(self):
         width, height = self.d.window_size()
         cards = [n for n in self.nodes() if '起送' in n.get('content-desc', '')
                  and self.bounds(n)[2]-self.bounds(n)[0] > width*.7
                  and self.bounds(n)[3]-self.bounds(n)[1] > height*.07]
+        if getattr(self, '_query', '') == '药店':
+            cards = [n for n in cards if any(word in n.get('content-desc', '')
+                                            for word in ('药店', '药房'))]
         if not cards:
             raise StepUnavailable('当前地区没有可定位的商家')
         self.click_node(min(cards, key=lambda n: self.bounds(n)[1]))
@@ -304,11 +375,24 @@ class JingdongDynamicCase(ShoppingDynamicCase):
         self.label('确定', '确认', optional=True)
 
     def food_search(self):
-        self.click(rid='hourly_go_new_search_bar')
-        time.sleep(1)
-        self.wait_for(lambda: self.find_label('搜索框', prefix=True) is not None
-                      or bool(self.d(className='android.widget.EditText').exists),
-                      '外卖搜索框未打开')
+        def open_food_search():
+            self.dismiss_instant_busy()
+            self.wait_for(lambda: self.has(rid='hourly_go_new_search_bar'),
+                          '外卖搜索入口未加载')
+            self.click(rid='hourly_go_new_search_bar')
+
+        try:
+            self.transition(open_food_search,
+                            lambda: self.activity_has('SearchActivity')
+                            or self.has(rid='com.jd.lib.omnichannelsearch.feature:id/o3'),
+                            '外卖搜索框未打开')
+        except (RuntimeError, StepUnavailable):
+            if self.find_label('非常火爆，请稍后再试') is not None:
+                raise StepUnavailable('京东外卖频道提示“非常火爆，请稍后再试”')
+            raise
+        self.dismiss_instant_busy()
+        if self.has(rid='com.jd.lib.omnichannelsearch.feature:id/o3'):
+            self.click(rid='com.jd.lib.omnichannelsearch.feature:id/o3')
 
     def search_medicine(self):
         self.input_query('药店')
@@ -347,5 +431,17 @@ class JingdongDynamicCase(ShoppingDynamicCase):
 
     def orders(self):
         self.label('全部订单', '我的订单', '全部', optional=True)
-        self.wait_for(lambda: not self.activity_has('MainFrameActivity')
-                      and self.find_label('待收货') is not None, '全部订单页未打开')
+        self.wait_for(lambda: self.activity_has('OrderListActivity')
+                      or (not self.activity_has('MainFrameActivity')
+                          and self.find_label('待收货') is not None), '全部订单页未打开')
+        time.sleep(2)
+
+    def receiving_orders(self):
+        if self.find_label('待收货') is not None:
+            self.label('待收货')
+        elif self.activity_has('OrderListActivityTaro'):
+            # 京东 16.1.0 的 Taro 订单页控件均无文本/描述；截图核对了
+            # 顶部固定状态栏第二项“待收货”，使用比例适配屏幕尺寸。
+            self.pct(.316, .19)
+        else:
+            raise StepUnavailable('当前订单页没有待收货入口')
