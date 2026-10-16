@@ -11,7 +11,7 @@ from aw_new import SeaOfStarsAW
 
 
 class PerformanceDynamic_xhs_0010(Case):
-    all_app_package_list = ["com.xingin.xhs"]
+    all_app_package_list = [""]
 
     def __init__(self, result_path):
         super().__init__(result_path)
@@ -68,10 +68,10 @@ class PerformanceDynamic_xhs_0010(Case):
         SeaOfStarsAW.ut_device(text='我')[0].click()
         time.sleep(1)
 
-        SeaOfStarsAW.ut_device.click(280, 1615)
+        SeaOfStarsAW.ut_device(text='收藏').click()
         time.sleep(1)
 
-        SeaOfStarsAW.ut_device.click(270, 2130)
+        SeaOfStarsAW.ut_device.click(0.274, 0.807)
         time.sleep(1)
 
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
@@ -81,7 +81,7 @@ class PerformanceDynamic_xhs_0010(Case):
         step = "3、左下角点赞（停留1s）"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(590, 2280)
+        SeaOfStarsAW.ut_device.click(0.48, 0.945)
         time.sleep(1)
 
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
@@ -91,7 +91,7 @@ class PerformanceDynamic_xhs_0010(Case):
         step = "4、浏览图片（向左滑动3次，每次停留2s）"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(530, 900)
+        SeaOfStarsAW.ut_device.click(0.464, 0.458)
         time.sleep(1)
         for _ in range(2):
             SeaOfStarsAW.swipe_right(1)
@@ -103,7 +103,10 @@ class PerformanceDynamic_xhs_0010(Case):
         step = "5、返回我的页面（停留1s）"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(55, 190)
+        for _ in range(2):
+            SeaOfStarsAW.ut_device.click(0.056, 0.081)
+            time.sleep(1)
+        SeaOfStarsAW.ut_device(text='笔记')[0].click()
         time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
@@ -112,6 +115,8 @@ class PerformanceDynamic_xhs_0010(Case):
         step = "6、点击设置图标（停留1s）"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
+        SeaOfStarsAW.ut_device(description="菜单").click()
+        time.sleep(1)
         SeaOfStarsAW.ut_device(description="设置").click()
         time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
@@ -121,7 +126,9 @@ class PerformanceDynamic_xhs_0010(Case):
         step = "7、返回首页（停留1s）"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(60, 190)
+        SeaOfStarsAW.ut_device.click(0.062, 0.084)
+        time.sleep(1)
+        SeaOfStarsAW.ut_device.click(0.942, 0.391)
         time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
@@ -143,7 +150,7 @@ class PerformanceDynamic_xhs_0010(Case):
         step = "9、点击消息"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(750, 2290)
+        SeaOfStarsAW.ut_device(text='消息').click()
         time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
@@ -161,7 +168,7 @@ class PerformanceDynamic_xhs_0010(Case):
         step = "11、点击消息"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(750, 2290)
+        SeaOfStarsAW.ut_device(text='消息').click()
         time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
@@ -179,7 +186,7 @@ class PerformanceDynamic_xhs_0010(Case):
         step = "13、点击“+”进入相册（停留2S）"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(540, 2300)
+        SeaOfStarsAW.ut_device.click(0.498, 0.954)
         time.sleep(1)
         SeaOfStarsAW.ut_device(text='从相册选择')[0].click()
         time.sleep(1)
@@ -203,7 +210,7 @@ class PerformanceDynamic_xhs_0010(Case):
         step = "15、点击第一张照片大图查看（停留2S）"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(150, 540)
+        SeaOfStarsAW.ut_device.click(0.164, 0.244)
         time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
@@ -226,13 +233,14 @@ class PerformanceDynamic_xhs_0010(Case):
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
         for _ in range(2):
-            SeaOfStarsAW.ut_device.click(80, 155)
+            SeaOfStarsAW.ut_device.click(0.078, 0.065)
             time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+
         steps_num += 1
 
-        step = "18、返回home页面（停留1s）"
+        step = "19、返回home页面（停留1s）"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
         SeaOfStarsAW.return_launcher()
