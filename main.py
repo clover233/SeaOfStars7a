@@ -714,19 +714,6 @@ if __name__ == "__main__":
             finally:
                 pass
 
-        # 单个用例循环测试
-        # for i in range(5):
-        #     try:
-        #         case = Performance_jank_kpi_05_000012(Result_Dir_Path)
-        #         case.run_case()
-        #         case.clean_up()
-        #         succ_num += 1
-        #         # print(SeaOfStarsAW.check_status(resourceId="com.sina.weibo:id/tab_main"))
-        #
-        #     except ElementNotFoundError as e:
-        #         logging.error(e)
-        #         fail_num += 1
-
         logging.info('succ_num - ' + str(succ_num))
         logging.info('fail_num - ' + str(fail_num))
         # 整理输出错误日志
