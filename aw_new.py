@@ -76,7 +76,7 @@ class SeaOfStarsAW:
                     time.sleep(1)
                     os.rename(os.path.join(self.save_path, "trace"), os.path.join(self.save_path, trace_name))
                     time.sleep(1)
-                    logging.info("{}抓取结束,当前温度:{}℃".format(trace_name, SeaOfStarsAW.get_current_tempreture()))
+                    logging.info("{}抓取结束".format(trace_name))
                     self.isPerfettoRunning = False
                 time.sleep(0.5)
 
@@ -751,7 +751,7 @@ class SeaOfStarsAW:
         time.sleep(1)
         os.rename(os.path.join(trace_path, "trace"), os.path.join(trace_path, trace_name))
         time.sleep(1)
-        logging.info("{}抓取结束,当前温度:{}℃".format(trace_name, SeaOfStarsAW.get_current_tempreture()))
+        logging.info("{}抓取结束".format(trace_name))
         if is_screen_shot and screenshot_dir_path:
             SeaOfStarsAW.screen_shot(screenshot_dir_path, case_name, scene_name, time_stamp)
         # 开始抓取空闲Perfetto thread

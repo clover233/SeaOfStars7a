@@ -683,7 +683,7 @@ Basic5 = [
 ]
 
 # case_list = Basic1
-case_list = [PerformanceDynamic_fuzai]
+case_list = Basic1
 
 succ_num = 0
 fail_num = 0
