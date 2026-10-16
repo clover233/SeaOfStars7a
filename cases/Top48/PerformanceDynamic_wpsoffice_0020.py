@@ -45,7 +45,190 @@ class PerformanceDynamic_wpsoffice_0020(Case):
         # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
         logging.info("用例开始执行!")
         # SeaOfStarsAW.init_device()
-        #  todo
+        steps_num = 1
+
+        app = 'cn.wps.moffice_eng'
+        step = "1、启动WPS（等待2s）"
+
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info("启动{}中".format("WPS"))
+        SeaOfStarsAW.ut_device.app_start(app, use_monkey=True)
+        time.sleep(5)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "2、点击底部稻壳儿，每次停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device(text="找模板").click()
+        time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "3、滑动浏览稻壳儿页面，上滑两次，下滑两次每次停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        for _ in range(2):
+            SeaOfStarsAW.scroll_down()
+            time.sleep(2)
+        for _ in range(2):
+            SeaOfStarsAW.scroll_up()
+            time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "4、点击首页，返回wps首页,等待2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device(text="首页").click()
+        time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "5、文件列表滑动，上滑3次，下滑3次，等待2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        for _ in range(3):
+            SeaOfStarsAW.scroll_down()
+            time.sleep(2)
+        for _ in range(3):
+            SeaOfStarsAW.scroll_up()
+            time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "6、点击右下角红色+，停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device.click(0.864, 0.827)
+        time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "7、点击文字icon，停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device(text="文字").click()
+        time.sleep(2)
+        SeaOfStarsAW.ut_device(text="空白文档").click()
+        time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "8、输入动态性能测试，停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device.send_keys("动态性能测试", clear=True)
+        time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        # 返回桌面
+        step = "9、点左上角保存按钮，停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device(text="保存").click()
+        time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+
+        steps_num += 1
+
+        # 返回桌面
+        step = "10、点击本机，进入保存页面，停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device.click(0.928, 0.176)
+        time.sleep(2)
+
+
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+
+        steps_num += 1
+
+        # 返回桌面
+        step = "11、点击文档文件夹，停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device(text="本地").click()
+        time.sleep(2)
+        SeaOfStarsAW.ut_device(text="我的文档").click()
+        time.sleep(2)
+
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+
+        steps_num += 1
+
+        # 返回桌面
+        step = "12、点击右上角√进行保存，停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        for _ in range(3):
+            SeaOfStarsAW.ut_device.click(0.068, 0.086)
+            time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+
+        steps_num += 1
+
+        # 返回桌面
+        step = "13、返回首页，停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device.click(0.068, 0.086)
+        time.sleep(2)
+        SeaOfStarsAW.ut_device(text="不保存").click()
+        time.sleep(10)
+        SeaOfStarsAW.ut_device.click(0.07, 0.09)
+        time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+
+        steps_num += 1
+
+        # 返回桌面
+        step = "14、点击一个文档进行浏览，停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device(text="最近").click()
+        time.sleep(2)
+        SeaOfStarsAW.ut_device(text="欢迎使用WPS云文档").click()
+        time.sleep(2)
+
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+
+        steps_num += 1
+
+        time.sleep(2)
+        # 返回桌面
+        step = "15、返回首页，停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device.click(0.068, 0.086)
+        time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+
+        steps_num += 1
+
+        # 返回桌面
+        step = "16、滑动返回Home页，停留2s"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.return_launcher()
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
 
         logging.info("用例执行结束!")
 
