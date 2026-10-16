@@ -10,7 +10,7 @@ class PerformanceDynamic_sodamusic_0010(SodaMusicDynamicCase):
             ('搜索国歌', self.search_anthem, 2),
             ('上滑2次，下滑2次浏览国歌', self.browse_search, 2),
             ('返回首页', self.main_page, 2),
-            ('点击下方播放按钮，播放15S后暂停', self.play_pause, 2),
+            ('点击下方播放按钮（如果播放中15s后直接暂停），播放15S后暂停', self.play_pause, 2),
             ('点击右下角我的', self.my_page, 2),
             ('点击我喜欢的音乐', self.favorites, 2),
             ('返回首页', self.main_page, 2),

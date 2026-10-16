@@ -1,217 +1,23 @@
-# -*- coding: utf-8 -*-
-
-import logging
-import os
-import shutil
-import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
+"""动态性能场景；Excel「新-7.0.2模型测试步骤」第 1577～1591 行。"""
+from Cases.Top48.weibo_common import WeiboDynamicCase
 
 
-class PerformanceDynamic_weibo_0030(Case):
-    all_app_package_list = ["com.xingin.xhs"]
-
-    def __init__(self, result_path):
-        super().__init__(result_path)
-
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        """
-        测试环境准备
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("测试环境开始准备!")
-        # 判断手机上是否已安装好TOP30应用,未安装则用例失败
-        phone_app_list = SeaOfStarsAW.get_app_list()
-        for per_app in self.all_app_package_list:
-            if per_app not in phone_app_list:
-                return False
-        # 设置系统语言为中文
-        SeaOfStarsAW.set_system_language_cn()
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 设置屏幕锁定时间为10min
-        SeaOfStarsAW.set_screen_lock_long_time()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
-
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        """
-        测试用例执行
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例开始执行!")
-        steps_num = 1
-
-        app = 'com.sina.weibo'
-        step = "1、打开微博应用，等待3s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info("启动{}中".format("微博"))
-        SeaOfStarsAW.ut_device.app_start(app, use_monkey=True)
-        time.sleep(5)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "2、点击屏幕底部“发现”，等待1s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(530, 2300)
-        time.sleep(5)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "3、点击“更多热搜”进入热搜界面等待2s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(700, 790)
-        time.sleep(1)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "4、上滑5次，下滑6次。等待2s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        for _ in range(5):
-            SeaOfStarsAW.scroll_up(0.5)
-            time.sleep(2)
-        for _ in range(6):
-            SeaOfStarsAW.scroll_down(0.5)
-            time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "5、点击微博热搜第一条，等待3s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(280, 800)
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "6、点击“视频”页签第一条博文，查看正文，等待3s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        # 点击视频页签
-        SeaOfStarsAW.ut_device.click(580, 660)
-        time.sleep(1)
-        # 点击视频中的第一条热搜
-        SeaOfStarsAW.ut_device.click(900, 1500)
-        time.sleep(1)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "7、上滑5次，下滑5次，等待2s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        for _ in range(5):
-            SeaOfStarsAW.scroll_up(0.5)
-            time.sleep(2)
-        for _ in range(5):
-            SeaOfStarsAW.scroll_down(0.5)
-            time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "8、点击右下角“赞”，等待1s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(820, 2280)
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "9、点击右下角“赞”，从而取消赞，等待1s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(820, 2280)
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "10、点击评论，输入“评论”,等待2s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(500, 2280)
-        time.sleep(2)
-        SeaOfStarsAW.ut_device.send_keys("评论")
-        time.sleep(1)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "11、点击取消，到达博文正文界面"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(640, 520)
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "12、点击转发微博，等待1s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(160, 2280)
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "13、点击取消，等待2s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(70, 170)
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "14、左滑3次，返回“发现”界面，等待2s"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        for _ in range(3):
-            SeaOfStarsAW.ut_device.click(60, 175)
-            time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "15、从屏幕底部上滑退出微博应用"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.return_launcher()
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        logging.info("用例执行结束!")
-
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        """
-        清理日志，保留应用后台
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+class PerformanceDynamic_weibo_0030(WeiboDynamicCase):
+    def steps(self):
+        return [
+            ('启动微博', self.launch, 3),
+            ('点击发现', self.discover, 1),
+            ('点击更多热搜', self.hot_list, 2),
+            ('热搜界面上滑5次下滑5次', lambda: self.browse(5, 5), 2),
+            ('点击微博热搜第一条', self.first_hot, 3),
+            ('点击第一条博文查看正文', self.first_post, 3),
+            ('正文上滑5次下滑5次', lambda: self.browse(5, 5), 2),
+            ('点赞', lambda: self.group('点赞', self.like), 1),
+            ('取消本次点赞', lambda: self.within('点赞', self.unlike), 1),
+            ('评论框输入评论', lambda: self.group('评论草稿', self.comment_draft), 2),
+            ('取消评论返回正文', lambda: self.within('评论草稿', self.cancel_comment), 1),
+            ('点击转发微博', lambda: self.group('转发草稿', self.repost_draft), 1),
+            ('取消转发', lambda: self.within('转发草稿', self.cancel_repost), 2),
+            ('返回微博主界面', self.main_page, 2),
+            ('滑动返回Home页', self.home, 1),
+        ]

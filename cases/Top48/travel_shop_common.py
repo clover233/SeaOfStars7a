@@ -77,15 +77,19 @@ class TravelShopCase(TencentObservedCase):
         super().dismiss_system_prompt()
 
     def input_text(self, text):
-        edits=[n for n in self.nodes() if n.get('class')=='android.widget.EditText']
+        edits=self.input_nodes()
         if not edits:
             raise StepUnavailable('输入框尚未显示，未向其他控件输入文字')
         if not any(n.get('focused')=='true' for n in edits):
             self.click_node(edits[0])
-        self.content_wait(lambda:any(n.get('focused')=='true' and n.get('class')=='android.widget.EditText'
-                                     for n in self.nodes()),'输入框未获得焦点',timeout=8)
+        self.content_wait(lambda:any(n.get('focused')=='true' for n in self.input_nodes()),'输入框未获得焦点',timeout=8)
         time.sleep(.4)
+        self.foreground()
         super().input_text(text)
+
+    def input_nodes(self):
+        return [n for n in self.nodes() if n.get('class') in ('android.widget.EditText',
+                'android.widget.AutoCompleteTextView','android.widget.MultiAutoCompleteTextView')]
 
     def point(self, x, y):
         self.foreground()
@@ -118,7 +122,7 @@ class TravelShopCase(TencentObservedCase):
         self.dismiss_ads()
         original=getattr(self,'_tap_source',self.INPUT_SOURCE)
         try:
-            for source in (self.INPUT_SOURCE,'mouse' if self.INPUT_SOURCE!='mouse' else ''):
+            for source in (original,'mouse' if original!='mouse' else ''):
                 if ready():return
                 self._tap_source=source
                 action()
@@ -254,7 +258,7 @@ class QunarDynamicCase(TravelShopCase):
 
     def booking_ready(self):
         return (self.has(desc='f_major_bundle_rn|QunarBooking|NavBar')
-                and self.visible('填单页',region=(0,.04,1,.14)))
+                and self.visible('填单页',True,region=(0,.04,1,.14)))
 
     @optional('booking')
     def browse_booking(self):
@@ -298,7 +302,7 @@ class QunarDynamicCase(TravelShopCase):
     def xian(self):
         self.needs('hotel_page')
         if not self.hotel_ready():raise StepUnavailable('酒店搜索页不可用')
-        if self.visible('西安'):
+        if self.has(rid='atom_hotel_tv_city_name',text='西安') or self.visible('西安'):
             self.adapt('目的地已是西安，保留当前城市')
             return
         nodes=self.nodes(rid='atom_hotel_tv_city_name')
@@ -306,6 +310,11 @@ class QunarDynamicCase(TravelShopCase):
         self._locators.add('tree'); self.click_node(nodes[0])
         self.content_wait(lambda:self.has(rid='qd_placeholder') or self.visible('西安')
                           or any(n.get('class')=='android.widget.EditText' for n in self.nodes()),'城市选择页未显示')
+        if self.has(rid='qd_common_tv_cityname',text='西安'):
+            self.go(lambda:self.native(rid='qd_common_tv_cityname',text='西安'),
+                    lambda:self.hotel_ready() and self.has(rid='atom_hotel_tv_city_name',text='西安'),
+                    '历史/热门城市西安未选中')
+            return
         if not self.visible('西安'):
             if self.has(rid='qd_placeholder'):self.native(rid='qd_placeholder')
             self.content_wait(lambda:any(n.get('class')=='android.widget.EditText' for n in self.nodes()),'城市搜索输入框未显示')
@@ -340,7 +349,8 @@ class QunarDynamicCase(TravelShopCase):
 
     def hotel_results_ready(self):
         return (self.has(desc='home_rn|listPage|filter') and
-                self.has(desc='home_rn|listPage|hotel_',prefix=True))
+                self.has(desc='home_rn|listPage|hotel_',prefix=True) and
+                any(self.visible(s,True,region=(0,.05,1,.5)) for s in ('智能排序','星级/价格','位置区域')))
 
     @optional('hotels')
     def browse_hotels(self):
@@ -365,6 +375,16 @@ class QunarDynamicCase(TravelShopCase):
                 self.choose(name,True,index=0);break
         else:raise StepUnavailable('酒店详情没有可核对的图片/相册入口')
         self.content_wait(lambda:self.visible('相册',True) or self.visible('全部',True),'酒店图片详情未打开')
+        width,height=self.d.window_size()
+        def open_photo():
+            tiles=[n for n in self.nodes() if n.get('content-desc') in ('房间','客房','外观','公共区域')
+                   and self.bounds(n)[2]-self.bounds(n)[0]>width*.3
+                   and self.bounds(n)[3]-self.bounds(n)[1]>height*.1]
+            if not tiles:raise StepUnavailable('图片总览没有可核对的照片缩略图')
+            self._locators.add('tree');self.click_node(sorted(tiles,key=lambda n:self.bounds(n)[1])[0])
+        self.go(open_photo,lambda:any(re.search(r'\d+\s*/\s*\d+|第\d+张',r['text']) for r in self.screen()),
+                '酒店照片大图未打开')
+        self.adapt('当前版本先进入图片总览，再打开首张照片大图')
 
     @optional('hotel_pictures')
     def browse_pictures(self):
@@ -401,7 +421,8 @@ class SodaMusicDynamicCase(TravelShopCase):
             self.adapt('关闭首次听歌偏好引导，不选择新的偏好')
 
     def main_ready(self):
-        return (self.activity_is('main.main.MainActivity') and self.has(rid='czr') and self.has(rid='b6a')
+        return (self.activity_is('main.main.MainActivity') and self.has(rid='czr')
+                and self.has(rid='b6j',text='我的') and self.has(rid='b6j',text='发现')
                 and self.visible('我的',region=(.75,.9,1,.99)))
 
     def main_page(self):
@@ -409,18 +430,16 @@ class SodaMusicDynamicCase(TravelShopCase):
         self.return_to(self.main_ready,'未返回汽水音乐底部导航',limit=8)
 
     def search_ready(self):
-        return any(n.get('class')=='android.widget.EditText' for n in self.nodes())
+        return self.has(rid='ddz') and bool(self.input_nodes())
 
     @optional('search')
     def search_page(self):
         self.main_page()
-        if self.has(rid='czr'):
-            self.native(rid='czr')
-        elif self.has(desc='搜索'):
-            self.native(desc='搜索')
-        else:
-            raise StepUnavailable('当前首页未导出可核对的搜索图标')
-        self.content_wait(self.search_ready,'汽水音乐搜索输入页未打开')
+        def open_search():
+            if self.has(rid='czr'):self.native(rid='czr')
+            elif self.has(desc='搜索'):self.native(desc='搜索')
+            else:raise StepUnavailable('当前首页未导出可核对的搜索图标')
+        self.go(open_search,self.search_ready,'汽水音乐搜索输入页未打开')
 
     def results_ready(self):
         return self.visible('国歌',True,region=(0,.15,1,.85)) and any(self.visible(s) for s in ('综合','歌曲','单曲'))
@@ -458,10 +477,10 @@ class SodaMusicDynamicCase(TravelShopCase):
         if self.main_ready() and self.has(rid='b6a'):
             self.native(rid='b6a')
             return
-        # 新版沉浸播放器隐藏播放文案；封面中心点击切换播放状态，须通过媒体会话确认。
+        # 播放/暂停状态有时使用不同原生图标ID，底部中央按钮的位置已经截图核对。
         if not self.main_ready():raise StepUnavailable('当前不在汽水音乐播放器')
-        self.pct(.5,.45)
-        self.adapt('当前版本用歌曲封面中心切换播放/暂停，以本包媒体会话校验')
+        self.pct(.5,.936)
+        self.adapt('底部播放图标未导出描述，按主界面中央按钮比例切换，以本包媒体会话校验')
 
     def my_page(self):
         self.return_to(self.main_ready,'未返回汽水音乐主界面')
@@ -488,12 +507,33 @@ class TaobaoDynamicCase(TravelShopCase):
     PACKAGE='com.taobao.taobao'
     all_app_package_list=[PACKAGE]
     COMPONENT=PACKAGE+'/com.taobao.tao.welcome.Welcome'
-    ALBUM='SeaOfStars_Taobao_Test'
+    ALBUM='淘宝性能素材'
     NEED_IMAGES=True
     TAP_MS=200
     INPUT_SOURCE='mouse'
     # 本次人工授权仅覆盖此关键词选出的商品客服；后续批跑需显式启用实发。
     SEND_ENV='TAOBAO_ALLOW_CUSTOMER_MESSAGES'
+
+    def verification_active(self):
+        app=self.current_app()
+        return app['package']==self.PACKAGE and '.security.open.middletier.fc.ui.' in app['activity']
+
+    def foreground(self):
+        super().foreground()
+        if self.verification_active():
+            raise StepUnavailable('淘宝要求滑块/安全验证，停止交互，待用户在应用内处理后复测')
+
+    def native(self, **selector):
+        self.foreground()
+        super().native(**selector)
+
+    def home(self):
+        if self.verification_active():
+            self.d.press('home')
+            self.wait_for(lambda:'launcher' in self.current_app()['activity'].lower(),'未返回Home')
+            self.adapt('出现淘宝验证页，按Home离开，未操作验证控件')
+            return
+        super().home()
 
     def launch(self):
         self._verified_product=False
@@ -516,7 +556,12 @@ class TaobaoDynamicCase(TravelShopCase):
                           '-d','file://'+remote+'/'+local.name])
 
     def dismiss_ads(self):
+        if self.verification_active():
+            raise StepUnavailable('淘宝要求滑块/安全验证，停止交互，待用户在应用内处理后复测')
         rows=super().dismiss_ads()
+        if self.ad_matches(rows,'点击推荐可切换模式',True):
+            self.pct(.5,.42)
+            return
         if self.has(desc='限时福利砸中你') and self.has(desc='关闭按钮'):
             self.native(desc='关闭按钮')
             time.sleep(.8);self.invalidate()
@@ -556,7 +601,7 @@ class TaobaoDynamicCase(TravelShopCase):
         self.needs('search');self.browse_checked(self.results_ready,5,6,'商品结果不可用')
 
     def product_ready(self):
-        return (self.activity_is('TTDetailActivity','DetailActivity') and
+        return (self.current_app()['activity'].rsplit('.',1)[-1] in ('TTDetailActivity','DetailActivity') and
                 (self.has(desc='客服,按钮') or self.visible('客服',region=(0,.85,.5,1))))
 
     @optional('product')
@@ -592,14 +637,34 @@ class TaobaoDynamicCase(TravelShopCase):
 
     @optional('reviews')
     def reviews(self):
-        self.needs('product')
-        for _ in range(7):
-            if self.visible('查看全部评价',True):
-                self.choose('查看全部评价',True,index=0);break
-            if self.visible('查看更多') and self.visible('评价',True):
-                self.choose('查看更多',index=0);break
+        self.needs('product');self.return_product()
+        height=self.d.window_size()[1]
+        tabs=[n for n in self.nodes(text='评价') if self.bounds(n)[1]<height*.2]
+        if tabs:self._locators.add('tree');self.click_node(tabs[0]);time.sleep(.7);self.invalidate()
+        if not self.product_ready() and any(self.visible(x,True) for x in ('全部评价','有图','追评')):
+            self.adapt('当前版本通过顶部“评价”直接打开完整评价页')
+            return
+        for _ in range(5):
+            # “问大家”也有查看更多；必须限定到评价标题所在的原生行。
+            headers=[n for n in self.nodes() if re.match(r'^(宝贝|用户|商品)?评价',n.get('content-desc',''))
+                     and any(x in n.get('content-desc','') for x in ('查看更多','查看全部'))]
+            if headers:
+                header=headers[0]
+                buttons=[n for n in header.iter('node') if any(t in (n.get('text','')+' '+n.get('content-desc',''))
+                         for t in ('查看更多','查看全部')) and n is not header]
+                if buttons:
+                    self._locators.add('tree');self.click_node(sorted(buttons,key=lambda n:self.bounds(n)[2]-self.bounds(n)[0])[0]);break
+                # 某些版本只导出整行；限定评价行右侧，不能点击整行中心或问大家。
+                a,b,z,y=self.bounds(header);w,h=self.d.window_size()
+                if y-b<h*.15:
+                    self.pct((a+(z-a)*.92)/w,(b+y)/2/h);break
+            if self.visible('查看全部评价',True):self.choose('查看全部评价',True,index=0);break
+            labels=[r for r in self.screen() if re.match(r'^(宝贝|用户|商品)?评价',r['text'])]
+            more=self.find('查看更多')
+            matches=[r for r in more if any(abs(r['y']-title['y'])<.025 for title in labels)]
+            if matches:self.tap_row(matches[0]);break
             self.swipe();time.sleep(.7)
-        else:raise StepUnavailable('当前商品未找到评价“查看更多/查看全部评价”入口')
+        else:raise StepUnavailable('当前商品未找到评价区域的查看更多入口，未点击问大家')
         self.content_wait(lambda:not self.product_ready() and any(self.visible(x,True) for x in ('全部评价','有图','追评')),
                           '宝贝评价页未打开')
 
@@ -620,17 +685,29 @@ class TaobaoDynamicCase(TravelShopCase):
     def customer_service(self):
         self.needs('product');self.return_product()
         if not getattr(self,'_verified_product',False):raise StepUnavailable('未确认本次清风商品，停止打开客服')
-        self.entry('客服',region=(0,.85,.55,1))
-        self.content_wait(lambda:self.chat_ready() or self.visible('登录',True),'商品客服未打开')
+        def open_customer():
+            if self.has(desc='客服,按钮'):self.native(desc='客服,按钮')
+            else:self.entry('客服',region=(0,.85,.55,1))
+        self.go(open_customer,lambda:self.chat_ready() or self.visible('登录',True),'商品客服未打开')
         if not self.chat_ready():raise StepUnavailable('商品客服需要登录，未进入聊天')
         # 商品详情直接打开的客服仍须展示同一品牌/商品，再保存当前会话顶部身份。
-        if not self.visible('清风',True):raise StepUnavailable('客服页面未显示清风商品或店铺，未授权当前会话')
+        self.content_wait(lambda:self.visible('清风',True),'客服页面未显示清风商品或店铺，未授权当前会话',timeout=15)
+        last=['']
+        def stable_header():
+            title=self.chat_header()
+            ready=bool(title) and title==last[0]
+            last[0]=title
+            return ready
+        self.content_wait(stable_header,'客服标题尚未稳定，未授权当前会话',timeout=12)
         self._customer_header=self.chat_header()
         if not self._customer_header:raise StepUnavailable('无法核对客服会话标题')
 
     def chat_header(self):
-        labels=[r['text'] for r in self.screen() if .035<r['y']+r['h']/2<.12 and .15<r['x']+r['w']/2<.85]
-        return '|'.join(labels)
+        # 只取店名标题，排除下方会变化的星级/评分与加载时的通用“消息”。
+        labels=[self.normalized(r['text']) for r in self.screen()
+                if .04<r['y']+r['h']/2<.085 and .12<r['x']+r['w']/2<.7
+                and re.search(r'[\u4e00-\u9fff]',r['text'])]
+        return '|'.join(t for t in labels if t not in ('消息','客服'))
 
     def require_customer_send(self):
         self.needs('customer')
@@ -655,20 +732,35 @@ class TaobaoDynamicCase(TravelShopCase):
 
     @optional('picture')
     def send_picture(self):
+        original=getattr(self,'_tap_source',self.INPUT_SOURCE)
+        self._tap_source=''
+        try:return self._send_picture()
+        finally:self._tap_source=original
+
+    def _send_picture(self):
         self.require_customer_send()
         if getattr(self,'_picture_attempted',False):raise StepUnavailable('已执行过本次图片发送，不重复发送')
-        if self.has(desc='更多功能'):self.native(desc='更多功能')
-        elif self.has(desc='添加'):self.native(desc='添加')
-        elif self.visible('+'):self.choose('+',region=(.7,.6,1,1))
-        else:raise StepUnavailable('客服聊天未导出可核对的加号入口')
-        self.content_wait(lambda:self.visible('相册'),'相册入口未展开')
-        self.entry('相册')
-        self.content_wait(lambda:self.visible('所有照片',True) or self.visible('最近项目',True) or self.visible(self.ALBUM,True),
-                          '未进入可核对的相册选择页')
-        for title in ('所有照片','最近项目'):
-            if self.visible(title,True):self.choose(title,True,index=0);break
-        self.content_wait(lambda:self.visible(self.ALBUM,True),'专用测试相册未显示，未选个人图片')
-        self.choose(self.ALBUM,True,index=0)
+        def open_drawer():
+            if self.has(desc='抽屉菜单按钮'):self.native(desc='抽屉菜单按钮')
+            elif self.has(desc='更多功能'):self.native(desc='更多功能')
+            elif self.has(desc='添加'):self.native(desc='添加')
+            elif self.visible('+'):self.choose('+',region=(.7,.6,1,1))
+            else:raise StepUnavailable('客服聊天未导出可核对的加号入口')
+        self.go(open_drawer,lambda:self.visible('相册'),'相册入口未展开')
+        titles=('所有照片','全部照片','最近照片','最近项目')
+        def open_album():
+            items=[n for n in self.nodes(desc='相册') if n.get('clickable')=='true']
+            if items:self._locators.add('tree');self.click_node(items[0])
+            else:self.entry('相册')
+        self.go(open_album,lambda:any(self.visible(t,True,region=(0,.03,1,.18)) for t in titles+(self.ALBUM,)),
+                '未进入可核对的相册选择页')
+        if not self.visible(self.ALBUM,region=(.1,.03,.9,.15)):
+            for title in titles:
+                if self.visible(title,True,region=(0,.03,1,.18)):
+                    self.choose(title,True,region=(0,.03,1,.18),index=0);break
+            self.content_wait(lambda:self.visible(self.ALBUM,True,region=(0,.15,1,1)),
+                              '专用测试相册未显示，未选个人图片')
+            self.choose(self.ALBUM,True,region=(0,.15,1,1),index=0)
         self.content_wait(lambda:self.visible(self.ALBUM,region=(.1,.03,.9,.15)),
                           '专用测试相册标题未显示，未选择图片')
         # 该相册只创建一张纯色测试图；必须有图片/选中控件才可选择。
@@ -676,36 +768,44 @@ class TaobaoDynamicCase(TravelShopCase):
         if not choices:raise StepUnavailable('专用相册未导出图片选择控件，未猜测点击个人照片')
         self.click_node(choices[0]);time.sleep(.5);self.invalidate()
         if not self.visible('发送',True):raise StepUnavailable('选择测试图后未出现发送按钮')
+        buttons=[r for r in self.find('发送',True) if r['x']+r['w']/2>.6
+                 and (r['y']+r['h']/2<.18 or r['y']+r['h']/2>.82)]
+        if not buttons:raise StepUnavailable('未找到当前测试图的发送按钮')
         self._picture_attempted=True
-        self.choose('发送',True,region=(.6,0,1,.18),index=0)
+        self.tap_row(buttons[0])
         self.content_wait(self.chat_ready,'图片发送后未回到客服会话；不自动重发')
         self.adapt('仅发送专用纯色测试图；返回同一客服会话，具体送达状态以聊天截图核对')
 
     @optional('shop')
     def shop(self):
         self.needs('product');self.return_product();self.swipe()
-        self.entry('店铺','进店逛逛',region=(0,.1,1,1))
-        self.content_wait(lambda:not self.product_ready() and any(self.visible(x,True) for x in ('全部宝贝','店铺首页','店铺推荐')),
-                          '商品店铺未打开')
+        def open_shop():
+            if self.has(desc='店铺,按钮'):self.native(desc='店铺,按钮')
+            else:self.entry('店铺','进店逛逛',region=(0,.1,1,1))
+        self.go(open_shop,lambda:self.has(desc='llShopInfoPart') or
+                (not self.product_ready() and any(self.visible(x,True) for x in
+                ('全部宝贝','全部商品','店铺首页','店铺推荐'))),'商品店铺未打开')
         self.browse(3,3)
 
     @optional('cart')
     def add_cart(self):
         self.needs('product');self.return_product()
         if not getattr(self,'_verified_product',False):raise StepUnavailable('未确认清风商品，未加购')
+        if getattr(self,'_cart_attempted',False):raise StepUnavailable('本次已尝试加购，不自动重复增加数量')
         if self.has(desc='加入购物车,不可选') or self.visible('此地区暂不可购买',True):
             raise StepUnavailable('当前商品所在地区不可购买，加购按钮不可选，未更改收货地址')
+        def success():
+            return any(self.visible(t,True) for t in ('加入购物车成功','添加成功','已加入购物车','加购成功','加入成功'))
+        self._cart_attempted=True
         self.entry('加入购物车',region=(.3,.85,1,1))
-        if self.visible('加入购物车成功',True) or self.visible('添加成功',True):return
-        # 不代选未知规格；明确选中默认规格时才能确认加购。
-        selected=[n for n in self.nodes() if n.get('selected')=='true' and n.get('text')]
-        if not selected:raise StepUnavailable('加购需要选择规格，当前没有已选默认规格，停留选择页')
-        if self.visible('确定',region=(0,.85,1,1)):
-            self.choose('确定',region=(0,.85,1,1))
-        elif self.visible('加入购物车',region=(0,.85,1,1)):
-            self.choose('加入购物车',region=(0,.85,1,1))
-        else:raise StepUnavailable('规格选择页没有明确的加购确认按钮')
-        self.content_wait(lambda:self.visible('加入购物车成功',True) or self.visible('添加成功',True),'加购成功未确认')
+        self.content_wait(lambda:success() or self.visible('套餐类型',True) or self.visible('请选择',True),
+                          '加购结果或规格选择页未显示')
+        if success():return
+        # 原生状态未导出时保留当前默认规格，只确认加购，不进入购买或支付。
+        if not self.visible('加入购物车',region=(0,.85,1,1)):
+            raise StepUnavailable('规格页没有明确的加购确认按钮')
+        self.choose('加入购物车',region=(0,.85,1,1))
+        self.content_wait(success,'加购成功未确认；不自动重试，避免重复增加数量')
 
     def selected_channel(self, name):
         return self.has(desc=name+',已选中') or self.has(desc=name+'已选中')
@@ -744,7 +844,9 @@ class TaobaoDynamicCase(TravelShopCase):
         self.main_page()
         label='逛逛' if self.visible('逛逛',region=(0,.9,1,1)) else '视频'
         self.bottom_node(label)
-        self.content_wait(lambda:self.visible('关注') or self.visible('发现') or self.visible('推荐'),'逛逛/视频内容未打开')
+        self.content_wait(lambda:not self.has(desc='搜索栏') and
+                (self.has(desc='已选中，推荐，按钮') or self.has(desc='已选中，关注，按钮')
+                 or self.visible('发现')),'逛逛/视频内容未打开')
         if label=='视频':self.adapt('当前底栏“逛逛”已改为“视频”，改为浏览视频内容')
 
     @optional('explore')

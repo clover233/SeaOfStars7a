@@ -17,9 +17,11 @@ class GameWeatherGuardsTest(unittest.TestCase):
     def test_game_runs_for_full_thirty_seconds(self):
         c=object.__new__(HonorLaunchCase);c.launch=Mock();c.dismiss_system_prompt=Mock()
         c.current_app=Mock(return_value={'package':c.PACKAGE});c.visible=Mock(return_value=False)
-        with patch('Cases.Top48.game_weather_common.time.monotonic',side_effect=[100,100,101,130]),patch('Cases.Top48.game_weather_common.time.sleep') as sleep:
+        now=[100.0]
+        def advance(seconds):now[0]+=seconds
+        with patch('Cases.Top48.game_weather_common.time.monotonic',side_effect=lambda:now[0]),patch('Cases.Top48.game_weather_common.time.sleep',side_effect=advance):
             c.launch_30()
-        sleep.assert_called_once_with(1)
+        self.assertEqual(now[0]-100,30)
 
     def weather(self,count):
         c=object.__new__(WeatherDynamicCase);c.unavailable={};c.main_page=Mock();c.swipe=Mock()

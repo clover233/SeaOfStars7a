@@ -14,6 +14,21 @@ class TravelShopGuardsTest(unittest.TestCase):
         c.chat_ready=Mock(return_value=True);c.input_text=Mock();c.entry=Mock()
         return c
 
+    def test_verification_blocks_swipes_before_input_injection(self):
+        c=object.__new__(TaobaoDynamicCase)
+        c.current_app=Mock(return_value=dict(package=c.PACKAGE,activity='com.alibaba.wireless.security.open.middletier.fc.ui.Ext2ContainerActivity'))
+        with self.assertRaises(StepUnavailable):c.swipe()
+        c.d.shell.assert_not_called()
+
+    def test_customer_title_ignores_changing_star_rating(self):
+        c=object.__new__(TaobaoDynamicCase)
+        c.screen=Mock(return_value=[dict(text='羽诺旗舰店',x=.12,y=.055,w=.3,h=.025),dict(text='五星评分 4.8',x=.12,y=.085,w=.3,h=.02)])
+        self.assertEqual(c.chat_header(),'羽诺旗舰店')
+
+    def test_loading_message_title_does_not_authorize_customer(self):
+        c=object.__new__(TaobaoDynamicCase);c.screen=Mock(return_value=[dict(text='消息',x=.12,y=.055,w=.3,h=.025)])
+        self.assertEqual(c.chat_header(),'')
+
     def test_customer_requires_explicit_runtime_opt_in(self):
         c=self.customer()
         with patch.dict(os.environ,{c.SEND_ENV:'0'}),self.assertRaises(StepUnavailable):c.send_hello()
@@ -52,6 +67,11 @@ class TravelShopGuardsTest(unittest.TestCase):
     def test_music_main_page_does_not_toggle_playback(self):
         c=object.__new__(SodaMusicDynamicCase);c.dismiss_ads=Mock();c.return_to=Mock();c.native=Mock()
         c.main_page();c.native.assert_not_called()
+
+    def test_music_home_does_not_require_playing_only_icon(self):
+        c=object.__new__(SodaMusicDynamicCase);c.activity_is=Mock(return_value=True);c.visible=Mock(return_value=True)
+        c.has=lambda **kw:kw.get('rid')=='czr' or (kw.get('rid')=='b6j' and kw.get('text') in ('我的','发现'))
+        self.assertTrue(c.main_ready())
 
     def test_already_playing_music_waits_then_pauses_only(self):
         c=object.__new__(SodaMusicDynamicCase);c.unavailable={};c.main_page=Mock()

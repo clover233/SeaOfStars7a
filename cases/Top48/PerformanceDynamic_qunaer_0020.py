@@ -15,7 +15,7 @@ class PerformanceDynamic_qunaer_0020(QunarDynamicCase):
             ('点击值机选座，切换到选座页', self.checkin, 2),
             ('值机选座页上滑1次、下滑1次', self.browse_checkin, 2),
             ('侧滑返回去哪儿旅行主页', self.main_page, 2),
-            ('点击火车高铁，进入搜索页面', self.train_page, 2),
+            ('点击火车高铁，有弹窗（点击放弃权益），进入搜索页面', self.train_page, 2),
             ('点击搜索，进入车次选择页面', self.train_search, 2),
             ('返回去哪儿旅行主界面', self.main_page, 2),
             ('滑动返回Home页', self.home, 2),
