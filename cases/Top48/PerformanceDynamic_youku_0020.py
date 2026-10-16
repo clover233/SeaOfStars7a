@@ -55,16 +55,7 @@ class PerformanceDynamic_youku_0020(Case):
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
 
-        step = "2、点击剧集（停留1s）"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device(text='剧集')[0].click()
-        time.sleep(1)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "3、上滑5次，下滑5次，每次停留2s"
+        step = "2、首页浏览上滑5次，下滑5次"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
         for _ in range(5):
@@ -77,7 +68,29 @@ class PerformanceDynamic_youku_0020(Case):
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
 
-        step = "4、点击电影（停留1s）"
+        step = "3、点击动漫tab页"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device(text='动漫')[0].click()
+        time.sleep(1)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "4、动漫tab页浏览上滑3次，下滑3次"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        for _ in range(3):
+            SeaOfStarsAW.scroll_down(0.5)
+            time.sleep(2)
+        for _ in range(3):
+            SeaOfStarsAW.scroll_up(0.5)
+            time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "5、点击电影tab页"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
         SeaOfStarsAW.ut_device(text='电影')[0].click()
@@ -86,104 +99,89 @@ class PerformanceDynamic_youku_0020(Case):
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
 
-        step = "5、浏览电影（上滑5次，下滑5次，每次停留2s)"
+        step = "6、电影tab页浏览上滑3次，下滑3次"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        for _ in range(5):
+        for _ in range(3):
             SeaOfStarsAW.scroll_down(0.5)
             time.sleep(2)
-        for _ in range(5):
+        for _ in range(3):
             SeaOfStarsAW.scroll_up(0.5)
             time.sleep(2)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
 
-        step = "6、点击综艺（停留1s）"
+        step = "7、返回推荐页点击搜索框，切换到搜索页面"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device(text='综艺')[0].click()
+        SeaOfStarsAW.ut_device(text='剧集')[0].click()
+        time.sleep(1)
+        SeaOfStarsAW.ut_device(text='首页')[0].click()
+        time.sleep(1)
+        SeaOfStarsAW.ut_device.click(0.466, 0.084)
         time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
 
-        step = "7、浏览综艺（上滑5次，下滑5次，每次停留2s)"
+        step = "8、输入大话天仙"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        for _ in range(5):
-            SeaOfStarsAW.scroll_down(0.5)
-            time.sleep(2)
-        for _ in range(5):
-            SeaOfStarsAW.scroll_up(0.5)
-            time.sleep(2)
+        SeaOfStarsAW.ut_device.send_keys("大话天仙", clear=True)
+        time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
 
-        step = "8、点击搜索框"
+        step = "9、搜索视频大话天仙，重复搜索2次"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(600, 180)
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "9、搜索中国好声音"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.send_keys("中国好声音", clear=True)
-        time.sleep(2)
+        for _ in range(2):
+            SeaOfStarsAW.ut_device.click(0.082, 0.138)
+            time.sleep(1)
+            SeaOfStarsAW.ut_device.send_keys("大话天仙", clear=True)
+            time.sleep(1)
         SeaOfStarsAW.ut_device(text='搜索')[0].click()
         time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
 
-        step = "10、浏览搜索结果（上滑5次，下滑5次，每次停留2s)，播放视频并横竖屏切换"
+        step = "10、点击播放大话天仙，观看30秒"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+
+        SeaOfStarsAW.ut_device.click(0.408, 0.551)
+        time.sleep(30)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "11、视频播放页浏览上滑5次，下滑5次"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
         for _ in range(5):
-            SeaOfStarsAW.scroll_down(0.5)
+            SeaOfStarsAW.scroll_down()
             time.sleep(2)
         for _ in range(5):
-            SeaOfStarsAW.scroll_up(0.5)
+            SeaOfStarsAW.scroll_up()
             time.sleep(2)
-
-        SeaOfStarsAW.ut_device.click(550, 1300)
-        time.sleep(2)
-
-        SeaOfStarsAW.ut_device.click(1000, 650)
-        time.sleep(2)
-
-        SeaOfStarsAW.ut_device.click(310, 70)
-        time.sleep(2)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
 
-        step = "11、返回2次到主界面"
+        step = "12、返回优酷主界面"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        for _ in range(3):
-            SeaOfStarsAW.ut_device.click(80, 160)
-            time.sleep(2)
-
+        for _ in range(5):
+            SeaOfStarsAW.ut_device.swipe(0.99, 0.423, 0.636, 0.423)
+            time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
 
-        step = "12、返回Home界面"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(160, 2280)
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "13、点击首页回到首页"
+        step = "13、上滑返回桌面"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
         SeaOfStarsAW.return_launcher()
