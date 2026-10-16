@@ -232,6 +232,7 @@ class Case(object):
         logger = logging.getLogger()
         formatter = logging.Formatter('%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
         self.fh = logging.FileHandler(os.path.join(self.result_dir_path, "log.txt"), encoding='utf-8')
+        self.fh.setLevel(logging.INFO)
         self.fh.setFormatter(formatter)
         logger.addHandler(self.fh)
         self.case_index = 0
