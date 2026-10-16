@@ -3,15 +3,12 @@ import re
 import time
 
 from Cases.Top48.shopping_common import ShoppingDynamicCase, StepUnavailable
+from Cases.Top48.weibo_vip_common import WeiboVipDynamicCase
 
 
-class VipshopDynamicCase(ShoppingDynamicCase):
+class VipshopDynamicCase(WeiboVipDynamicCase):
     PACKAGE = 'com.achievo.vipshop'
     all_app_package_list = [PACKAGE]
-
-    def point(self, x, y):
-        self.foreground()
-        self.d.long_click(round(x), round(y), duration=.2)
 
     def main_ready(self):
         return self.activity_has('LodingActivity', 'MainActivity') and self.has(rid='tv_title', text='首页')

@@ -3,15 +3,12 @@ import re
 import time
 
 from Cases.Top48.shopping_common import ShoppingDynamicCase, StepUnavailable
+from Cases.Top48.weibo_vip_common import WeiboVipDynamicCase
 
 
-class WeiboDynamicCase(ShoppingDynamicCase):
+class WeiboDynamicCase(WeiboVipDynamicCase):
     PACKAGE = 'com.sina.weibo'
     all_app_package_list = [PACKAGE]
-
-    def point(self, x, y):
-        self.foreground()
-        self.d.long_click(round(x), round(y), duration=.2)
 
     def main_ready(self):
         return self.activity_has('MainTabActivity') and self.has(desc='首页')
@@ -29,7 +26,7 @@ class WeiboDynamicCase(ShoppingDynamicCase):
         for _ in range(12):
             if self.main_ready():
                 self.bottom('首页')
-                self.wait_for(lambda: self.has(text='推荐'), '微博首页未加载')
+                self.wait_for(lambda: self.find_label('推荐') is not None, '微博首页未加载')
                 return
             if getattr(self, '_draft', False):
                 node = self.find_label('不保存', '不保留', '放弃编辑')
@@ -71,7 +68,8 @@ class WeiboDynamicCase(ShoppingDynamicCase):
     def feed_tab(self, name):
         self.main_page()
         self.label(name)
-        self.await_page(lambda: self.has(rid='contentTextView'), name + '内容未加载')
+        self.await_page(lambda: self.has(rid='contentTextView') or any(
+            len(r['text']) > 12 and .2 < r['y'] < .85 for r in self.visual_rows()), name + '内容未加载')
 
     def following(self):
         self.require_account()
@@ -80,11 +78,14 @@ class WeiboDynamicCase(ShoppingDynamicCase):
     def first_live(self):
         self.require_account()
         height = self.d.window_size()[1]
-        entries = [n for n in self.nodes() if '直播' in n.get('content-desc', '')
+        entries = [n for n in self.nodes() if '直播' in (n.get('content-desc', '') + n.get('text', ''))
                    and self.bounds(n)[1] < height*.45
                    and '发起' not in n.get('content-desc', '')]
         if not entries:
-            raise StepUnavailable('关注页没有正在直播的博主')
+            node = self.find_label('热门直播')
+            if node is None:
+                raise StepUnavailable('关注页没有正在直播的博主')
+            entries = [node]
         self.click_node(entries[0])
         self.await_page(lambda: self.activity_has('Live', 'live'), '直播未打开', optional=True)
 
