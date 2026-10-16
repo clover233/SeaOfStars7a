@@ -152,7 +152,6 @@ os.makedirs(Result_Dir_Path)
 
 class ConsoleFormatter(logging.Formatter):
     """控制台只显示简短日志，文件日志仍保留完整异常堆栈。"""
-
     def format(self, record):
         console_record = copy.copy(record)
         console_record.exc_info = None
@@ -567,13 +566,14 @@ Basic5 = [
     PerformanceDynamic_weixin_0010,
 ]
 
-# case_list = Basic1
+# case_list = Basic1 + Basic2 + Basic3
 case_list = Basic1
 
 succ_num = 0
 fail_num = 0
 
 error_logs = {}
+
 if __name__ == "__main__":
     if True:
         # 用例串行运行

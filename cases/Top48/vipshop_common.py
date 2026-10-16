@@ -18,6 +18,18 @@ class VipshopDynamicCase(WeiboVipDynamicCase):
         self.bottom('首页')
         self.wait_for(lambda: self.has(rid='index_searchbar_layout'), '唯品会首页未加载')
         self.dismiss_popup()
+        for _ in range(3):
+            tabs = self.nodes(rid='tab_text')
+            recommended = next((n for n in tabs if n.get('text') == '推荐'), None)
+            if recommended is not None:
+                if recommended.get('selected') != 'true':
+                    self.click_node(recommended)
+                break
+            if not tabs:
+                break
+            _, top, _, bottom = self.bounds(tabs[0])
+            y = (top+bottom)/2/self.screen_size()[1]
+            self.swipe(.2, y, .85, y)
 
     def launch(self):
         self._added_title = None
@@ -26,7 +38,7 @@ class VipshopDynamicCase(WeiboVipDynamicCase):
         self.main_page()
 
     def bottom(self, label):
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         nodes = [n for n in self.nodes(rid='tv_title', text=label) if self.bounds(n)[1] > height*.88]
         if not nodes:
             raise StepUnavailable('当前页面没有唯品会底栏：' + label)
@@ -57,7 +69,7 @@ class VipshopDynamicCase(WeiboVipDynamicCase):
         self.await_page(lambda: bool(self.product_cards()), '没有可定位的清风商品')
 
     def product_cards(self):
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         return sorted([n for n in self.nodes() if n.get('content-desc', '').startswith('清风 ')
                        and re.search(r'\d.*元$', n.get('content-desc', ''))
                        and self.bounds(n)[2]-self.bounds(n)[0] > width*.3
@@ -116,13 +128,15 @@ class VipshopDynamicCase(WeiboVipDynamicCase):
 
     @staticmethod
     def normalize_title(text):
-        return re.sub(r'\s+', '', text)
+        # 搜索页标题带“清风”品牌前缀，购物车标题省略此前缀。
+        return re.sub(r'\s+', '', re.sub(r'^\s*清风\s*', '', text))
 
     def added_rows(self):
         title = self.normalize_title(self._product_title or '')
         if not title:
             return []
-        return [n for n in self.nodes() if self.normalize_title(n.get('text', '')) == title]
+        return [n for n in self.nodes(rid='cart_item_product_name')
+                if self.normalize_title(n.get('text', '')) == title]
 
     def add_to_cart(self):
         if not self._product_title:
@@ -132,10 +146,10 @@ class VipshopDynamicCase(WeiboVipDynamicCase):
             raise StepUnavailable('原购物车已有商品，保留原数量；跳过加购及后续结算、删除')
         # 加购前检查原购物车，只清理本次新增商品。
         self.open_cart()
-        self.await_page(lambda: self.find_label('结算', prefix=True) is not None,
+        self.await_page(lambda: self.find_label('结算', '购物车空空如也', '购物袋空空如也', prefix=True) is not None,
                         '购物车未暴露可核实的商品和结算控件，跳过加购', optional=True)
         existing = self.added_rows()
-        self._cart_had_products = any('清风' in n.get('text', '') for n in self.nodes())
+        self._cart_had_products = bool(self.nodes(rid='cart_item_product_name'))
         self.return_product()
         if existing:
             raise StepUnavailable('该商品原已在购物车，保留原数量')
@@ -155,7 +169,16 @@ class VipshopDynamicCase(WeiboVipDynamicCase):
         if not self._added_title or not self.cart_ready():
             raise StepUnavailable('没有本次新增商品或不在购物车页')
         if self._cart_had_products:
-            raise StepUnavailable('原购物车含其他清风商品，跳过混合结算')
+            raise StepUnavailable('原购物车含其他商品，跳过混合结算')
+        title = self.normalize_title(self._added_title)
+        cards = [n for n in self.nodes(rid='contentView') if any(
+            self.normalize_title(child.get('text', '')) == title
+            for child in n.iter('node') if child.get('resource-id', '').endswith('/cart_item_product_name'))]
+        if len(cards) != 1:
+            raise StepUnavailable('无法唯一核对待结算商品')
+        checks = [n for n in cards[0].iter('node') if n.get('resource-id', '').endswith('/iv_cart_selected')]
+        if checks and checks[0].get('content-desc') == '未勾选':
+            self.click_node(checks[0])
         self.label('结算', prefix=True, optional=True)
         self.await_page(lambda: self.find_label('确认订单', '提交订单', '订单确认') is not None,
                         '未进入订单确认页', optional=True)
@@ -181,7 +204,7 @@ class VipshopDynamicCase(WeiboVipDynamicCase):
             raise StepUnavailable('没有本次新增商品可删除')
         self.label('删除')
         time.sleep(.5)
-        node = self.find_label('确认删除', '确定删除')
+        node = self.find_label('确认删除', '确定删除', '确定')
         if node is not None:
             self.click_node(node)
         self.await_page(lambda: not self.added_rows(), '删除后仍存在本次新增商品')
@@ -198,18 +221,22 @@ class VipshopDynamicCase(WeiboVipDynamicCase):
             node = self.find_label('运动')
             if node is not None:
                 self.click_node(node)
-                self.await_page(lambda: self.has(rid='tab_text', text='运动'), '运动频道未打开', optional=True)
+                self.await_page(lambda: any(n.get('selected') == 'true' for n in self.nodes(rid='tab_text', text='运动')),
+                                '运动频道未打开', optional=True)
                 return
             self.swipe(y1=.3, y2=.8, duration=150)
         raise StepUnavailable('当前版本没有运动频道')
 
     def category(self):
         self.bottom('分类')
-        self.await_page(lambda: self.activity_has('Category') or self.find_label('推荐分类', '为你推荐') is not None,
+        self.await_page(self.category_ready,
                         '分类页面未打开', optional=True)
 
+    def category_ready(self):
+        return self.has(rid='tv_menu_all_category_menu_name') and self.has(rid='tv_menu_all_category_search')
+
     def browse(self, up=5, down=5, pause=2):
-        if self.activity_has('Category'):
+        if self.category_ready():
             # 分类页左侧为分类菜单，滑右侧商品区。
             for y1, y2, count in ((.78, .32, up), (.32, .78, down)):
                 for _ in range(count):

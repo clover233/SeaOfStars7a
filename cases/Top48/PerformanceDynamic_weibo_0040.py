@@ -3,6 +3,8 @@ from Cases.Top48.weibo_common import WeiboDynamicCase
 
 
 class PerformanceDynamic_weibo_0040(WeiboDynamicCase):
+    NEED_IMAGES = True
+
     def steps(self):
         return [
             ('启动微博', self.launch, 3),
@@ -11,7 +13,7 @@ class PerformanceDynamic_weibo_0040(WeiboDynamicCase):
             ('输入动态测试', lambda: self.input_text('动态测试'), 2),
             ('点击搜索', self.submit_search, 2),
             ('点击用户', lambda: self.group('用户搜索', self.users_tab), 1),
-            ('打开动态测试用户', lambda: self.group('目标用户', lambda: self.within('用户搜索', self.test_user)), 2),
+            ('跳过动态测试用户（按用户要求）', lambda: self.group('目标用户', self.test_user), 0),
             ('浏览第一条微博', lambda: self.within('目标用户', self.user_first_post), 2),
             ('返回微博首页', self.main_page, 2),
             ('点击右上角加号', lambda: self.group('发布菜单', self.compose_menu), 1),
