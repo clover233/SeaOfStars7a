@@ -1,167 +1,24 @@
-# -*- coding: utf-8 -*-
-
-import logging
-import os
-import shutil
-import time
-import uiautomator2 as u2
-from uiautomator2 import Device
-from Cases.CaseBase import Case
-from aw_new import SeaOfStarsAW
+"""微信添加朋友和朋友圈；用例表1648～1661行。"""
+from Cases.Top48.weixin_common import WeixinDynamicCase
 
 
-class PerformanceDynamic_weixin_0020(Case):
-    all_app_package_list = ["com.xingin.xhs"]
+class PerformanceDynamic_weixin_0020(WeixinDynamicCase):
+    NEED_IMAGES = True
 
-    def __init__(self, result_path):
-        super().__init__(result_path)
-
-    @SeaOfStarsAW.function_log
-    def set_up(self):
-        """
-        测试环境准备
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("测试环境开始准备!")
-        # 判断手机上是否已安装好TOP30应用,未安装则用例失败
-        phone_app_list = SeaOfStarsAW.get_app_list()
-        for per_app in self.all_app_package_list:
-            if per_app not in phone_app_list:
-                return False
-        # 设置系统语言为中文
-        SeaOfStarsAW.set_system_language_cn()
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 设置屏幕锁定时间为10min
-        SeaOfStarsAW.set_screen_lock_long_time()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
-
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        """
-        测试用例执行
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例开始执行!")
-        steps_num = 1
-
-        app = 'com.tencent.mm'
-        step = "1、启动微信(启动2s，停留2s)"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info("启动{}中".format("微信"))
-        SeaOfStarsAW.ut_device.app_start(app, use_monkey=True)
-        time.sleep(5)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "2、点击右上角+号(停留1s)"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(1000, 170)
-        time.sleep(1)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "3、点击添加朋友(停留1s)"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(800, 500)
-        time.sleep(1)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "4、点击搜索框，输入好友账号点击查询(停留1s)"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(550, 310)
-        time.sleep(2)
-        SeaOfStarsAW.ut_device.send_keys("测试")
-        time.sleep(1)
-        SeaOfStarsAW.ut_device.click(450, 350)
-        time.sleep(1)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "5、返回微信首页(停留1s)"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(1010, 180)
-        time.sleep(1)
-        SeaOfStarsAW.ut_device.click(50, 170)
-        time.sleep(1)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "6、进入发现(2s，停留2s)"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(600, 300)
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "7、进入朋友圈(2s、停留2s）"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(670, 2290)
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "8、浏览朋友圈(上滑3次，下滑3次，各2s+停留2s)"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        for _ in range(3):
-            SeaOfStarsAW.scroll_up(0.5)
-            time.sleep(2)
-        for _ in range(3):
-            SeaOfStarsAW.scroll_down(0.5)
-            time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "9、返回微信主界面（2s，停留2s）"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(60, 170)
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "10、返回home页面(2s，停留2s)"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.return_launcher()
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        logging.info("用例执行结束!")
-
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        """
-        清理日志，保留应用后台
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        logging.info("用例结束，保留应用后台，仅清理日志处理器。")
-        logger = logging.getLogger()
-        logger.removeHandler(self.fh)
+    def steps(self):
+        return [
+            ('启动微信', self.launch, 2),
+            ('点击右上角+号', self.plus_menu, 2),
+            ('点击右上角+号，切换到添加朋友页面', self.add_friend, 2),
+            ('点击搜索框，输入好友账号点击查询', self.friend_query, 2),
+            ('返回微信主界面', self.wechat_home, 2),
+            ('点击发现，切换到发现页面', self.discover, 2),
+            ('点击朋友圈，切换到朋友圈页面', self.moments, 2),
+            ('浏览朋友圈上滑3次，下滑3次', self.browse_moments, 2),
+            ('在第一条朋友圈评论真不错', self.comment, 2),
+            ('点击右上角相机按钮', self.moments_camera, 2),
+            ('点击拍摄，切换到拍照页面后，返回上一页', self.camera_and_back, 2),
+            ('9宫格选择9张照片', self.nine_photos, 2),
+            ('返回微信主界面', self.wechat_home, 2),
+            ('滑动返回Home页', self.home, 2),
+        ]

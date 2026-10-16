@@ -1,0 +1,691 @@
+"""去哪儿、汽水音乐、淘宝：主屏控件/截图定位和逐步采集。"""
+import os
+import re
+import time
+import xml.etree.ElementTree as ET
+from pathlib import Path
+from Cases.Top48.tencent_media_common import TencentObservedCase
+from Cases.Top48.observed_apps_common import StepUnavailable, optional
+
+
+class TravelShopCase(TencentObservedCase):
+    TAP_MS = 250
+
+    def nodes(self, rid=None, **kwargs):
+        rows=super().nodes(**kwargs)
+        if rid:
+            rows=[n for n in rows if n.get('resource-id')==rid or (':id/' not in rid
+                    and n.get('resource-id','').split(':id/')[-1]==rid)]
+        return rows
+
+    def dismiss_system_prompt(self):
+        # 本机权限窗出现时 mCurrentFocus 偶尔仍指向底下应用，以实际控件树为准。
+        system=('com.miui.securitycenter','com.android.permissioncontroller','com.google.android.permissioncontroller')
+        nodes=list(ET.fromstring(self.d.dump_hierarchy()).iter('node'))
+        for n in nodes:
+            if n.get('package') in system and n.get('text') in ('拒绝','不允许','不同意','取消'):
+                box=self.bounds(n)
+                if len(box)!=4:continue
+                a,b,z,y=box
+                self._locators.add('tree')
+                self.d.shell('input -d 0 tap {} {}'.format(round((a+z)/2),round((b+y)/2)))
+                time.sleep(.5);self.invalidate()
+                if any(x.get('package') in system and x.get('text') in ('拒绝','不允许','不同意','取消')
+                       for x in ET.fromstring(self.d.dump_hierarchy()).iter('node')):
+                    self.d.press('back');time.sleep(.5);self.invalidate()
+                return
+        super().dismiss_system_prompt()
+
+    def input_text(self, text):
+        edits=[n for n in self.nodes() if n.get('class')=='android.widget.EditText']
+        if not edits:
+            raise StepUnavailable('输入框尚未显示，未向其他控件输入文字')
+        if not any(n.get('focused')=='true' for n in edits):
+            self.click_node(edits[0])
+        self.content_wait(lambda:any(n.get('focused')=='true' and n.get('class')=='android.widget.EditText'
+                                     for n in self.nodes()),'输入框未获得焦点',timeout=8)
+        time.sleep(.4)
+        super().input_text(text)
+
+    def point(self, x, y):
+        self.foreground()
+        source=getattr(self,'_tap_source','')
+        r = self.d.shell('input {3} -d 0 swipe {0} {1} {0} {1} {2}'.format(round(x), round(y), self.TAP_MS, source))
+        if r.exit_code:
+            raise RuntimeError('主屏点击失败：'+r.output)
+        self.invalidate()
+
+    def swipe(self, x1=.5, y1=.78, x2=.5, y2=.32, duration=400):
+        self.foreground()
+        w, h = self.d.window_size()
+        r = self.d.shell('input -d 0 swipe {} {} {} {} {}'.format(
+            round(w*x1), round(h*y1), round(w*x2), round(h*y2), duration))
+        if r.exit_code:
+            raise RuntimeError('主屏滑动失败：'+r.output)
+        self.invalidate()
+
+    def entry(self, *labels, region=None):
+        self.dismiss_ads()
+        for label in labels:
+            if self.visible(label, region=region):
+                self.choose(label, region=region)
+                return
+        raise StepUnavailable('当前页面没有可核对的入口：'+'/'.join(labels))
+
+    def go(self, action, ready, message):
+        # 仅供可重复的页面导航；发送、加购等动作不使用此重试入口。
+        self.dismiss_ads()
+        original=getattr(self,'_tap_source','')
+        try:
+            for source in ('','mouse'):
+                if ready():return
+                self._tap_source=source
+                action()
+                try:
+                    self.content_wait(ready,message,timeout=6)
+                    return
+                except StepUnavailable:
+                    pass
+        finally:self._tap_source=original
+        raise StepUnavailable(message+'；两次导航均未确认目标页面')
+
+    def horizontal(self, left, right, y=.5):
+        for count, a, b in ((left,.8,.2),(right,.2,.8)):
+            for _ in range(count):
+                self.dismiss_ads()
+                self.swipe(a,y,b,y)
+                time.sleep(2)
+
+    def first_row(self, pattern, region=(0,.2,1,.85)):
+        rows = [r for r in self.screen() if re.search(pattern,r['text'])
+                and region[0] < r['x']+r['w']/2 < region[2]
+                and region[1] < r['y']+r['h']/2 < region[3]]
+        if not rows:
+            raise StepUnavailable('没有可核对的首条结果，未点击广告或旧位置')
+        r=rows[0]; self._locators.add(r['source'])
+        self.pct(r['x']+r['w']/2,r['y']+r['h']/2,record=False)
+
+
+class QunarDynamicCase(TravelShopCase):
+    PACKAGE = 'com.Qunar'
+    all_app_package_list = [PACKAGE]
+    COMPONENT = PACKAGE + '/com.mqunar.splash.SplashActivity'
+
+    def dismiss_ads(self):
+        super().dismiss_ads()
+        if self.has(text='刮刮卡弹窗', prefix=True) or (self.visible('获得一张新喜国庆刮刮卡',True)
+                and self.visible('双节限时加赠',True)) or self.visible('刮奖区',True):
+            self.back()
+        if self.visible('上滑或点击跳转广告详情页面',True) and self.visible('关闭',True):
+            self.choose('关闭',True,index=0)
+            time.sleep(.7)
+
+    def native(self, **selector):
+        self.dismiss_ads()
+        super().native(**selector)
+
+    def content_wait(self, predicate, message, timeout=25):
+        def ready():
+            self.dismiss_ads()
+            return predicate()
+        return super().content_wait(ready,message,timeout)
+
+    def main_ready(self):
+        return self.activity_is('alexhome.ui.activity.MainActivity') and self.visible('看世界',region=(0,.9,1,1))
+
+    def main_page(self):
+        self.dismiss_ads()
+        self.return_to(self.main_ready,'未返回去哪儿旅行首页',limit=10)
+        self.native(rid='atom_alexhome_mod_home')
+        self.dismiss_ads()
+
+    def flight_ready(self):
+        return self.activity_is('flight.modules.home') and self.has(rid='atom_flight_tv_search_text')
+
+    @optional('flight_page')
+    def flight_page(self):
+        self.main_page()
+        self.native(rid='atom_alexhome_youth_mod_flight')
+        self.content_wait(self.flight_ready,'机票搜索页未打开')
+        self.dismiss_ads()
+
+    @optional('flights')
+    def flight_search(self):
+        self.needs('flight_page')
+        self.dismiss_ads()
+        if not self.flight_ready():
+            raise StepUnavailable('当前不在机票搜索页')
+        self.native(rid='atom_flight_tv_search_text')
+        self.content_wait(self.flight_results_ready,'已点击机票搜索，但搜索结果未加载',timeout=30)
+
+    def flight_results_ready(self):
+        return not self.flight_ready() and any(self.visible(s,True) for s in ('起飞时间','低价优先','出发时间','筛选','无直飞航班'))
+
+    @optional('flights')
+    def tomorrow(self):
+        self.needs('flights')
+        self.entry('明天')
+        self.content_wait(self.flight_results_ready,'明天的航班结果未显示')
+
+    @optional('flights')
+    def browse_flights(self):
+        self.needs('flights')
+        self.browse_checked(self.flight_results_ready,5,5,'机票结果不可用')
+
+    def flight_detail_ready(self):
+        return not self.flight_ready() and (self.visible('预订') or self.visible('订',region=(.7,.2,1,.9)))
+
+    @optional('flight_detail')
+    def first_flight(self):
+        self.needs('flights')
+        if not self.flight_results_ready():
+            raise StepUnavailable('机票结果不可用')
+        for _ in range(3):self.swipe(.5,.35,.5,.8)
+        def open_first():
+            cards=self.nodes(desc='flight_module_search|QunarFlightList|Flights_',prefix=True)
+            if not cards:raise StepUnavailable('未找到首条航班卡片')
+            self._locators.add('tree');self.click_node(sorted(cards,key=lambda n:self.bounds(n)[1])[0])
+        self.go(open_first,self.flight_detail_ready,'首条机票方案未打开')
+
+    @optional('flight_detail')
+    def browse_flight(self):
+        self.needs('flight_detail')
+        self.browse_checked(self.flight_detail_ready,1,1,'机票方案不可用')
+
+    @optional('booking')
+    def booking(self):
+        self.needs('flight_detail')
+        self.entry('预订','订')
+        self.content_wait(lambda:self.visible('乘机人',True) or self.visible('登录',True),'订票填写页未显示')
+        if self.visible('登录',True):
+            raise StepUnavailable('预订需要登录，停在登录页，未提交订单')
+
+    @optional('booking')
+    def browse_booking(self):
+        self.needs('booking')
+        if not self.visible('乘机人',True):raise StepUnavailable('订票填写页不可用')
+        self.browse(2,2)
+
+    def return_flight(self):
+        self.dismiss_ads()
+        self.return_to(self.flight_ready,'未返回机票首页',limit=8)
+
+    @optional('checkin')
+    def checkin(self):
+        self.return_flight()
+        if self.visible('值机选座'):
+            self.entry('值机选座')
+        else:
+            self.entry('航班服务')
+            self.content_wait(lambda:self.visible('值机选座'),'航班服务中没有值机选座')
+            self.entry('值机选座')
+        self.content_wait(lambda:self.visible('值机',True) or self.visible('选座',True),'值机页面未打开')
+
+    @optional('checkin')
+    def browse_checkin(self):
+        self.needs('checkin')
+        self.browse(1,1)
+
+    def hotel_ready(self):
+        return not self.main_ready() and self.visible('开始搜索')
+
+    @optional('hotel_page')
+    def hotel_page(self):
+        self.main_page()
+        self.native(rid='atom_alexhome_youth_mod_hotel')
+        self.content_wait(self.hotel_ready,'酒店搜索页未打开')
+
+    @optional('hotel_page')
+    def xian(self):
+        self.needs('hotel_page')
+        if not self.hotel_ready():raise StepUnavailable('酒店搜索页不可用')
+        if self.visible('西安'):
+            self.adapt('目的地已是西安，保留当前城市')
+            return
+        nodes=self.nodes(rid='atom_hotel_tv_city_name')
+        if not nodes:raise StepUnavailable('酒店目的地未导出可核对的城市控件')
+        self._locators.add('tree'); self.click_node(nodes[0])
+        self.content_wait(lambda:self.has(rid='qd_placeholder') or self.visible('西安')
+                          or any(n.get('class')=='android.widget.EditText' for n in self.nodes()),'城市选择页未显示')
+        if not self.visible('西安'):
+            if self.has(rid='qd_placeholder'):self.native(rid='qd_placeholder')
+            self.content_wait(lambda:any(n.get('class')=='android.widget.EditText' for n in self.nodes()),'城市搜索输入框未显示')
+            edits=[n for n in self.nodes() if n.get('class')=='android.widget.EditText']
+            self.click_node(edits[0]);self.input_text('西安')
+            self.content_wait(lambda:self.visible('西安'),'西安城市结果未显示')
+        def select_city():
+            height=self.d.window_size()[1]
+            matches=[n for n in self.nodes(text='西安') if n.get('class')!='android.widget.EditText'
+                     and self.bounds(n)[1]<height*.3]
+            if not matches:raise StepUnavailable('未找到“城市 西安/陕西”的城市结果')
+            self._locators.add('tree');self.click_node(sorted(matches,key=lambda n:self.bounds(n)[1])[0])
+        self.go(select_city,lambda:self.hotel_ready() and self.visible('西安'),'酒店目的地未切换到西安')
+
+    @optional('hotel_orders')
+    def hotel_orders(self):
+        self.needs('hotel_page')
+        self.entry('酒店订单','我的订单')
+        self.content_wait(lambda:self.visible('订单',True) or self.visible('登录',True),'酒店订单页未显示')
+        if self.visible('登录',True):self.adapt('当前未登录，酒店订单验证到登录入口')
+
+    def return_hotel(self):
+        self.needs('hotel_page')
+        self.return_to(self.hotel_ready,'未返回酒店搜索页')
+
+    @optional('hotels')
+    def hotel_search(self):
+        self.needs('hotel_page')
+        self.return_hotel();self.entry('开始搜索')
+        self.content_wait(self.hotel_results_ready,'酒店搜索结果未加载',timeout=35)
+
+    def hotel_results_ready(self):
+        return not self.hotel_ready() and self.visible('筛选',True) and any(self.visible(s,True) for s in ('价格','距离','位置'))
+
+    @optional('hotels')
+    def browse_hotels(self):
+        self.needs('hotels');self.browse_checked(self.hotel_results_ready,3,3,'酒店列表不可用')
+
+    @optional('hotel_detail')
+    def first_hotel(self):
+        self.needs('hotels')
+        for _ in range(3):self.swipe(.5,.35,.5,.8)
+        self.first_row(r'(酒店|宾馆|民宿|公寓)',(.05,.25,.95,.85))
+        self.content_wait(lambda:self.visible('房型',True) or self.visible('设施',True),'酒店详情未打开')
+
+    @optional('hotel_pictures')
+    def hotel_pictures(self):
+        self.needs('hotel_detail')
+        for name in ('查看全部图片','相册','图片'):
+            if self.visible(name,True):
+                self.choose(name,True,index=0);break
+        else:raise StepUnavailable('酒店详情没有可核对的图片/相册入口')
+        self.content_wait(lambda:self.visible('相册',True) or self.visible('全部',True),'酒店图片详情未打开')
+
+    @optional('hotel_pictures')
+    def browse_pictures(self):
+        self.needs('hotel_pictures');self.horizontal(3,3)
+
+    @optional('train_page')
+    def train_page(self):
+        self.main_page();self.native(rid='atom_alexhome_youth_mod_train')
+        self.content_wait(lambda:self.visible('搜索') or self.visible('搜索车票'),'火车高铁查询页未打开')
+
+    @optional('trains')
+    def train_search(self):
+        self.needs('train_page');self.entry('搜索','搜索车票','查询')
+        self.content_wait(lambda:self.visible('出发时间',True) or self.visible('耗时',True)
+                          or self.visible('暂无车次',True),'车次结果未加载',timeout=35)
+
+
+class SodaMusicDynamicCase(TravelShopCase):
+    PACKAGE='com.luna.music'
+    all_app_package_list=[PACKAGE]
+    COMPONENT=PACKAGE+'/com.luna.biz.main.main.MainActivity'
+    TAP_MS=100
+
+    def dismiss_ads(self):
+        super().dismiss_ads()
+        if self.visible('签到7天领',True) and self.visible('打开签到提醒',True):
+            # 已核对签到弹窗底部 X；不触碰领取或提醒开关。
+            self.pct(.5,.721)
+            self.invalidate()
+        if self.visible('选择最近的听歌偏好') and self.visible('完成'):
+            self.choose('完成')
+            self.adapt('关闭首次听歌偏好引导，不选择新的偏好')
+
+    def main_ready(self):
+        return (self.activity_is('main.main.MainActivity') and self.has(rid='czr') and self.has(rid='b6a')
+                and self.visible('我的',region=(.75,.9,1,.99)))
+
+    def main_page(self):
+        self.dismiss_ads()
+        self.return_to(self.main_ready,'未返回汽水音乐底部导航',limit=8)
+
+    def search_ready(self):
+        return any(n.get('class')=='android.widget.EditText' for n in self.nodes())
+
+    @optional('search')
+    def search_page(self):
+        self.main_page()
+        if self.has(rid='czr'):
+            self.native(rid='czr')
+        elif self.has(desc='搜索'):
+            self.native(desc='搜索')
+        else:
+            raise StepUnavailable('当前首页未导出可核对的搜索图标')
+        self.content_wait(self.search_ready,'汽水音乐搜索输入页未打开')
+
+    def results_ready(self):
+        return self.visible('国歌',True,region=(0,.15,1,.85)) and any(self.visible(s) for s in ('综合','歌曲','单曲'))
+
+    @optional('search')
+    def search_anthem(self):
+        self.needs('search')
+        self.input_text('国歌')
+        if self.visible('搜索',region=(.75,.03,1,.16)):
+            self.choose('搜索',region=(.75,.03,1,.16))
+        else:self.d.press('enter');self.invalidate()
+        self.content_wait(self.results_ready,'国歌搜索结果未显示')
+
+    @optional('search')
+    def browse_search(self):
+        self.needs('search');self.browse_checked(self.results_ready,2,2,'国歌搜索结果不可用')
+
+    @optional('playback')
+    def play_pause(self):
+        self.main_page()
+        if self.media_state()!=3:
+            self.play_control(False)
+            self.content_wait(lambda:self.media_state()==3,'汽水音乐未开始播放')
+        time.sleep(15)
+        if self.media_state()!=3:
+            raise StepUnavailable('播放中断，未完成15秒连续播放')
+        self.play_control(True)
+        self.content_wait(lambda:self.media_state()==2,'汽水音乐暂停未生效')
+
+    def play_control(self, pause):
+        labels=('暂停','暂停播放') if pause else ('播放','继续播放')
+        for label in labels:
+            if self.has(desc=label):self.native(desc=label);return
+            if self.visible(label):self.choose(label);return
+        if self.main_ready() and self.has(rid='b6a'):
+            self.native(rid='b6a')
+            return
+        # 新版沉浸播放器隐藏播放文案；封面中心点击切换播放状态，须通过媒体会话确认。
+        if not self.main_ready():raise StepUnavailable('当前不在汽水音乐播放器')
+        self.pct(.5,.45)
+        self.adapt('当前版本用歌曲封面中心切换播放/暂停，以本包媒体会话校验')
+
+    def my_page(self):
+        self.return_to(self.main_ready,'未返回汽水音乐主界面')
+        self.entry('我的',region=(.75,.9,1,.99))
+        self.content_wait(lambda:self.visible('我喜欢',True) or self.visible('登录',True),'我的页面未显示')
+
+    @optional('favorites')
+    def favorites(self):
+        if self.visible('登录',True):raise StepUnavailable('我喜欢的音乐需要登录')
+        self.entry('我喜欢的音乐','我喜欢')
+        self.content_wait(lambda:self.visible('我喜欢',True) and not self.visible('模式选择'),'我喜欢列表未打开')
+
+    @optional('playlist')
+    def playlist(self):
+        self.main_page()
+        if self.has(desc='播放列表'):
+            self.native(desc='播放列表')
+        elif self.has(rid='cxd'):
+            self.native(rid='cxd')
+        else:raise StepUnavailable('当前版本没有可核对的播放列表入口')
+        self.content_wait(lambda:self.visible('播放列表',True) or self.visible('播放队列',True)
+                          or self.visible('接下来播放',True),'播放列表未打开')
+
+
+class TaobaoDynamicCase(TravelShopCase):
+    PACKAGE='com.taobao.taobao'
+    all_app_package_list=[PACKAGE]
+    COMPONENT=PACKAGE+'/com.taobao.tao.welcome.Welcome'
+    ALBUM='SeaOfStars_Taobao_Test'
+    NEED_IMAGES=True
+    # 本次人工授权仅覆盖此关键词选出的商品客服；后续批跑需显式启用实发。
+    SEND_ENV='TAOBAO_ALLOW_CUSTOMER_MESSAGES'
+
+    def launch(self):
+        self._verified_product=False
+        self._customer_header=''
+        super().launch()
+
+    def prepare_images(self):
+        import struct, zlib, tempfile
+        def chunk(kind,data):
+            return struct.pack('!I',len(data))+kind+data+struct.pack('!I',zlib.crc32(kind+data))
+        raw=b''.join(b'\x00'+bytes((35,165,210))*320 for _ in range(320))
+        png=(b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('!2I5B',320,320,8,2,0,0,0))
+             +chunk(b'IDAT',zlib.compress(raw))+chunk(b'IEND',b''))
+        remote='/sdcard/Pictures/'+self.ALBUM
+        self.d.shell(['mkdir','-p',remote])
+        with tempfile.TemporaryDirectory(prefix='taobao-fixture-') as folder:
+            local=Path(folder)/'SeaOfStars_Taobao_Test.png';local.write_bytes(png)
+            self.d.push(str(local),remote+'/'+local.name)
+            self.d.shell(['am','broadcast','-a','android.intent.action.MEDIA_SCANNER_SCAN_FILE',
+                          '-d','file://'+remote+'/'+local.name])
+
+    def dismiss_ads(self):
+        super().dismiss_ads()
+        if self.has(desc='限时福利砸中你') and self.has(desc='关闭按钮'):
+            self.native(desc='关闭按钮')
+            time.sleep(.8);self.invalidate()
+        # 原生首页券条，只点该条右端关闭区域，不领取优惠券。
+        banners=self.nodes(rid='homepage_pop_view')
+        if banners and self.visible('待领取',True):
+            a,b,z,y=self.bounds(banners[0]);w,h=self.d.window_size()
+            self.pct((a+(z-a)*.96)/w,(b+y)/2/h)
+
+    def main_ready(self):
+        return (self.activity_is('tao.welcome.Welcome') and self.has(desc='搜索栏')
+                and self.visible('购物车',region=(.5,.9,.8,1))
+                and not self.has(desc='限时福利砸中你'))
+
+    def main_page(self):
+        self.dismiss_ads()
+        self.return_to(self.main_ready,'未返回淘宝首页',limit=10)
+
+    def search_ready(self):
+        return self.activity_is('search.uniform.SearchActivity') and self.has(rid='searchEdit')
+
+    def results_ready(self):
+        return self.search_ready() and self.has(desc='销量,',prefix=True)
+
+    @optional('search')
+    def search_tissue(self):
+        self.main_page()
+        self.go(lambda:self.native(desc='搜索栏'),self.search_ready,'淘宝搜索输入页未打开')
+        self.input_text('清风卫生纸')
+        self.go(lambda:self.native(rid='searchbtn'),self.results_ready,'清风卫生纸搜索结果未显示')
+        self._tissue_search=True
+
+    @optional('search')
+    def browse_results(self):
+        self.needs('search');self.browse_checked(self.results_ready,5,6,'商品结果不可用')
+
+    def product_ready(self):
+        return (not self.results_ready() and self.visible('加入购物车',True)
+                and (self.visible('客服') or self.visible('店铺')))
+
+    @optional('product')
+    def sales_first(self):
+        self.needs('search')
+        for _ in range(5):
+            if self.has(desc='销量,',prefix=True):break
+            self.swipe(.5,.35,.5,.8)
+        self.go(lambda:self.native(desc='销量,',prefix=True),
+                lambda:self.has(desc='销量,已选中'),'销量排序未选中')
+        w,h=self.d.window_size()
+        cards=[n for n in self.nodes() if '清风' in n.get('content-desc','')
+               and re.search(r'(元|付款)',n.get('content-desc',''))
+               and (self.bounds(n)[3]-self.bounds(n)[1])>h*.12
+               and self.bounds(n)[1]>h*.15 and self.bounds(n)[3]<h*.98]
+        if not cards:raise StepUnavailable('销量排序后没有可核对的清风商品卡片')
+        cards=sorted(cards,key=lambda n:(self.bounds(n)[1],self.bounds(n)[0]))
+        organic=[n for n in cards if not any(s in n.get('content-desc','') for s in ('下拉补贴','下拉详情','广告'))]
+        card=(organic or cards)[0]
+        if card is not cards[0]:self.adapt('首条为补贴广告卡，改为销量结果中首条普通清风商品')
+        self._selected_product=card.get('content-desc','')
+        self.go(lambda:self.click_node(card),self.product_ready,'首条清风商品详情未打开')
+        self._verified_product='清风' in self._selected_product
+
+    @optional('product')
+    def browse_product(self):
+        self.needs('product');self.browse_checked(self.product_ready,5,5,'商品详情不可用')
+
+    @optional('reviews')
+    def reviews(self):
+        self.needs('product')
+        for _ in range(7):
+            if self.visible('查看全部评价',True):
+                self.choose('查看全部评价',True,index=0);break
+            if self.visible('查看更多') and self.visible('评价',True):
+                self.choose('查看更多',index=0);break
+            self.swipe();time.sleep(.7)
+        else:raise StepUnavailable('当前商品未找到评价“查看更多/查看全部评价”入口')
+        self.content_wait(lambda:not self.product_ready() and any(self.visible(x,True) for x in ('全部评价','有图','追评')),
+                          '宝贝评价页未打开')
+
+    @optional('reviews')
+    def browse_reviews(self):
+        self.needs('reviews');self.browse(5,5)
+
+    @optional('product_return')
+    def return_product(self):
+        self.needs('product')
+        self.return_to(self.product_ready,'未返回本次商品详情',limit=6)
+
+    def chat_ready(self):
+        return (self.activity_is('chat', 'conversation') and
+                any(n.get('class')=='android.widget.EditText' for n in self.nodes()))
+
+    @optional('customer')
+    def customer_service(self):
+        self.needs('product');self.return_product()
+        if not getattr(self,'_verified_product',False):raise StepUnavailable('未确认本次清风商品，停止打开客服')
+        self.entry('客服',region=(0,.85,.55,1))
+        self.content_wait(lambda:self.chat_ready() or self.visible('登录',True),'商品客服未打开')
+        if not self.chat_ready():raise StepUnavailable('商品客服需要登录，未进入聊天')
+        # 商品详情直接打开的客服仍须展示同一品牌/商品，再保存当前会话顶部身份。
+        if not self.visible('清风',True):raise StepUnavailable('客服页面未显示清风商品或店铺，未授权当前会话')
+        self._customer_header=self.chat_header()
+        if not self._customer_header:raise StepUnavailable('无法核对客服会话标题')
+
+    def chat_header(self):
+        labels=[r['text'] for r in self.screen() if .035<r['y']+r['h']/2<.12 and .15<r['x']+r['w']/2<.85]
+        return '|'.join(labels)
+
+    def require_customer_send(self):
+        self.needs('customer')
+        if os.environ.get(self.SEND_ENV)!='1':raise StepUnavailable('客服实发未启用；设置 '+self.SEND_ENV+'=1 后运行')
+        if not (getattr(self,'_verified_product',False) and self.chat_ready()
+                and getattr(self,'_customer_header','') and self.chat_header()==self._customer_header):
+            raise StepUnavailable('当前客服会话与本次清风商品身份不一致，未发送')
+
+    @optional('hello')
+    def send_hello(self):
+        self.require_customer_send()
+        if getattr(self,'_hello_attempted',False):raise StepUnavailable('已执行过本次文字发送，不重复发送')
+        self.input_text('你好')
+        edits=[n for n in self.nodes() if n.get('class')=='android.widget.EditText']
+        if not any(n.get('text')=='你好' for n in edits):raise StepUnavailable('待发文字不是“你好”，未点击发送')
+        self.require_customer_send()
+        self._hello_attempted=True
+        self.entry('发送',region=(.7,.45,1,1))
+        self.content_wait(lambda:self.chat_ready() and self.visible('你好') and
+                          not any(n.get('text')=='你好' and n.get('class')=='android.widget.EditText' for n in self.nodes()),
+                          '文字发送结果未确认；不自动重发')
+
+    @optional('picture')
+    def send_picture(self):
+        self.require_customer_send()
+        if getattr(self,'_picture_attempted',False):raise StepUnavailable('已执行过本次图片发送，不重复发送')
+        if self.has(desc='更多功能'):self.native(desc='更多功能')
+        elif self.has(desc='添加'):self.native(desc='添加')
+        elif self.visible('+'):self.choose('+',region=(.7,.6,1,1))
+        else:raise StepUnavailable('客服聊天未导出可核对的加号入口')
+        self.content_wait(lambda:self.visible('相册'),'相册入口未展开')
+        self.entry('相册')
+        self.content_wait(lambda:self.visible('所有照片',True) or self.visible('最近项目',True) or self.visible(self.ALBUM,True),
+                          '未进入可核对的相册选择页')
+        for title in ('所有照片','最近项目'):
+            if self.visible(title,True):self.choose(title,True,index=0);break
+        self.content_wait(lambda:self.visible(self.ALBUM,True),'专用测试相册未显示，未选个人图片')
+        self.choose(self.ALBUM,True,index=0)
+        self.content_wait(lambda:self.visible(self.ALBUM),'专用测试相册未打开')
+        # 该相册只创建一张纯色测试图；必须有图片/选中控件才可选择。
+        choices=[n for n in self.nodes() if re.search(r'(未选中|选择图片|选择照片)',n.get('content-desc',''))]
+        if not choices:raise StepUnavailable('专用相册未导出图片选择控件，未猜测点击个人照片')
+        self.click_node(choices[0]);time.sleep(.5);self.invalidate()
+        if not self.visible('发送',True):raise StepUnavailable('选择测试图后未出现发送按钮')
+        self._picture_attempted=True
+        self.choose('发送',True,region=(.6,0,1,.18),index=0)
+        self.content_wait(self.chat_ready,'图片发送后未回到客服会话；不自动重发')
+        self.adapt('仅发送专用纯色测试图；返回同一客服会话，具体送达状态以聊天截图核对')
+
+    @optional('shop')
+    def shop(self):
+        self.needs('product');self.return_product();self.swipe()
+        self.entry('店铺','进店逛逛',region=(0,.1,1,1))
+        self.content_wait(lambda:not self.product_ready() and any(self.visible(x,True) for x in ('全部宝贝','店铺首页','店铺推荐')),
+                          '商品店铺未打开')
+        self.browse(3,3)
+
+    @optional('cart')
+    def add_cart(self):
+        self.needs('product');self.return_product()
+        if not getattr(self,'_verified_product',False):raise StepUnavailable('未确认清风商品，未加购')
+        if self.has(desc='加入购物车,不可选') or self.visible('此地区暂不可购买',True):
+            raise StepUnavailable('当前商品所在地区不可购买，加购按钮不可选，未更改收货地址')
+        self.entry('加入购物车',region=(.3,.85,1,1))
+        if self.visible('加入购物车成功',True) or self.visible('添加成功',True):return
+        # 不代选未知规格；明确选中默认规格时才能确认加购。
+        selected=[n for n in self.nodes() if n.get('selected')=='true' and n.get('text')]
+        if not selected:raise StepUnavailable('加购需要选择规格，当前没有已选默认规格，停留选择页')
+        if self.visible('确定',region=(0,.85,1,1)):
+            self.choose('确定',region=(0,.85,1,1))
+        elif self.visible('加入购物车',region=(0,.85,1,1)):
+            self.choose('加入购物车',region=(0,.85,1,1))
+        else:raise StepUnavailable('规格选择页没有明确的加购确认按钮')
+        self.content_wait(lambda:self.visible('加入购物车成功',True) or self.visible('添加成功',True),'加购成功未确认')
+
+    def selected_channel(self, name):
+        return self.has(desc=name+',已选中') or self.has(desc=name+'已选中')
+
+    def channel(self,name):
+        self.main_page()
+        def select():
+            for desc in (name+',未选中',name+',已选中',name+'未选中',name+'已选中',name):
+                if self.has(desc=desc):self.native(desc=desc);return
+            self.entry(name,region=(0,.045,1,.11))
+        self.go(select,lambda:self.selected_channel(name),'首页'+name+'频道未选中')
+
+    def recommend(self):self.channel('推荐')
+
+    @optional('third')
+    def third_tab(self):
+        self.channel('闪购')
+        self.adapt('当前首页第三个频道为“闪购”，按实际第三个频道浏览')
+
+    @optional('third')
+    def browse_third(self):
+        self.needs('third');self.browse_checked(lambda:self.selected_channel('闪购'),5,5,'第三频道不可用')
+
+    def browse_recommend(self):
+        self.recommend();self.browse(5,5)
+
+    @optional('following')
+    def following(self):self.channel('关注')
+
+    @optional('following')
+    def browse_following(self):
+        self.needs('following');self.browse_checked(lambda:self.selected_channel('关注'),5,5,'关注页不可用')
+
+    @optional('explore')
+    def explore(self):
+        self.main_page()
+        label='逛逛' if self.visible('逛逛',region=(0,.9,1,1)) else '视频'
+        self.bottom_node(label)
+        self.content_wait(lambda:self.visible('关注') or self.visible('发现') or self.visible('推荐'),'逛逛/视频内容未打开')
+        if label=='视频':self.adapt('当前底栏“逛逛”已改为“视频”，改为浏览视频内容')
+
+    @optional('explore')
+    def browse_explore(self):
+        self.needs('explore');self.browse(5,5);self.horizontal(3,3)
+
+    def my_taobao(self):
+        # 先恢复主屏，避免点在商品或视频里的同名字样。
+        self.main_page();self.bottom_node('我的淘宝')
+        self.content_wait(lambda:self.visible('我的订单',True) or self.visible('待付款'),'我的淘宝未打开')
+
+    @optional('orders')
+    def orders(self):
+        self.entry('我的订单','全部订单','查看全部订单')
+        self.content_wait(lambda:self.visible('全部') and self.visible('待付款'),'我的订单页未打开')
+
+    @optional('orders')
+    def browse_orders(self):
+        self.needs('orders');self.horizontal(5,5)
