@@ -1,6 +1,5 @@
 """微博/唯品会共用定位：优先活动窗口，兼容标准 uiautomator2。"""
 import xml.etree.ElementTree as ET
-import time
 
 from Cases.Top48.shopping_common import ShoppingDynamicCase
 from Cases.Top48.weixin_common import WeixinDynamicCase
@@ -18,6 +17,9 @@ class WeiboVipDynamicCase(ShoppingDynamicCase):
         self._screen_cache = None
         self._ocr_command = None
         self.prepare_ocr()
+
+    def tap_visual(self, row):
+        self.pct(row['x']+row['w']/2, row['y']+row['h']/2)
 
     def visual_rows(self):
         if not hasattr(self, '_ocr_command'):

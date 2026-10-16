@@ -2,7 +2,7 @@
 import re
 import time
 
-from Cases.Top48.shopping_common import ShoppingDynamicCase, StepUnavailable
+from Cases.Top48.shopping_common import StepUnavailable
 from Cases.Top48.weibo_vip_common import WeiboVipDynamicCase
 
 

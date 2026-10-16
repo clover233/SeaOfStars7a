@@ -2,7 +2,7 @@
 import re
 import time
 
-from Cases.Top48.shopping_common import ShoppingDynamicCase, StepUnavailable
+from Cases.Top48.shopping_common import StepUnavailable
 from Cases.Top48.weibo_vip_common import WeiboVipDynamicCase
 
 
@@ -68,6 +68,9 @@ class WeiboDynamicCase(WeiboVipDynamicCase):
     def feed_tab(self, name):
         self.main_page()
         self.label(name)
+        time.sleep(.7)
+        if name == '关注' and self.find_label('默认分组') is not None:
+            self.label('全部关注')
         self.await_page(lambda: self.has(rid='contentTextView') or any(
             len(r['text']) > 12 and .2 < r['y'] < .85 for r in self.visual_rows()), name + '内容未加载')
 
@@ -86,7 +89,9 @@ class WeiboDynamicCase(WeiboVipDynamicCase):
             if node is None:
                 raise StepUnavailable('关注页没有正在直播的博主')
             entries = [node]
-        self.click_node(entries[0])
+        # 直播标签在圆形封面下沿；点击同列封面中心，按标签边界换算。
+        l, t, r, _ = self.bounds(entries[0])
+        self.point((l+r)/2, t-height*.025)
         self.await_page(lambda: self.activity_has('Live', 'live'), '直播未打开', optional=True)
 
     def return_following(self):
@@ -121,9 +126,14 @@ class WeiboDynamicCase(WeiboVipDynamicCase):
         self.await_page(lambda: bool(self.nodes(desc=label)), '底栏切换未生效', optional=True)
 
     def super_topic(self):
-        self.bottom_from_menu('超话')
-        self.bottom('超话')
-        self.await_page(lambda: self.activity_has('Super', 'super') or self.has(text='超话'),
+        self.main_page()
+        node = self.find_label('超话')
+        if node is not None:
+            self.click_node(node)
+        else:
+            # 当前版首页左上“超话”图片无文字节点，截图已核对。
+            self.pct(.075, .08)
+        self.await_page(lambda: self.activity_has('Super', 'super') or self.find_label('超话社区') is not None,
                         '超话页面未打开', optional=True)
 
     def first_super_topic(self):
@@ -138,8 +148,7 @@ class WeiboDynamicCase(WeiboVipDynamicCase):
         self.await_page(lambda: self.has(rid='contentTextView'), '超话内容未加载', optional=True)
 
     def return_super_topic(self):
-        self.return_to(lambda: self.main_ready(), '未返回微博底栏')
-        self.bottom('超话')
+        self.return_to(lambda: self.find_label('超话社区') is not None, '未返回超话社区', limit=6)
 
     def discover(self):
         self.main_page()

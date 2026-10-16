@@ -15,7 +15,7 @@ class PerformanceDynamic_weibo_0020(WeiboDynamicCase):
             ('直播页面上滑5次下滑5次', lambda: self.within('直播', lambda: self.browse(5, 5)), 2),
             ('返回关注界面', lambda: self.within('关注', self.return_following), 1),
             ('长按底部视频tab', lambda: self.group('切换菜单', lambda: self.tab_menu('视频')), 1),
-            ('点击超话', lambda: self.group('超话', lambda: self.within('切换菜单', self.super_topic)), 2),
+            ('点击超话（新版使用首页左上入口）', lambda: self.group('超话', self.super_topic), 2),
             ('超话页面上滑3次下滑3次', lambda: self.within('超话', lambda: self.browse(3, 3)), 2),
             ('点击第一条超话', lambda: self.group('超话详情', lambda: self.within('超话', self.first_super_topic)), 2),
             ('超话内容上滑3次下滑3次', lambda: self.within('超话详情', lambda: self.browse(3, 3)), 2),
