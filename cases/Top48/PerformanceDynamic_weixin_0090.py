@@ -1,5 +1,5 @@
 """微信搜索和支付；用例表1748～1759行。"""
-from Cases.Top48.weixin_extended import WeixinExtendedCase
+from Cases.Top48.weixin_common import WeixinExtendedCase
 
 
 class PerformanceDynamic_weixin_0090(WeixinExtendedCase):

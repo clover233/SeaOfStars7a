@@ -1,5 +1,5 @@
 """蜜雪冰城微信小程序浏览；用例表1831～1837行。"""
-from Cases.Top48.weixin_remaining import WeixinRemainingCase
+from Cases.Top48.weixin_common import WeixinRemainingCase
 
 
 class PerformanceDynamic_weixin_0160(WeixinRemainingCase):

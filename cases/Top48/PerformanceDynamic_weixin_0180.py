@@ -1,5 +1,5 @@
 """同程旅行微信小程序浏览；用例表1844～1853行。"""
-from Cases.Top48.weixin_remaining import WeixinRemainingCase
+from Cases.Top48.weixin_common import WeixinRemainingCase
 
 
 class PerformanceDynamic_weixin_0180(WeixinRemainingCase):

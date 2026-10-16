@@ -1,5 +1,5 @@
 """微信新闻公众号浏览；用例表1802～1817行。"""
-from Cases.Top48.weixin_extended import WeixinExtendedCase
+from Cases.Top48.weixin_common import WeixinExtendedCase
 
 
 class PerformanceDynamic_weixin_0130(WeixinExtendedCase):

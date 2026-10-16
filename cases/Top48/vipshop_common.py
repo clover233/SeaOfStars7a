@@ -2,11 +2,10 @@
 import re
 import time
 
-from Cases.Top48.shopping_common import StepUnavailable
-from Cases.Top48.weibo_vip_common import WeiboVipDynamicCase
+from Cases.Top48.shopping_common import StepUnavailable, VisualShoppingDynamicCase
 
 
-class VipshopDynamicCase(WeiboVipDynamicCase):
+class VipshopDynamicCase(VisualShoppingDynamicCase):
     PACKAGE = 'com.achievo.vipshop'
     all_app_package_list = [PACKAGE]
 

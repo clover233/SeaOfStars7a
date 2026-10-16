@@ -1,12 +1,11 @@
 """微博实机定位：weditor 0.7.3 Dump Hierarchy / Android 17，2026-10-16。"""
 import time
 
-from Cases.Top48.shopping_common import StepUnavailable
-from Cases.Top48.weibo_vip_common import WeiboVipDynamicCase
+from Cases.Top48.shopping_common import StepUnavailable, VisualShoppingDynamicCase
 from Cases.Top48.weixin_common import WeixinDynamicCase
 
 
-class WeiboDynamicCase(WeiboVipDynamicCase):
+class WeiboDynamicCase(VisualShoppingDynamicCase):
     PACKAGE = 'com.sina.weibo'
     all_app_package_list = [PACKAGE]
     ALBUM = '微博性能素材'

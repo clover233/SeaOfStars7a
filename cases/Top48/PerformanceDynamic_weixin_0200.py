@@ -1,5 +1,5 @@
 """微信收藏、我的浏览；用例表1866～1876行。"""
-from Cases.Top48.weixin_remaining import WeixinRemainingCase
+from Cases.Top48.weixin_common import WeixinRemainingCase
 
 
 class PerformanceDynamic_weixin_0200(WeixinRemainingCase):

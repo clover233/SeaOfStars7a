@@ -1,5 +1,5 @@
 """微信视频号和直播；用例表1760～1773行。"""
-from Cases.Top48.weixin_extended import WeixinExtendedCase
+from Cases.Top48.weixin_common import WeixinExtendedCase
 
 
 class PerformanceDynamic_weixin_0100(WeixinExtendedCase):

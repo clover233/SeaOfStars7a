@@ -4,7 +4,7 @@
 步骤来源：动态性能模型测试用例7.xlsx / 新-7.0.2模型测试步骤。
 表中未指定停留时长，浏览每次停留2秒，保留原0010的1/2秒停留。
 """
-from Cases.Top48.alipay_messages import AlipayMessageCase
+from Cases.Top48.alipay_common import AlipayMessageCase
 
 
 class PerformanceDynamic_alipay_0020(AlipayMessageCase):

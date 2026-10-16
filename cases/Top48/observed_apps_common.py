@@ -3,7 +3,7 @@ import time
 import xml.etree.ElementTree as ET
 
 from Cases.Top48.weixin_common import WeixinStepSkipped as StepUnavailable, optional
-from Cases.Top48.weixin_extended import WeixinExtendedCase
+from Cases.Top48.weixin_common import WeixinExtendedCase
 
 
 class ObservedAppCase(WeixinExtendedCase):

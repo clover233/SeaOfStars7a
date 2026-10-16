@@ -1,5 +1,5 @@
 """微信选择照片发送；用例表1854～1865行。"""
-from Cases.Top48.weixin_remaining import WeixinRemainingCase
+from Cases.Top48.weixin_common import WeixinRemainingCase
 
 
 class PerformanceDynamic_weixin_0190(WeixinRemainingCase):
