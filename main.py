@@ -575,8 +575,7 @@ error_logs = {}
 
 if __name__ == "__main__":
     if True:
-        # 用例串行运行
-        # 初始化设备链接
+        # 用例串行运行，初始化设备链接
         # SeaOfStarsAW.init_device()
         for l in case_list:
             logging.info(l.__name__)
@@ -600,6 +599,7 @@ if __name__ == "__main__":
 
         logging.info('succ_num - ' + str(succ_num))
         logging.info('fail_num - ' + str(fail_num))
+
         # 整理输出错误日志
         if len(error_logs.keys()) > 0:
             all_error_log = ""
