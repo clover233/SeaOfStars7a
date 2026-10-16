@@ -11,7 +11,7 @@ from aw_new import SeaOfStarsAW
 
 class PerformanceDynamic_xhs_0020(Case):
 
-    all_app_package_list = ["com.xingin.xhs"]
+    all_app_package_list = [""]
 
     def __init__(self, result_path):
         super().__init__(result_path)

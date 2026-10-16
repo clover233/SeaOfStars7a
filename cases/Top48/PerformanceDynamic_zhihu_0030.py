@@ -11,7 +11,7 @@ from aw_new import SeaOfStarsAW
 
 class PerformanceDynamic_zhihu_0030(Case):
 
-    all_app_package_list = ["com.zhihu.android"]
+    all_app_package_list = [""]
 
     def __init__(self, result_path):
         super().__init__(result_path)
