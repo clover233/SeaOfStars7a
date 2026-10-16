@@ -175,7 +175,6 @@ fh.setFormatter(formatter)
 logger.addHandler(fh)
 
 
-# 精简重复执行并保留原有场景覆盖；所有保留项沿用原始次序，fuzai 仍在每组开头。
 Basic1 = [
     PerformanceDynamic_fuzai,
     PerformanceDynamic_fanqie_0010,
