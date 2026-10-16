@@ -44,9 +44,145 @@ class PerformanceDynamic_xiechengtrip_0020(Case):
         # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
         # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
         logging.info("用例开始执行!")
-        # SeaOfStarsAW.init_device()
-        #  todo
+        steps_num = 1
 
+        app = 'ctrip.android.view'
+        step = "1、启动携程旅行"
+
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info("启动{}中".format("携程旅行"))
+        SeaOfStarsAW.ut_device.app_start(app, use_monkey=True)
+        time.sleep(5)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "2、点击机票"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device(text="机票").click()
+        time.sleep(2)
+        # SeaOfStarsAW.ut_device.swipe(0.99, 0.423, 0.636, 0.423)
+        # time.sleep(1)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "3、点击查询"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device.click(0.508, 0.547)
+        time.sleep(2)
+
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "4、上滑3次下滑4次浏览搜索结果"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        for _ in range(3):
+            SeaOfStarsAW.scroll_down()
+            time.sleep(1)
+        for _ in range(4):
+            SeaOfStarsAW.scroll_up()
+            time.sleep(1)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "5、查看第一条搜索结果详情"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device.click(0.412, 0.347)
+        time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "6、返回携程旅行首页"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        for _ in range(3):
+            SeaOfStarsAW.ut_device.swipe(0.99, 0.423, 0.636, 0.423)
+            time.sleep(1)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "7、点击火车票"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device(text="火车票").click()
+        time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "8、点击查询"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device.click(0.498, 0.524)
+        time.sleep(2)
+        # SeaOfStarsAW.ut_device.swipe(0.99, 0.423, 0.636, 0.423)
+        # time.sleep(1)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "9、上滑3次下滑4次浏览查询结果"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        for _ in range(3):
+            SeaOfStarsAW.scroll_down()
+            time.sleep(1)
+        for _ in range(4):
+            SeaOfStarsAW.scroll_up()
+            time.sleep(1)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "10、查看第一条搜索结果详情"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device.click(0.412, 0.347)
+        time.sleep(2)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "11、点击预订"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device(text='订')[1].click()
+        time.sleep(1)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
+
+        step = "12、返回携程旅行主界面"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.ut_device.swipe(0.99, 0.423, 0.636, 0.423)
+        time.sleep(1)
+        SeaOfStarsAW.ut_device(text='确认离开')[1].click()
+        time.sleep(1)
+        for _ in range(3):
+            SeaOfStarsAW.ut_device.swipe(0.99, 0.423, 0.636, 0.423)
+            time.sleep(1)
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+
+        steps_num += 1
+
+        step = "13、返回home页面"
+        SeaOfStarsAW.start_perfetto_trace()
+        logging.info(step)
+        SeaOfStarsAW.return_launcher()
+        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
+                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
+        steps_num += 1
         logging.info("用例执行结束!")
 
     @SeaOfStarsAW.function_log

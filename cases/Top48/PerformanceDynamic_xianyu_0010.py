@@ -58,6 +58,8 @@ class PerformanceDynamic_xianyu_0010(Case):
         logging.info("启动{}中".format("闲鱼"))
         SeaOfStarsAW.ut_device.app_start(app, use_monkey=True)
         time.sleep(5)
+        SeaOfStarsAW.ut_device.swipe(0.99, 0.423, 0.636, 0.423)
+        time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
@@ -66,11 +68,12 @@ class PerformanceDynamic_xianyu_0010(Case):
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
         for _ in range(5):
-            SeaOfStarsAW.scroll_up()
-            time.sleep(2)
-        for _ in range(5):
             SeaOfStarsAW.scroll_down()
             time.sleep(2)
+        for _ in range(6):
+            SeaOfStarsAW.scroll_up()
+            time.sleep(2)
+
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
@@ -78,11 +81,9 @@ class PerformanceDynamic_xianyu_0010(Case):
         step = "3、搜索华为mate60，每次停留2s"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(600, 170)
-        time.sleep(1)
-        SeaOfStarsAW.ut_device.send_keys("华为mate60", clear=True)
-        time.sleep(1)
-        SeaOfStarsAW.ut_device.click(1000, 170)
+        SeaOfStarsAW.ut_device.click(0.898, 0.084)
+        time.sleep(4)
+        SeaOfStarsAW.ut_device.click(0.068, 0.083)
         time.sleep(2)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
@@ -91,13 +92,16 @@ class PerformanceDynamic_xianyu_0010(Case):
         step = "4、点击第一个商品，上滑5次，下滑5次，每次停留2s"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(250, 1750)
+        SeaOfStarsAW.ut_device.click(0.746, 0.41)
         time.sleep(1)
-        for _ in range(5):
-            SeaOfStarsAW.scroll_up()
-            time.sleep(2)
+        # SeaOfStarsAW.ut_device(description="返回").click()
+        # time.sleep(1)
         for _ in range(5):
             SeaOfStarsAW.scroll_down()
+
+            time.sleep(2)
+        for _ in range(5):
+            SeaOfStarsAW.scroll_up()
             time.sleep(2)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
@@ -106,8 +110,10 @@ class PerformanceDynamic_xianyu_0010(Case):
         step = "5、点击分享，等待4s后返回"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(1000, 170)
+        SeaOfStarsAW.ut_device(description="分享").click()
         time.sleep(4)
+        SeaOfStarsAW.ut_device(description="返回").click()
+        time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
@@ -116,11 +122,8 @@ class PerformanceDynamic_xianyu_0010(Case):
         step = "6、返回闲鱼首页，返回home页面，停留2s"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.click(550, 2330)
+        SeaOfStarsAW.ut_device(description="返回").click()
         time.sleep(2)
-        for _ in range(3):
-            SeaOfStarsAW.ut_device.click(65, 170)
-            time.sleep(1)
         SeaOfStarsAW.return_launcher()
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
