@@ -14,7 +14,7 @@ class PerformanceDynamic_sodamusic_0010(SodaMusicDynamicCase):
             ('点击右下角我的', self.my_page, 2),
             ('点击我喜欢的音乐', self.favorites, 2),
             ('返回首页', self.main_page, 2),
-            ('点击右下角⋮打开播放列表', self.playlist, 2),
+            ('点击右上角三横线', self.header_menu, 2),
             ('返回汽水音乐主界面', self.main_page, 2),
             ('滑动返回Home页', self.home, 2),
         ]

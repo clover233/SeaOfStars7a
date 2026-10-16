@@ -10,6 +10,46 @@ from Cases.Top48.observed_apps_common import StepUnavailable, optional
 
 class TravelShopCase(TencentObservedCase):
     TAP_MS = 250
+    INPUT_SOURCE = ''
+
+    def launch(self):
+        self.unavailable={}
+        self._recording=self._call_active=self._live_started=self._owned_draft=False
+        for attempt in range(2):
+            result=self.d.shell(['am','start','-W','--display','0','-n',self.COMPONENT])
+            if result.exit_code:raise RuntimeError('应用启动失败：'+result.output)
+            time.sleep(2);self.invalidate()
+            self.dismiss_system_prompt()
+            if self.current_app()['package']==self.PACKAGE:break
+        self.wait_for(lambda:self.current_app()['package']==self.PACKAGE,'应用未进入前台')
+        self.dismiss_ads();self.main_page()
+
+    def return_to(self, ready, message, limit=6):
+        for _ in range(limit):
+            self.dismiss_ads()
+            if ready():return
+            self.back()
+        self.wait_for(ready,message,timeout=3)
+
+    def ad_matches(self, rows, label, contains=False):
+        query=self.normalized(label)
+        return [r for r in rows if (query in self.normalized(r['text']) if contains
+                                    else query==self.normalized(r['text']))]
+
+    def tap_row(self,row):
+        self._locators.add(row['source'])
+        self.pct(row['x']+row['w']/2,row['y']+row['h']/2,record=False)
+
+    def dismiss_ads(self):
+        self.dismiss_system_prompt()
+        for _ in range(3):
+            rows=self.screen()
+            for label in ('跳过广告','跳过','关闭广告','以后再说','暂不升级','暂不更新','下次再说'):
+                matches=self.ad_matches(rows,label,True)
+                if len(matches)==1:
+                    self.tap_row(matches[0]);time.sleep(.5);break
+            else:return rows
+        return self.screen()
 
     def nodes(self, rid=None, **kwargs):
         rows=super().nodes(**kwargs)
@@ -49,8 +89,9 @@ class TravelShopCase(TencentObservedCase):
 
     def point(self, x, y):
         self.foreground()
-        source=getattr(self,'_tap_source','')
-        r = self.d.shell('input {3} -d 0 swipe {0} {1} {0} {1} {2}'.format(round(x), round(y), self.TAP_MS, source))
+        source=getattr(self,'_tap_source',self.INPUT_SOURCE)
+        duration=200 if source=='mouse' else self.TAP_MS
+        r = self.d.shell('input {3} -d 0 swipe {0} {1} {0} {1} {2}'.format(round(x), round(y), duration, source))
         if r.exit_code:
             raise RuntimeError('主屏点击失败：'+r.output)
         self.invalidate()
@@ -75,9 +116,9 @@ class TravelShopCase(TencentObservedCase):
     def go(self, action, ready, message):
         # 仅供可重复的页面导航；发送、加购等动作不使用此重试入口。
         self.dismiss_ads()
-        original=getattr(self,'_tap_source','')
+        original=getattr(self,'_tap_source',self.INPUT_SOURCE)
         try:
-            for source in ('','mouse'):
+            for source in (self.INPUT_SOURCE,'mouse' if self.INPUT_SOURCE!='mouse' else ''):
                 if ready():return
                 self._tap_source=source
                 action()
@@ -112,12 +153,18 @@ class QunarDynamicCase(TravelShopCase):
     COMPONENT = PACKAGE + '/com.mqunar.splash.SplashActivity'
 
     def dismiss_ads(self):
-        super().dismiss_ads()
-        if self.has(text='刮刮卡弹窗', prefix=True) or (self.visible('获得一张新喜国庆刮刮卡',True)
-                and self.visible('双节限时加赠',True)) or self.visible('刮奖区',True):
+        rows=super().dismiss_ads()
+        matches=self.ad_matches(rows,'放弃权益')
+        if len(matches)==1:
+            self.tap_row(matches[0])
+            time.sleep(.6);self.invalidate()
+            return
+        if self.has(text='刮刮卡弹窗', prefix=True) or (self.ad_matches(rows,'获得一张新喜国庆刮刮卡',True)
+                and self.ad_matches(rows,'双节限时加赠',True)) or self.ad_matches(rows,'刮奖区',True):
             self.back()
-        if self.visible('上滑或点击跳转广告详情页面',True) and self.visible('关闭',True):
-            self.choose('关闭',True,index=0)
+            return
+        if self.ad_matches(rows,'上滑或点击跳转广告详情页面',True) and self.ad_matches(rows,'关闭',True):
+            self.tap_row(self.ad_matches(rows,'关闭',True)[0])
             time.sleep(.7)
 
     def native(self, **selector):
@@ -195,15 +242,24 @@ class QunarDynamicCase(TravelShopCase):
     @optional('booking')
     def booking(self):
         self.needs('flight_detail')
-        self.entry('预订','订')
-        self.content_wait(lambda:self.visible('乘机人',True) or self.visible('登录',True),'订票填写页未显示')
+        def open_booking():
+            for label in ('预订','订'):
+                matches=self.find(label,region=(.7,.25,1,.9))
+                if matches:self.tap_row(matches[0]);return
+            raise StepUnavailable('当前航班没有可核对的预订按钮')
+        self.go(open_booking,lambda:self.visible('登录',True) or self.booking_ready(),
+                '订票填写页未显示')
         if self.visible('登录',True):
             raise StepUnavailable('预订需要登录，停在登录页，未提交订单')
+
+    def booking_ready(self):
+        return (self.has(desc='f_major_bundle_rn|QunarBooking|NavBar')
+                and self.visible('填单页',region=(0,.04,1,.14)))
 
     @optional('booking')
     def browse_booking(self):
         self.needs('booking')
-        if not self.visible('乘机人',True):raise StepUnavailable('订票填写页不可用')
+        if not self.booking_ready():raise StepUnavailable('订票填写页不可用')
         self.browse(2,2)
 
     def return_flight(self):
@@ -213,6 +269,9 @@ class QunarDynamicCase(TravelShopCase):
     @optional('checkin')
     def checkin(self):
         self.return_flight()
+        for _ in range(3):
+            if self.visible('值机选座') or self.visible('航班服务'):break
+            self.swipe();time.sleep(.7)
         if self.visible('值机选座'):
             self.entry('值机选座')
         else:
@@ -265,7 +324,8 @@ class QunarDynamicCase(TravelShopCase):
     def hotel_orders(self):
         self.needs('hotel_page')
         self.entry('酒店订单','我的订单')
-        self.content_wait(lambda:self.visible('订单',True) or self.visible('登录',True),'酒店订单页未显示')
+        self.content_wait(lambda:not self.hotel_ready() and any(self.visible(s,True) for s in
+                          ('搜索订单','待入住','登录')),'酒店订单页未显示')
         if self.visible('登录',True):self.adapt('当前未登录，酒店订单验证到登录入口')
 
     def return_hotel(self):
@@ -279,7 +339,8 @@ class QunarDynamicCase(TravelShopCase):
         self.content_wait(self.hotel_results_ready,'酒店搜索结果未加载',timeout=35)
 
     def hotel_results_ready(self):
-        return not self.hotel_ready() and self.visible('筛选',True) and any(self.visible(s,True) for s in ('价格','距离','位置'))
+        return (self.has(desc='home_rn|listPage|filter') and
+                self.has(desc='home_rn|listPage|hotel_',prefix=True))
 
     @optional('hotels')
     def browse_hotels(self):
@@ -289,8 +350,12 @@ class QunarDynamicCase(TravelShopCase):
     def first_hotel(self):
         self.needs('hotels')
         for _ in range(3):self.swipe(.5,.35,.5,.8)
-        self.first_row(r'(酒店|宾馆|民宿|公寓)',(.05,.25,.95,.85))
-        self.content_wait(lambda:self.visible('房型',True) or self.visible('设施',True),'酒店详情未打开')
+        def open_first():
+            cards=self.nodes(desc='home_rn|listPage|hotel_',prefix=True)
+            if not cards:raise StepUnavailable('当前列表没有可核对的酒店卡片')
+            self._locators.add('tree');self.click_node(sorted(cards,key=lambda n:self.bounds(n)[1])[0])
+        self.go(open_first,lambda:not self.hotel_results_ready() and
+                (self.visible('房型',True) or self.visible('设施',True)),'酒店详情未打开')
 
     @optional('hotel_pictures')
     def hotel_pictures(self):
@@ -308,6 +373,7 @@ class QunarDynamicCase(TravelShopCase):
     @optional('train_page')
     def train_page(self):
         self.main_page();self.native(rid='atom_alexhome_youth_mod_train')
+        self.dismiss_ads()
         self.content_wait(lambda:self.visible('搜索') or self.visible('搜索车票'),'火车高铁查询页未打开')
 
     @optional('trains')
@@ -321,16 +387,17 @@ class SodaMusicDynamicCase(TravelShopCase):
     PACKAGE='com.luna.music'
     all_app_package_list=[PACKAGE]
     COMPONENT=PACKAGE+'/com.luna.biz.main.main.MainActivity'
-    TAP_MS=100
+    TAP_MS=200
+    INPUT_SOURCE='mouse'
 
     def dismiss_ads(self):
-        super().dismiss_ads()
-        if self.visible('签到7天领',True) and self.visible('打开签到提醒',True):
+        rows=super().dismiss_ads()
+        if self.ad_matches(rows,'签到7天领',True) and self.ad_matches(rows,'打开签到提醒',True):
             # 已核对签到弹窗底部 X；不触碰领取或提醒开关。
             self.pct(.5,.721)
             self.invalidate()
-        if self.visible('选择最近的听歌偏好') and self.visible('完成'):
-            self.choose('完成')
+        if self.ad_matches(rows,'选择最近的听歌偏好') and len(self.ad_matches(rows,'完成'))==1:
+            self.tap_row(self.ad_matches(rows,'完成')[0])
             self.adapt('关闭首次听歌偏好引导，不选择新的偏好')
 
     def main_ready(self):
@@ -407,16 +474,14 @@ class SodaMusicDynamicCase(TravelShopCase):
         self.entry('我喜欢的音乐','我喜欢')
         self.content_wait(lambda:self.visible('我喜欢',True) and not self.visible('模式选择'),'我喜欢列表未打开')
 
-    @optional('playlist')
-    def playlist(self):
+    @optional('header_menu')
+    def header_menu(self):
         self.main_page()
-        if self.has(desc='播放列表'):
-            self.native(desc='播放列表')
-        elif self.has(rid='cxd'):
-            self.native(rid='cxd')
-        else:raise StepUnavailable('当前版本没有可核对的播放列表入口')
-        self.content_wait(lambda:self.visible('播放列表',True) or self.visible('播放队列',True)
-                          or self.visible('接下来播放',True),'播放列表未打开')
+        # 本机21.2.0的三横线在左上，右上为搜索。按已核对的实际三横线打开侧栏。
+        if not self.has(rid='c+o'):raise StepUnavailable('当前首页没有三横线模式入口')
+        self.go(lambda:self.pct(.08,.081),lambda:self.visible('听歌模式') and self.visible('默认模式',True),
+                '三横线侧栏未打开')
+        self.adapt('本版本三横线位于左上，打开“听歌模式”侧栏；未切换模式或开通会员')
 
 
 class TaobaoDynamicCase(TravelShopCase):
@@ -425,6 +490,8 @@ class TaobaoDynamicCase(TravelShopCase):
     COMPONENT=PACKAGE+'/com.taobao.tao.welcome.Welcome'
     ALBUM='SeaOfStars_Taobao_Test'
     NEED_IMAGES=True
+    TAP_MS=200
+    INPUT_SOURCE='mouse'
     # 本次人工授权仅覆盖此关键词选出的商品客服；后续批跑需显式启用实发。
     SEND_ENV='TAOBAO_ALLOW_CUSTOMER_MESSAGES'
 
@@ -449,23 +516,25 @@ class TaobaoDynamicCase(TravelShopCase):
                           '-d','file://'+remote+'/'+local.name])
 
     def dismiss_ads(self):
-        super().dismiss_ads()
+        rows=super().dismiss_ads()
         if self.has(desc='限时福利砸中你') and self.has(desc='关闭按钮'):
             self.native(desc='关闭按钮')
             time.sleep(.8);self.invalidate()
         # 原生首页券条，只点该条右端关闭区域，不领取优惠券。
         banners=self.nodes(rid='homepage_pop_view')
-        if banners and self.visible('待领取',True):
+        if banners and self.ad_matches(rows,'待领取',True):
             a,b,z,y=self.bounds(banners[0]);w,h=self.d.window_size()
             self.pct((a+(z-a)*.96)/w,(b+y)/2/h)
 
     def main_ready(self):
-        return (self.activity_is('tao.welcome.Welcome') and self.has(desc='搜索栏')
+        return (self.activity_is('tao.welcome.Welcome','tao.TBMainActivity') and self.has(desc='搜索栏')
                 and self.visible('购物车',region=(.5,.9,.8,1))
                 and not self.has(desc='限时福利砸中你'))
 
     def main_page(self):
         self.dismiss_ads()
+        if not self.main_ready() and self.has(desc='首页') and self.visible('购物车',region=(.5,.9,.8,1)):
+            self.go(lambda:self.native(desc='首页'),self.main_ready,'淘宝首页底栏未切换')
         self.return_to(self.main_ready,'未返回淘宝首页',limit=10)
 
     def search_ready(self):
@@ -487,8 +556,8 @@ class TaobaoDynamicCase(TravelShopCase):
         self.needs('search');self.browse_checked(self.results_ready,5,6,'商品结果不可用')
 
     def product_ready(self):
-        return (not self.results_ready() and self.visible('加入购物车',True)
-                and (self.visible('客服') or self.visible('店铺')))
+        return (self.activity_is('TTDetailActivity','DetailActivity') and
+                (self.has(desc='客服,按钮') or self.visible('客服',region=(0,.85,.5,1))))
 
     @optional('product')
     def sales_first(self):
@@ -509,7 +578,12 @@ class TaobaoDynamicCase(TravelShopCase):
         card=(organic or cards)[0]
         if card is not cards[0]:self.adapt('首条为补贴广告卡，改为销量结果中首条普通清风商品')
         self._selected_product=card.get('content-desc','')
-        self.go(lambda:self.click_node(card),self.product_ready,'首条清风商品详情未打开')
+        def open_product():
+            if not self.results_ready():raise StepUnavailable('已离开商品列表，未重复点击旧卡片位置')
+            fresh=self.nodes(desc=self._selected_product)
+            if not fresh:raise StepUnavailable('本次清风商品卡片已变化，未点击旧位置')
+            self._locators.add('tree');self.click_node(fresh[0])
+        self.go(open_product,self.product_ready,'首条清风商品详情未打开')
         self._verified_product='清风' in self._selected_product
 
     @optional('product')
@@ -595,7 +669,8 @@ class TaobaoDynamicCase(TravelShopCase):
             if self.visible(title,True):self.choose(title,True,index=0);break
         self.content_wait(lambda:self.visible(self.ALBUM,True),'专用测试相册未显示，未选个人图片')
         self.choose(self.ALBUM,True,index=0)
-        self.content_wait(lambda:self.visible(self.ALBUM),'专用测试相册未打开')
+        self.content_wait(lambda:self.visible(self.ALBUM,region=(.1,.03,.9,.15)),
+                          '专用测试相册标题未显示，未选择图片')
         # 该相册只创建一张纯色测试图；必须有图片/选中控件才可选择。
         choices=[n for n in self.nodes() if re.search(r'(未选中|选择图片|选择照片)',n.get('content-desc',''))]
         if not choices:raise StepUnavailable('专用相册未导出图片选择控件，未猜测点击个人照片')
