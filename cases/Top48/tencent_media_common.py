@@ -467,6 +467,7 @@ class TencentVideoDynamicCase(TencentObservedCase):
     PACKAGE = 'com.tencent.qqlive'
     all_app_package_list = [PACKAGE]
     COMPONENT = PACKAGE + '/.ona.activity.SplashHomeActivity'
+    PREROLL_TIMEOUT = 180
 
     def swipe(self, x1=.5, y1=.78, x2=.5, y2=.32, duration=400):
         self.foreground()
@@ -527,7 +528,7 @@ class TencentVideoDynamicCase(TencentObservedCase):
             if self.paywall():
                 raise StepUnavailable('首个推荐视频要求开通VIP观看完整内容，未购买')
             return not self.preroll() and self.media_state() == 3
-        self.content_wait(playing, '广告未结束或视频未开始播放', timeout=90)
+        self.content_wait(playing, '广告未结束或视频未开始播放', timeout=self.PREROLL_TIMEOUT)
         for _ in range(6):
             time.sleep(5)
             self.invalidate()

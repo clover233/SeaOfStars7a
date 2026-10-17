@@ -97,7 +97,15 @@ class DouyinDynamicCase(DynamicAppCase):
             else:
                 return self.skip('当前抖音版本无“{}”频道'.format(name))
         if not self.top_selected(target):
-            self.click_node(self.top_tabs(target)[0])
+            # 引导浮层出现时整棵首页树可能短暂消失；等待并保存同一份节点，
+            # 避免 reveal 与再次取 [0] 之间的状态变化造成越界。
+            tabs = []
+            def ready():
+                nonlocal tabs
+                tabs = self.top_tabs(target)
+                return bool(tabs)
+            self.wait_for(ready, '抖音顶部频道未恢复：' + target, timeout=12)
+            self.click_node(tabs[0])
             time.sleep(2)
         return True
 
@@ -413,13 +421,18 @@ class DouyinDynamicCase(DynamicAppCase):
         return bool(self.contains_nodes(text='关注')) and (
             bool(self.contains_nodes(text='作品')) or bool(self.contains_nodes(desc='作品')))
 
+    def own_profile_ready(self):
+        # “我的钱包”可被个性化功能栏替换；编辑主页和抖音号区分本人/作者主页。
+        return (bool(self.nodes(text='编辑主页') or self.nodes(text='编辑资料'))
+                and bool(self.contains_nodes(text='抖音号：'))
+                and bool(self.contains_nodes(desc='收藏,按钮')))
+
     def open_me(self):
-        self.bottom_tab('我')
-        time.sleep(2)
         self.dismiss_known_popup()
-        self.wait_for(lambda: bool(self.contains_nodes(text='我的钱包'))
-                      and bool(self.contains_nodes(desc='收藏,按钮')),
-                      '抖音个人页未加载')
+        def ready():
+            self.dismiss_known_popup()
+            return self.own_profile_ready()
+        self.transition(lambda: self.bottom_tab('我'), ready, '抖音个人页未加载')
 
     def open_following(self):
         self.open_me()

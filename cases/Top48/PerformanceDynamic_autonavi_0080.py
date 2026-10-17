@@ -3,9 +3,11 @@ from Cases.Top48.autonavi_common import AutonaviDynamicCase
 
 
 class PerformanceDynamic_autonavi_0080(AutonaviDynamicCase):
+    BACKGROUND_NAVIGATION = True
+
     def resume_navigation(self):
         self.launch()
-        self.navigation_visible()
+        self.navigation_visible('0080 未发现后台导航，请先成功运行 0070 并保留导航进程')
 
     def exit_to_home(self):
         self.open_exit()

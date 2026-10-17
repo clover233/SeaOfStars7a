@@ -1,9 +1,9 @@
 """百度系列动态用例的等待、比例手势和逐步性能采集。"""
 import logging
-import re
 import time
 
 from Cases.CaseBase import Case
+from Cases.Top48.main_display import ForegroundNotReady, MainDisplayMixin
 from aw_new import SeaOfStarsAW
 
 
@@ -29,29 +29,22 @@ class BaiduDynamicCase(Case):
         self._prepared = True
 
     def current_app(self):
-        # 此机 Android 17 的 adbutils.app_current() 会返回后台 SwanApp；
-        # 直接解析当前焦点，避免误判前台应用和返回状态。
-        output = self.d.shell('dumpsys window windows').output
-        match = re.search(r'mCurrentFocus=Window\{[^\n]*?\su\d+\s+([\w.]+)/([\w.$]+)', output)
-        if not match:
-            output = self.d.shell('dumpsys activity activities').output
-            match = re.search(r'topResumedActivity=ActivityRecord\{[^\n]*?\su\d+\s+([\w.]+)/([\w.$]+)', output)
-        if not match:
-            raise RuntimeError('无法识别系统前台应用')
-        return {'package': match.group(1), 'activity': match.group(2)}
+        # 小米副屏也有 resumed activity；只读取 display 0。
+        # 播放器挂载/页面切换会短暂丢失焦点，直接查询时也给出有限重试。
+        for attempt in range(3):
+            try:
+                return MainDisplayMixin.current_app(self)
+            except ForegroundNotReady:
+                if attempt == 2:
+                    raise
+                time.sleep(.2)
 
     def foreground(self):
         current = self.current_app()
         if current['package'] != self.PACKAGE:
             raise RuntimeError('前台不是目标应用，停止操作：{}'.format(current))
 
-    def wait_for(self, predicate, message, timeout=15):
-        deadline = time.monotonic() + timeout
-        while time.monotonic() < deadline:
-            if predicate():
-                return
-            time.sleep(0.4)
-        raise RuntimeError('{}；当前页面 {}'.format(message, self.current_app()))
+    wait_for = MainDisplayMixin.wait_for
 
     def tap(self, **selector):
         self.foreground()

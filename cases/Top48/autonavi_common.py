@@ -5,16 +5,18 @@ import time
 import xml.etree.ElementTree as ET
 
 from Cases.Top48.baidu_common import BaiduDynamicCase
+from Cases.Top48.main_display import MainDisplayMixin, ForegroundNotReady
 from aw_new import SeaOfStarsAW
 
 
-class AutonaviDynamicCase(BaiduDynamicCase):
+class AutonaviDynamicCase(MainDisplayMixin, BaiduDynamicCase):
     PACKAGE = 'com.autonavi.minimap'
     AMAP = PACKAGE
     XHS = 'com.xingin.xhs'
     DOUYIN = 'com.ss.android.ugc.aweme'
     PREFIX = PACKAGE + ':id/'
     PERMISSIONS = ('ACCESS_COARSE_LOCATION', 'ACCESS_FINE_LOCATION')
+    BACKGROUND_NAVIGATION = False
     all_app_package_list = [PACKAGE]
 
     @SeaOfStarsAW.function_log
@@ -23,10 +25,29 @@ class AutonaviDynamicCase(BaiduDynamicCase):
             if not self.d.app_info(package):
                 raise RuntimeError('未安装应用：{}'.format(package))
         super().set_up()
+        if self.BACKGROUND_NAVIGATION:
+            sdk = int(self.d.shell('getprop ro.build.version.sdk').output)
+            permissions = ['RECORD_AUDIO']
+            if sdk >= 29:
+                permissions.append('ACCESS_BACKGROUND_LOCATION')
+            for permission in permissions:
+                result = self.d.shell('pm grant {} android.permission.{}'.format(self.AMAP, permission))
+                if result.exit_code or 'Exception' in result.output or 'Error' in result.output:
+                    raise RuntimeError('高德导航授权失败 {}：{}'.format(permission, result.output))
 
     def nodes(self):
         self.foreground()
-        return list(ET.fromstring(self.d.dump_hierarchy()).iter('node'))
+        width, height = self.d.window_size()
+        result = []
+        for node in ET.fromstring(self.d.dump_hierarchy()).iter('node'):
+            if (node.get('package') != self.PACKAGE or node.get('display-id', '0') != '0'
+                    or node.get('visible-to-user') == 'false'):
+                continue
+            left, top, right, bottom = self.bounds(node)
+            if (right > left and bottom > top and left < width and top < height
+                    and right > 0 and bottom > 0):
+                result.append(node)
+        return result
 
     def has(self, *, text=None, desc=None, rid=None, class_name=None):
         return any((text is None or n.get('text') == text) and
@@ -37,14 +58,24 @@ class AutonaviDynamicCase(BaiduDynamicCase):
 
     @staticmethod
     def bounds(node):
-        numbers = [int(x) for x in re.findall(r'\d+', node.get('bounds', ''))]
+        numbers = [int(x) for x in re.findall(r'-?\d+', node.get('bounds', ''))]
         if len(numbers) != 4:
             raise RuntimeError('控件无有效 bounds：{}'.format(node.attrib))
         return numbers
 
     def node_click(self, node):
         left, top, right, bottom = self.bounds(node)
+        width, height = self.d.window_size()
+        left, top, right, bottom = max(0, left), max(0, top), min(width, right), min(height, bottom)
+        if right <= left or bottom <= top:
+            raise RuntimeError('控件不在主屏可见区域')
         self.click_point((left + right) // 2, (top + bottom) // 2)
+
+    def click_point(self, x, y):
+        self.foreground()
+        result = self.d.shell('input -d 0 tap {} {}'.format(round(x), round(y)))
+        if result.exit_code:
+            raise RuntimeError('主屏点击失败：' + result.output)
 
     def find_node(self, *, text=None, desc=None, rid=None, class_name=None, first=False):
         matches = [n for n in self.nodes()
@@ -86,8 +117,22 @@ class AutonaviDynamicCase(BaiduDynamicCase):
 
     def search_page(self):
         self.transition(lambda: self.click_node(rid=self.PREFIX + 'txt_hotword'),
-                        lambda: self.has(desc='搜索', class_name='android.view.ViewGroup'),
+                        self.search_page_ready,
                         '未进入高德搜索页')
+
+    def search_page_ready(self):
+        return any(n.get('class') == 'android.widget.EditText' and n.get('enabled') == 'true'
+                   for n in self.nodes())
+
+    def dismiss_account_prompt(self):
+        if 'AccountActivity' not in self.current_app()['activity']:
+            return
+        if not (self.has(desc='本机号码一键登录') and self.has(desc='关闭页面')):
+            raise RuntimeError('高德账号页面未就绪，请先核实登录状态')
+        # 搜索后会弹出可关闭的一键登录引导；返回后仍是已加载的搜索结果。
+        self.d.press('back')
+        self.wait_for(lambda: 'AccountActivity' not in self.current_app()['activity'],
+                      '高德登录引导未关闭')
 
     def search(self, query, result=None):
         # EditText 可 set_text；首页自绘搜索框可能暂未生成 EditText，先点框聚焦。
@@ -110,10 +155,17 @@ class AutonaviDynamicCase(BaiduDynamicCase):
         self.d(className='android.widget.EditText', enabled=True).set_text(query)
         self.wait_for(lambda: self.has(text=query, class_name='android.widget.EditText'),
                       '搜索词未写入 {}'.format(query), timeout=6)
+        def results_ready():
+            self.dismiss_account_prompt()
+            return ((self.has(desc='搜索框，' + query)
+                     or self.has(text=query, class_name='android.widget.EditText'))
+                    and self.has(desc=result or query, class_name='android.view.ViewGroup'))
+        def submit_ready():
+            self.dismiss_account_prompt()
+            return self.has(desc='搜索', class_name='android.view.ViewGroup')
+        self.wait_for(submit_ready, '高德搜索按钮未就绪')
         self.click_node(desc='搜索', class_name='android.view.ViewGroup')
-        self.wait_for(lambda: self.has(desc='搜索框，' + query) and
-                      self.has(desc=result or query, class_name='android.view.ViewGroup'),
-                      '未出现搜索结果 {}'.format(query), timeout=20)
+        self.wait_for(results_ready, '未出现搜索结果 {}'.format(query), timeout=20)
 
     def result_route(self, result):
         # 路线属于指定结果行，不能用全局“路线”，否则会点到第二条。
@@ -123,16 +175,20 @@ class AutonaviDynamicCase(BaiduDynamicCase):
                         '未进入路线规划')
 
     def tap_route_child(self, result):
-        self.foreground()
-        row = self.d(description=result, className='android.view.ViewGroup')
-        if not row.wait(timeout=8):
-            raise RuntimeError('未找到目的地结果 {}'.format(result))
-        route = row.child(description='路线', className='android.view.ViewGroup')
-        if route.count != 1:
+        row = self.find_node(desc=result, class_name='android.view.ViewGroup')
+        left, top, right, bottom = self.bounds(row)
+        # 新版将“路线”导出为结果标题的兄弟节点；用同一行的几何关系关联，
+        # 不能全局取第一个按钮，也不能假定它永远是标题的 child。
+        routes = [node for node in row.iter('node') if node.get('content-desc') == '路线'
+                  and node.get('class') == 'android.view.ViewGroup']
+        if not routes:
+            routes = [node for node in self.nodes()
+                      if node.get('content-desc') == '路线' and node.get('class') == 'android.view.ViewGroup'
+                      and (lambda box: top <= (box[1]+box[3])/2 <= bottom
+                           and box[0] >= right)(self.bounds(node))]
+        if len(routes) != 1:
             raise RuntimeError('目的地路线按钮未找到或不唯一 {}'.format(result))
-        box = route.info['bounds']
-        self.click_point((box['left'] + box['right']) // 2,
-                         (box['top'] + box['bottom']) // 2)
+        self.node_click(routes[0])
 
     def drive(self):
         for _ in range(3):
@@ -151,10 +207,24 @@ class AutonaviDynamicCase(BaiduDynamicCase):
         raise RuntimeError('路线方式栏没有驾车标签')
 
     def start_navigation(self):
-        self.wait_for(lambda: self.has(desc='开始导航', class_name='android.view.ViewGroup'),
-                      '路线未加载开始导航按钮', timeout=30)
-        self.transition(lambda: self.click_node(desc='开始导航', class_name='android.view.ViewGroup'),
-                        lambda: self.has(desc='退出导航按钮'), '未开始导航')
+        if self.has(desc='退出导航按钮'):
+            return
+        if not self.has(text='驾车导航使用提示'):
+            self.wait_for(lambda: self.has(desc='开始导航', class_name='android.view.ViewGroup'),
+                          '路线未加载开始导航按钮', timeout=30)
+            self.transition(lambda: self.click_node(desc='开始导航', class_name='android.view.ViewGroup'),
+                            lambda: self.has(desc='退出导航按钮') or self.has(text='驾车导航使用提示'),
+                            '未开始导航')
+        if self.has(text='驾车导航使用提示'):
+            # 用户已明确同意该导航提示；只处理这一已核实的页面。
+            logging.info('确认驾车导航使用提示')
+            node = self.find_node(text='同意', class_name='android.view.View')
+            left, top, right, bottom = self.bounds(node)
+            # 该页忽略驻留手势，使用普通主屏 tap。
+            result = self.d.shell('input -d 0 tap {} {}'.format((left+right)//2, (top+bottom)//2))
+            if result.exit_code:
+                raise RuntimeError('导航使用提示确认失败：' + result.output)
+        self.wait_for(lambda: self.has(desc='退出导航按钮'), '未进入驾车导航页面', timeout=25)
 
     def open_exit(self):
         self.transition(lambda: self.click_node(desc='退出导航按钮'),
@@ -170,8 +240,9 @@ class AutonaviDynamicCase(BaiduDynamicCase):
                       not self.has(rid=self.PREFIX + 'hc_navi_exit_navi_bar_positive'),
                       '导航未退出', timeout=20)
 
-    def navigation_visible(self):
-        self.wait_for(lambda: self.has(desc='退出导航按钮'), '后台导航未恢复', timeout=25)
+    def navigation_visible(self, message='后台导航未恢复，请确认导航已启动且后台未被清理'):
+        self.wait_for(lambda: self.has(desc='退出导航按钮'),
+                      message, timeout=25)
 
     def swipe_ratio(self, x1, y1, x2, y2, duration=0.4):
         self.foreground()
@@ -209,8 +280,11 @@ class AutonaviDynamicCase(BaiduDynamicCase):
             self.swipe_ratio(.5, start, .5, end, duration)
             deadline = time.monotonic() + 3
             while time.monotonic() < deadline:
-                if 'launcher' in self.current_app()['activity'].lower():
-                    return
+                try:
+                    if 'launcher' in self.current_app()['activity'].lower():
+                        return
+                except ForegroundNotReady:
+                    pass
                 time.sleep(.3)
         # 小红书会吞掉系统边缘手势；用系统 Home 键保持返回桌面的结果。
         self.d.press('home')

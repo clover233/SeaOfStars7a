@@ -4,14 +4,53 @@ import time
 import re
 import xml.etree.ElementTree as ET
 
-from Cases.Top48.baidu_common import BaiduDynamicCase
+from Cases.Top48.dynamic_apps_common import DynamicAppCase
+from Cases.Top48.screen_text import ScreenshotText
 
 
-class PerformanceDynamic_baidumap_0010(BaiduDynamicCase):
+class PerformanceDynamic_baidumap_0010(DynamicAppCase):
     PACKAGE = 'com.baidu.BaiduMap'
     all_app_package_list = [PACKAGE]
     PERMISSIONS = ('ACCESS_COARSE_LOCATION', 'ACCESS_FINE_LOCATION')
     PREFIX = PACKAGE + ':id/'
+
+    def set_up(self):
+        super().set_up()
+        self._screen_text = ScreenshotText()
+
+    def screen_rows(self):
+        return self._screen_text.read(self.d)
+
+    @staticmethod
+    def compact(text):
+        return re.sub(r'\s+', '', text)
+
+    def dismiss_launch_overlay(self, rows):
+        updates = [r for r in rows if self.compact(r['text']) in
+                   ('立即更新最新版本', '立即更新最新版')]
+        if len(updates) == 1 and any('SR导航' in self.compact(r['text']) for r in rows):
+            # 已核对的升级卡片：关闭圆叉在更新按钮文字下方约0.27屏宽。
+            # 仅在标题和按钮同时匹配时使用；不点击更新按钮。
+            row = updates[0]
+            width, height = self.d.window_size()
+            x = (row['x'] + row['w']/2) * width
+            y = (row['y'] + row['h']/2) * height + width * .27
+            if not height * .65 < y < height * .9:
+                raise RuntimeError('百度地图更新提示布局变化，未确认关闭位置')
+            self.click_point(x, y)
+            return True
+        skips = [r for r in rows if re.fullmatch(r'跳过(?:广告)?\d*', self.compact(r['text']))
+                 and r['x'] > .75 and r['y'] < .16]
+        if len(skips) == 1:
+            row = skips[0]
+            self.relative_click(row['x'] + row['w']/2, row['y'] + row['h']/2)
+            return True
+        return False
+
+    def home_visible(self, rows):
+        # 开屏广告后面的首页控件仍会导出，必须核对截图上实际可见的底栏。
+        return all(any(self.compact(r['text']) == label and r['y'] > .9 for r in rows)
+                   for label in ('首页', '我的'))
 
     def control(self, name):
         return self.d(resourceId=self.PREFIX + name)
@@ -26,8 +65,16 @@ class PerformanceDynamic_baidumap_0010(BaiduDynamicCase):
     def return_home(self):
         for _ in range(10):
             self.foreground()
-            if self.is_home():
+            rows = self.screen_rows()
+            if self.dismiss_launch_overlay(rows):
+                time.sleep(.8)
+                continue
+            if self.is_home() and self.home_visible(rows):
                 return
+            if self.is_home():
+                # 首页节点在开屏背后时仅等待，不能返回退出应用。
+                time.sleep(1)
+                continue
             if self.is_navigation():
                 raise RuntimeError('导航尚未退出，不能直接返回地图首页')
             self.d.press('back')
@@ -35,11 +82,17 @@ class PerformanceDynamic_baidumap_0010(BaiduDynamicCase):
         raise RuntimeError('未返回百度地图主界面')
 
     def launch(self):
-        self.d.app_start(self.PACKAGE, use_monkey=True)
-        time.sleep(3)
+        self.start()
         self.return_home()
 
     def search(self, query='钟楼'):
+        def entry_ready():
+            rows = self.screen_rows()
+            if self.dismiss_launch_overlay(rows):
+                return False
+            return ((self.is_home() and self.home_visible(rows))
+                    or self.control('tv_first_text').exists)
+        self.wait_for(entry_ready, '地图搜索入口被遮挡或未加载', timeout=25)
         if self.is_home():
             selector = 'tv_searchbox_home_text_switcher'
         elif self.control('tv_first_text').exists:

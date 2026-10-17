@@ -6,34 +6,47 @@ import shutil
 import time
 import uiautomator2 as u2
 from uiautomator2 import Device
-from Cases.CaseBase import Case
+from Cases.Top48.dynamic_apps_common import DynamicAppCase
 from aw_new import SeaOfStarsAW
 
-class PerformanceDynamic_zhihu_0030(Case):
+class PerformanceDynamic_zhihu_0030(DynamicAppCase):
 
-    all_app_package_list = [""]
+    PACKAGE = "com.zhihu.android"
+    all_app_package_list = [PACKAGE]
 
     def __init__(self, result_path):
         super().__init__(result_path)
 
     @SeaOfStarsAW.function_log
     def set_up(self):
-        logging.info("测试环境开始准备!")
-        # 判断手机上是否已安装好TOP30应用,未安装则用例失败
-        phone_app_list = SeaOfStarsAW.get_app_list()
-        for per_app in self.all_app_package_list:
-            if per_app not in phone_app_list:
-                return False
-        # 设置系统语言为中文
-        SeaOfStarsAW.set_system_language_cn()
-        # 解锁屏幕
-        if SeaOfStarsAW.is_locked():
-            SeaOfStarsAW.unlock_device()
-        # 设置屏幕锁定时间为10min
-        SeaOfStarsAW.set_screen_lock_long_time()
-        # 保留已有应用后台
-        logging.info("测试环境准备完成!")
+        super().set_up()
 
+    def home_ready(self):
+        return self.has(rid='title', text='推荐') and self.has(rid='title', text='热榜')
+
+    def launch(self):
+        self.start()
+        def ready():
+            if self.has(rid='btn_skip', text='跳过', prefix=True):
+                self.click(rid='btn_skip', text='跳过', prefix=True)
+            # 只关闭已识别登录页，不点击登录、协议或切换账号。
+            if self.has(rid='operate_login_text') and self.has(rid='close'):
+                self.click(rid='close')
+            return self.home_ready()
+        self.wait_for(ready, '知乎首页推荐/热榜入口未加载', timeout=25)
+
+    def channel(self, name):
+        self.wait_for(self.home_ready, '知乎首页频道未就绪')
+        self.transition(lambda: self.click(rid='title', text=name),
+                        lambda: any(n.get('selected') == 'true'
+                                    for n in self.nodes(rid='title', text=name)),
+                        '未切换到知乎' + name)
+
+    def recommend(self):
+        self.channel('推荐')
+
+    def hot(self):
+        self.channel('热榜')
 
     @SeaOfStarsAW.function_log
     def run_case(self):
@@ -43,6 +56,8 @@ class PerformanceDynamic_zhihu_0030(Case):
         # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
         # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
         # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+        if not getattr(self, "_prepared", False):
+            self.set_up()
         logging.info("用例开始执行!")
         steps_num = 1
 
@@ -51,8 +66,7 @@ class PerformanceDynamic_zhihu_0030(Case):
 
         SeaOfStarsAW.start_perfetto_trace()
         logging.info("启动{}中".format("知乎"))
-        SeaOfStarsAW.ut_device.app_start(app, use_monkey=True)
-        time.sleep(5)
+        self.launch()
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
@@ -60,7 +74,7 @@ class PerformanceDynamic_zhihu_0030(Case):
         step = "2、点击屏幕顶部推荐"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device(text="推荐").click()
+        self.recommend()
         time.sleep(2)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
@@ -83,7 +97,7 @@ class PerformanceDynamic_zhihu_0030(Case):
         step = "4、点击屏幕顶部热榜"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device(text="热榜").click()
+        self.hot()
         time.sleep(5)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)

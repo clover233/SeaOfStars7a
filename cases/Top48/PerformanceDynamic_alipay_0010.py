@@ -8,7 +8,8 @@ from Cases.Top48.alipay_common import AlipayCase
 
 
 class PerformanceDynamic_alipay_0010(AlipayCase):
-    PERMISSIONS = ('CAMERA', 'READ_MEDIA_IMAGES', 'ACCESS_COARSE_LOCATION', 'ACCESS_FINE_LOCATION')
+    PERMISSIONS = ('CAMERA', 'READ_MEDIA_IMAGES', 'ACCESS_COARSE_LOCATION', 'ACCESS_FINE_LOCATION',
+                   'BLUETOOTH_CONNECT', 'BLUETOOTH_SCAN', 'BLUETOOTH_ADVERTISE')
 
     def steps(self):
         return [

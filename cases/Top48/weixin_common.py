@@ -22,6 +22,7 @@ import xml.etree.ElementTree as ET
 import zlib
 
 from Cases.Top48.dynamic_apps_common import DynamicAppCase
+from Cases.Top48.main_display import ForegroundNotReady
 from aw_new import SeaOfStarsAW
 
 
@@ -268,7 +269,9 @@ class WeixinDynamicCase(DynamicAppCase):
             if label == '发现':
                 return self.main_ready() and self.visible('朋友圈')
             if label in ('微信', '通讯录'):
-                return self.main_ready() and self.visible(label, label == '微信', (.2, .05, .8, .11))
+                return self.main_ready() and (
+                    self.visible(label, label == '微信', (.2, .05, .8, .11))
+                    or (label == '微信' and self.wechat_tab_selected()))
             return self.main_ready()
         self.transition(action, ready, '未切换到底部标签：' + label)
         if label == '发现':
@@ -282,6 +285,30 @@ class WeixinDynamicCase(DynamicAppCase):
                 time.sleep(.5)
         else:
             self.wait_for(self.main_ready, '底部标签切换后未显示主界面')
+
+    def wechat_tab_selected(self):
+        """标题被视频浮窗遮住时，核对底栏“微信”的绿色选中文字。"""
+        if any(n.get('selected') == 'true' or n.get('checked') == 'true'
+               for n in self.nodes(text='微信')
+               if self.bounds(n)[1] > self.d.window_size()[1] * .9):
+            return True
+        rows = self.find('微信', region=(0, .90, .25, 1))
+        if len(rows) != 1:
+            return False
+        # 只检查已识别的文字框，不使用图标上的绿色未读数作选中依据。
+        row = rows[0]
+        shot = self.d.screenshot().convert('RGB')
+        width, height = shot.size
+        box = (max(0, round(row['x'] * width)), max(0, round(row['y'] * height)),
+               min(width, round((row['x'] + row['w']) * width)),
+               min(height, round((row['y'] + row['h']) * height)))
+        if box[2] <= box[0] or box[3] <= box[1]:
+            return False
+        crop = shot.crop(box)
+        area = crop.width * crop.height
+        green = sum(count for count, (r, g, b) in crop.getcolors(area)
+                    if g > 90 and g > r * 1.25 and g > b * 1.10)
+        return green >= max(8, area * .03)
 
     def launch(self):
         self.unavailable = {}
@@ -579,14 +606,31 @@ class WeixinDynamicCase(DynamicAppCase):
         self.cancel_moments_camera()
         self.moments_camera()
 
+    def choose_fixture_album(self):
+        # 相册下拉列表会按媒体更新时间排序，专用素材可能在首屏以下。
+        region = (.1, .13, .95, .88)
+        for attempt in range(13):
+            # OCR 会把数量“（9）”并入相册名；只允许精确名称及可选数量后缀。
+            pattern = re.escape(self.ALBUM) + r'(?:[（(]\d+[）)])?'
+            rows = [row for row in self.find(self.ALBUM, True, region=region)
+                    if re.fullmatch(pattern, re.sub(r'\s+', '', row['text']))]
+            if len(rows) == 1:
+                self.choose(rows[0]['text'], region=region)
+                return
+            if len(rows) > 1:
+                raise WeixinStepSkipped('测试相册名称不唯一，停止选图')
+            if attempt < 12:
+                self.swipe(x1=.5, y1=.8, x2=.5, y2=.26)
+                time.sleep(.5)
+        raise WeixinStepSkipped('有限滚动后未找到专用测试相册，停止选图')
+
     @optional('album')
     def select_album(self, count=3):
         self.choose('从手机相册选择')
         self.await_text('预览')
         self.pct(.5, .083)
-        self.await_text(self.ALBUM, True)
-        self.choose(self.ALBUM, True)
-        self.await_text(self.ALBUM)
+        self.choose_fixture_album()
+        self.await_text(self.ALBUM, region=(.1, .05, .9, .12))
         # 专用相册仅有九张生成图片。实机为四列正方形网格，勾选在单元右上。
         # 用屏幕宽度计算行高；不能把像素或全屏高度直接当作网格行高。
         width, height = self.d.window_size()
@@ -1262,11 +1306,14 @@ class WeixinExtendedCase(WeixinDynamicCase):
         """有入口但内容受网络/账号/协议限制时，明确记录 SKIP。"""
         deadline = time.monotonic() + timeout
         while time.monotonic() < deadline:
-            if predicate():
-                return
-            self.foreground()
-            if any(self.visible(word, True) for word in ('同意并', '同意协议', '暂不支持', '加载失败', '网络不可用')):
-                raise WeixinStepSkipped(message + '；页面要求协议确认或内容不可用')
+            try:
+                if predicate():
+                    return
+                self.foreground()
+                if any(self.visible(word, True) for word in ('同意并', '同意协议', '暂不支持', '加载失败', '网络不可用')):
+                    raise WeixinStepSkipped(message + '；页面要求协议确认或内容不可用')
+            except ForegroundNotReady:
+                pass
             time.sleep(.7)
         raise WeixinStepSkipped(message + '；等待内容超时')
 
@@ -1803,8 +1850,7 @@ class WeixinRemainingCase(WeixinExtendedCase):
         self.choose(label)
         self.await_text('预览', True, region=(0, .85, .4, 1))
         self.pct(.5, .083)
-        self.await_text(self.ALBUM, True)
-        self.choose(self.ALBUM, True)
+        self.choose_fixture_album()
         self.await_text(self.ALBUM, region=(.1, .05, .9, .12))
         self._album_origin_verified = True
         self._album_selected = 0

@@ -566,7 +566,7 @@ Basic5 = [
 ]
 
 # case_list = Basic1 + Basic2 + Basic3
-case_list = Basic1
+case_list = Basic3
 
 succ_num = 0
 fail_num = 0

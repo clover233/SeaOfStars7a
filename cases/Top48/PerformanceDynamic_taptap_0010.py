@@ -46,9 +46,23 @@ class PerformanceDynamic_taptap_0010(DynamicAppCase):
 
     def search(self):
         self.open_control(lambda: self.has(rid=self.INPUT_ID), 'TapTap 搜索框未打开', rid=self.SEARCH_ID)
-        self.d(resourceId=self.INPUT_ID, packageName=self.PACKAGE).set_text('王者荣耀')
-        self.open_control(lambda: self.has(rid='com.taptap:id/title', text='王者荣耀'),
-                          '王者荣耀搜索结果未加载', rid='com.taptap.app.community:id/tvSure')
+        editor = self.d(resourceId=self.INPUT_ID, packageName=self.PACKAGE)
+        editor.set_text('王者荣耀')
+        self.wait_for(lambda: editor.get_text() == '王者荣耀', 'TapTap 搜索词未写入')
+        def submit():
+            width, height = self.d.window_size()
+            # 搜索联想/历史词位于左侧，避开右上方被视频浮窗覆盖的提交按钮。
+            # 只选择与本次搜索词完全相同的条目，排除输入框和相近游戏名。
+            matches = [n for n in self.nodes(text='王者荣耀')
+                       if n.get('resource-id') != self.INPUT_ID
+                       and .12 < (self.bounds(n)[1]+self.bounds(n)[3])/2/height < .6
+                       and (self.bounds(n)[0]+self.bounds(n)[2])/2/width < .38]
+            if matches:
+                self.click_node(min(matches, key=lambda n: self.bounds(n)[1]))
+            else:
+                self.click(rid='com.taptap.app.community:id/tvSure')
+        self.transition(submit, lambda: self.has(rid='com.taptap:id/title', text='王者荣耀'),
+                        '王者荣耀搜索结果未加载')
 
     def first_result(self):
         results = sorted(self.nodes(rid='com.taptap:id/title'), key=lambda n: self.bounds(n)[1])

@@ -55,9 +55,11 @@ class ObservedAppCase(WeixinExtendedCase):
         # 仅关闭明确命名的广告/提示，不接受协议、登录或授权。
         for _ in range(3):
             for text in ('跳过广告', '跳过', '关闭广告', '以后再说', '暂不升级', '暂不更新', '下次再说'):
-                matches = self.find(text, True)
+                # “51秒后可跳过广告”不是可点击的跳过按钮。
+                contains = text not in ('跳过广告', '跳过')
+                matches = self.find(text, contains)
                 if len(matches) == 1:
-                    self.choose(text, True)
+                    self.choose(text, contains)
                     time.sleep(.5)
                     break
             else:

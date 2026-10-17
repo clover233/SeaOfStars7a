@@ -28,12 +28,32 @@ class KuaishouDynamicCase(DynamicAppCase):
                    for n in self.nodes(desc='sideBarScroller'))
 
     def main_ready(self):
+        self.dismiss_widget_prompt()
         return (not self.menu_ready() and self.has(desc='首页')
                 and self.has(desc='精选') and self.has(desc='侧边栏'))
 
+    def dismiss_widget_prompt(self):
+        labels = ' '.join(n.get('text', '') + n.get('content-desc', '') for n in self.nodes())
+        if '快手商城' in labels and '小组件' in labels and '去添加' in labels:
+            self.back()
+            return True
+        return False
+
     def switch_bottom(self, name):
-        self.transition(lambda: self.click(desc=name),
-                        lambda: self.bottom_selected(name), '未切换到快手' + name)
+        def ready():
+            self.dismiss_widget_prompt()
+            return self.bottom_selected(name)
+        def select():
+            self.foreground()
+            left, top, right, bottom = self.bounds(self.node(desc=name))
+            # 当前版本底栏中心点击会被忽略；实机核对下半部短按可切换。
+            # 仍以可见节点为锚点，并用 selected 状态确认导航结果。
+            result = self.d.shell('input mouse -d 0 tap {} {}'.format(
+                round((left + right) / 2), round(top + (bottom - top) * .7)))
+            if result.exit_code:
+                raise RuntimeError('快手底栏点击失败：' + result.output)
+        self.transition(select,
+                        ready, '未切换到快手' + name)
 
     def return_home(self):
         # 直播间先关闭，避免系统返回触发挽留推荐；其余页面有限次返回。

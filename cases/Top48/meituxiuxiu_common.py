@@ -41,11 +41,17 @@ class MeituXiuxiuDynamicCase(DynamicAppCase):
                         '未进入美图秀秀图片页面')
 
     def first_image_and_filter(self):
-        images = self.nodes(rid='D`')
-        if not images:
-            raise RuntimeError('图片页面没有可编辑的图片')
-        self.transition(lambda: self.click_node(images[0]), self.editor_ready,
-                        '第一张图片未进入编辑页')
+        def select_first():
+            images = self.nodes(rid='D`')
+            if not images:
+                raise RuntimeError('图片页面没有可编辑的图片')
+            self.click_node(images[0])
+        self.transition(select_first,
+                        lambda: self.editor_ready() or self.has(text='进入图片美化'),
+                        '第一张图片未进入预览页')
+        if not self.editor_ready():
+            self.transition(lambda: self.click(text='进入图片美化'), self.editor_ready,
+                            '图片预览确认后未进入编辑页')
         self.click(text='滤镜')
         time.sleep(1)
 
@@ -65,13 +71,16 @@ class MeituXiuxiuDynamicCase(DynamicAppCase):
         if not self.has(text='调色'):
             raise RuntimeError('编辑页没有调色入口')
         self.click(text='调色')
-        self.wait_for(lambda: self.has(text='亮度') and self.has(rid='BDy'),
-                      '调色面板未打开')
-        slider = self.node(rid='BDy')
+        def sliders():
+            return self.nodes(rid='BDy') or self.nodes(rid='BF5')
+        self.wait_for(lambda: self.has(text='亮度') and bool(sliders()),
+                      '调色亮度滑杆未显示')
+        slider = sliders()[0]
         left, top, right, bottom = self.bounds(slider)
         self.d.swipe((left + right) // 2, (top + bottom) // 2,
                      right - 8, (top + bottom) // 2, duration=.35)
-        confirm = self.nodes(rid='O=')
+        self.wait_for(lambda: self.has(text='100') or self.has(text='+100'), '亮度未设置为100')
+        confirm = self.nodes(rid='O=') or self.nodes(rid='PH')
         if confirm:
             self.click_node(confirm[0])
         elif self.has(text='确认'):

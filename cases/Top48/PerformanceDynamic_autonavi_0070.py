@@ -3,6 +3,8 @@ from Cases.Top48.autonavi_common import AutonaviDynamicCase
 
 
 class PerformanceDynamic_autonavi_0070(AutonaviDynamicCase):
+    BACKGROUND_NAVIGATION = True
+
     def station_search(self):
         self.search('西安北站')
 

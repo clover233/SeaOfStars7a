@@ -17,8 +17,20 @@ class DoubaoDynamicCase(DynamicAppCase):
         return self.has(rid='chat_root') and self.has(rid='action_entrance')
 
     def launch(self):
-        self.start()
-        self.return_to(self.chat_ready, '豆包对话页未加载，请确认已登录')
+        # Monkey 启动后旧应用有时会重新抢到前台；使用当前安装版本的 launcher。
+        output = self.d.shell(['cmd', 'package', 'resolve-activity', '--brief',
+                               '-a', 'android.intent.action.MAIN',
+                               '-c', 'android.intent.category.LAUNCHER', self.PACKAGE]).output
+        components = [line.strip() for line in output.splitlines()
+                      if line.strip().startswith(self.PACKAGE + '/')]
+        if len(components) != 1:
+            raise RuntimeError('无法解析豆包启动入口：' + output)
+        result = self.d.shell(['am', 'start', '-W', '--display', '0', '-n', components[0]])
+        if result.exit_code or 'Error:' in result.output:
+            raise RuntimeError('豆包启动失败：' + result.output)
+        # 对话页尚未挂载时不能盲目按返回，否则会直接把刚启动的应用退出。
+        self.wait_for(lambda: self.current_package() == self.PACKAGE and self.chat_ready(),
+                      '豆包对话页未加载，请确认已登录', timeout=25)
 
     def new_chat(self):
         self.require(rid='larus_chat_top_left_create_new_cvs')

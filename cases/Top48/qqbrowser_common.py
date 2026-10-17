@@ -1,5 +1,6 @@
 """QQ浏览器20.6.7：原生搜索入口及学信网公开网页浏览。"""
 import time
+from urllib.parse import urlsplit
 
 from Cases.Top48.qq_common import QQDynamicBase, QQStepSkipped
 
@@ -86,11 +87,30 @@ class QQBrowserDynamicCase(QQDynamicBase):
         self.require(rid='white_tv_title', text='学信网')
         self.browse(2, 2)
 
+    def dismiss_default_prompt(self):
+        labels = [self.label(n) for n in self.nodes()]
+        if any('QQ浏览器设为默认浏览器' in text for text in labels) and '下次再说' in labels:
+            self.choose('下次再说')
+            time.sleep(.5)
+            return True
+        return False
+
+    @staticmethod
+    def official_address(address):
+        try:
+            url = urlsplit(address if '://' in address else 'https://' + address)
+            host = (url.hostname or '').lower()
+            return (url.scheme in ('https', 'http') and not url.username and not url.password
+                    and (host == 'chsi.com.cn' or host.endswith('.chsi.com.cn')))
+        except ValueError:
+            return False
+
     def site_ready(self):
-        # 搜索结果也包含站名，不能仅靠“学信网”三个字判断已进入官网。
-        labels=[self.label(n) for n in self.nodes()]
+        self.dismiss_default_prompt()
+        # 核对原生地址栏；搜索摘要出现官网域名不能代表已进入官网。
         return (not self.has(rid='white_tv_title', text='学信网')
-                and any('高等教育学生信息网' in text or 'chsi.com.cn' in text for text in labels))
+                and any(self.official_address(n.get('text', ''))
+                        for n in self.nodes(rid='third_web_search_title')))
 
     def official(self):
         self.require(rid='white_tv_title', text='学信网')
@@ -164,8 +184,7 @@ class QQBrowserDynamicCase(QQDynamicBase):
             if not nodes:
                 return False
             address=nodes[0].get('text','')
-            host=address.split('/')[0]
-            return (host=='chsi.com.cn' or host.endswith('.chsi.com.cn')) and address!='chsi.com.cn/wap/index.jsp'
+            return self.official_address(address) and address!='chsi.com.cn/wap/index.jsp'
         try:
             self.wait_for(changed,'比例点击后未确认进入官网内容页',timeout=20)
         except RuntimeError:

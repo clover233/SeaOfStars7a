@@ -3,6 +3,7 @@ from Cases.Top48.autonavi_common import AutonaviDynamicCase
 
 
 class PerformanceDynamic_autonavi_0060(AutonaviDynamicCase):
+    BACKGROUND_NAVIGATION = True
     all_app_package_list = [AutonaviDynamicCase.AMAP, AutonaviDynamicCase.XHS,
                             AutonaviDynamicCase.DOUYIN]
 

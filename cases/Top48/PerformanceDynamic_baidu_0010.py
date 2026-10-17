@@ -4,23 +4,42 @@ import re
 import time
 import xml.etree.ElementTree as ET
 
-from Cases.Top48.baidu_common import BaiduDynamicCase
+from Cases.Top48.dynamic_apps_common import DynamicAppCase
 
 
-class PerformanceDynamic_baidu_0010(BaiduDynamicCase):
+class PerformanceDynamic_baidu_0010(DynamicAppCase):
     PACKAGE = 'com.baidu.searchbox'
     all_app_package_list = [PACKAGE]
     QUESTION = '西安三天旅行攻略'
     QUERY = '西安百度百科'
 
     def is_home(self):
-        return (self.current_app()['activity'].endswith('.MainActivity')
-                and self.d(text='百度', className='android.widget.TextView').exists
-                and self.d(text='我的', className='android.widget.TextView').exists)
+        current = self.current_app()
+        height = self.d.window_size()[1]
+        return (current['package'] == self.PACKAGE
+                and current['activity'].endswith('.MainActivity')
+                and all(any(self.bounds(n)[1] > height * .9 for n in self.nodes(text=label))
+                        for label in ('百度', '我的')))
+
+    def dismiss_splash_ad(self):
+        height = self.d.window_size()[1]
+        skip = [n for n in self.nodes(text='跳过') if self.bounds(n)[3] < height * .16]
+        if len(skip) == 1:
+            self.click_node(skip[0])
+            return True
+        return False
+
+    def launch_ready(self):
+        if self.dismiss_splash_ad():
+            return False
+        return self.is_home()
 
     def return_home(self):
         for _ in range(10):
             self.foreground()
+            if self.dismiss_splash_ad():
+                self.wait_for(self.is_home, '百度开屏结束后首页未加载', timeout=30)
+                return
             if self.is_home():
                 return
             self.d.press('back')
@@ -28,9 +47,9 @@ class PerformanceDynamic_baidu_0010(BaiduDynamicCase):
         raise RuntimeError('未返回百度主界面')
 
     def launch(self):
-        self.d.app_start(self.PACKAGE, use_monkey=True)
-        time.sleep(3)
-        self.return_home()
+        self.start()
+        # 开屏时不能用 Back 探测首页，否则会退出百度回到桌面。
+        self.wait_for(self.launch_ready, '百度启动后首页未加载', timeout=35)
 
     def is_ai(self):
         return self.d(description='newChat', packageName=self.PACKAGE).exists and (

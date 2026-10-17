@@ -131,11 +131,19 @@ class UcDynamicCase(ObservedAppCase):
     @optional('search')
     def search_page(self):
         self.main_page()
-        # 首页搜索热词会动态变化，以原生输入/搜索栏节点优先。
-        nodes = [n for n in self.nodes() if self.bounds(n)[1] < self.d.window_size()[1]*.13
-                 and ('search' in n.get('resource-id', '').lower() or n.get('content-desc') in ('搜索', '搜索框'))]
-        action = (lambda: self.click_node(nodes[0])) if nodes else (lambda: self.pct(.48, .093))
-        self.go(action, self.search_ready, 'UC搜索编辑页未打开')
+        def open_search():
+            # 动态热词的 TextSwitcher 属于输入区；排除仅绘制边框的 search ID。
+            nodes = [n for n in self.nodes() if self.bounds(n)[1] < self.d.window_size()[1]*.13
+                     and '搜索框' in n.get('content-desc', '')]
+            text_nodes = [n for n in nodes if n.get('class') == 'android.widget.TextSwitcher']
+            if not nodes:
+                raise StepUnavailable('UC首页未找到可核对的搜索框')
+            node = (text_nodes or nodes)[0]
+            left, top, right, bottom = self.bounds(node)
+            self._locators.add('tree')
+            # 左侧输入区避开右上视频悬浮窗，也避开右端扫码/语音按钮。
+            self.point(left + (right-left)*.15, (top+bottom)/2)
+        self.go(open_search, self.search_ready, 'UC搜索编辑页未打开')
 
     @optional('search-results')
     def movie_search(self):

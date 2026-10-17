@@ -412,6 +412,13 @@ class SodaMusicDynamicCase(TravelShopCase):
 
     def dismiss_ads(self):
         rows=super().dismiss_ads()
+        if (self.ad_matches(rows, '汽水音乐与抖音数据互通')
+                and len(self.ad_matches(rows, '我知道了')) == 1):
+            # 首次进入“我的”的说明页只有关闭按钮，不涉及新的授权或设置。
+            self.tap_row(self.ad_matches(rows, '我知道了')[0])
+            self.content_wait(lambda: not self.visible('汽水音乐与抖音数据互通'),
+                              '汽水音乐数据互通说明未关闭', timeout=6)
+            rows = self.screen()
         if self.ad_matches(rows,'签到7天领',True) and self.ad_matches(rows,'打开签到提醒',True):
             # 已核对签到弹窗底部 X；不触碰领取或提醒开关。
             self.pct(.5,.721)
@@ -470,6 +477,12 @@ class SodaMusicDynamicCase(TravelShopCase):
         self.content_wait(lambda:self.media_state()==2,'汽水音乐暂停未生效')
 
     def play_control(self, pause):
+        expected = 2 if pause else 3
+        self.go(lambda: self.tap_play_control(pause),
+                lambda: self.media_state() == expected,
+                '汽水音乐暂停未生效' if pause else '汽水音乐未开始播放')
+
+    def tap_play_control(self, pause):
         labels=('暂停','暂停播放') if pause else ('播放','继续播放')
         for label in labels:
             if self.has(desc=label):self.native(desc=label);return
@@ -483,15 +496,30 @@ class SodaMusicDynamicCase(TravelShopCase):
         self.adapt('底部播放图标未导出描述，按主界面中央按钮比例切换，以本包媒体会话校验')
 
     def my_page(self):
+        self.dismiss_ads()
+        if self.my_ready():
+            return
         self.return_to(self.main_ready,'未返回汽水音乐主界面')
-        self.entry('我的',region=(.75,.9,1,.99))
-        self.content_wait(lambda:self.visible('我喜欢',True) or self.visible('登录',True),'我的页面未显示')
+        def ready():
+            self.dismiss_ads()
+            return self.my_ready()
+        self.go(lambda: self.bottom_node('我的'), ready, '我的页面未显示')
+
+    def my_ready(self):
+        return (self.visible('我的', region=(.75,.9,1,.99))
+                and (self.has(rid='49', text='我喜欢的')
+                     or self.visible('创建的歌单') or self.visible('登录', True)))
+
+    def favorites_ready(self):
+        return (not self.my_ready() and self.visible('我喜欢', True)
+                and not self.visible('模式选择'))
 
     @optional('favorites')
     def favorites(self):
+        self.my_page()
         if self.visible('登录',True):raise StepUnavailable('我喜欢的音乐需要登录')
-        self.entry('我喜欢的音乐','我喜欢')
-        self.content_wait(lambda:self.visible('我喜欢',True) and not self.visible('模式选择'),'我喜欢列表未打开')
+        self.go(lambda: self.entry('我喜欢的音乐','我喜欢的','我喜欢'),
+                self.favorites_ready, '我喜欢列表未打开')
 
     @optional('header_menu')
     def header_menu(self):
@@ -591,7 +619,13 @@ class TaobaoDynamicCase(TravelShopCase):
     @optional('search')
     def search_tissue(self):
         self.main_page()
-        self.go(lambda:self.native(desc='搜索栏'),self.search_ready,'淘宝搜索输入页未打开')
+        def open_search():
+            node = self.node(desc='搜索栏')
+            left, top, right, bottom = self.bounds(node)
+            # Basic3 右上视频浮窗会覆盖搜索栏中心；输入区左侧仍可点击。
+            self._locators.add('tree')
+            self.point(left + (right-left)*.15, (top+bottom)/2)
+        self.go(open_search,self.search_ready,'淘宝搜索输入页未打开')
         self.input_text('清风卫生纸')
         self.go(lambda:self.native(rid='searchbtn'),self.results_ready,'清风卫生纸搜索结果未显示')
         self._tissue_search=True

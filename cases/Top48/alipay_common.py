@@ -13,6 +13,8 @@ import time
 import xml.etree.ElementTree as ET
 
 from Cases.CaseBase import Case
+from Cases.Top48.main_display import MainDisplayMixin
+from Cases.Top48.screen_text import ScreenshotText
 from aw_new import SeaOfStarsAW
 
 
@@ -26,7 +28,7 @@ def bounds(node):
     return tuple(map(int, re.findall(r'\d+', node.get('bounds', ''))))
 
 
-class AlipayCase(Case):
+class AlipayCase(MainDisplayMixin, Case):
     all_app_package_list = [PACKAGE]
     TEST_TIME = 1
     PERMISSIONS = ()
@@ -44,6 +46,8 @@ class AlipayCase(Case):
         # 在采集前授权，避免首次权限弹窗混入性能场景。只申请本用例所需权限。
         sdk = int(self.d.shell('getprop ro.build.version.sdk').output.strip())
         for permission in self.PERMISSIONS:
+            if permission in ('BLUETOOTH_CONNECT', 'BLUETOOTH_SCAN', 'BLUETOOTH_ADVERTISE') and sdk < 31:
+                continue
             if permission == 'READ_MEDIA_IMAGES' and sdk < 33:
                 permission = 'READ_EXTERNAL_STORAGE'
             permission = 'android.permission.' + permission
@@ -51,15 +55,8 @@ class AlipayCase(Case):
             if result.exit_code or 'Exception' in result.output or 'Error' in result.output:
                 raise RuntimeError('权限授权失败 {}: {}'.format(permission, result.output))
         logging.info('支付宝环境准备完成，保留其他应用后台')
+        self._screen_text = ScreenshotText()
         self._prepared = True
-
-    def wait_for(self, predicate, message, timeout=12):
-        deadline = time.monotonic() + timeout
-        while time.monotonic() < deadline:
-            if predicate():
-                return
-            time.sleep(0.4)
-        raise RuntimeError('{}；当前页面 {}'.format(message, self.d.app_current()))
 
     def tap(self, text=None, resource_id=None, description=None, timeout=8):
         selector = {}
@@ -71,16 +68,20 @@ class AlipayCase(Case):
             selector['description'] = description
         obj = self.d(**selector)
         if not obj.wait(timeout=timeout):
-            raise RuntimeError('未找到控件 {}；当前页面 {}'.format(selector, self.d.app_current()))
+            raise RuntimeError('未找到控件 {}；当前页面 {}'.format(selector, self.current_app()))
         obj.click()
 
     def relative_click(self, x, y):
         if not (0 < x < 1 and 0 < y < 1):
             raise ValueError('坐标必须为屏幕比例，且在 (0, 1) 内')
-        if self.d.app_current()['package'] != PACKAGE:
+        if self.current_app()['package'] != PACKAGE:
             raise RuntimeError('比例点击前台不是支付宝，停止操作')
         width, height = self.d.window_size()
-        self.d.click(round(width * x), round(height * y))
+        px, py = round(width * x), round(height * y)
+        # XRiver Canvas 在本机过滤 u2 短按；向主屏注入 200ms 的单次点击。
+        result = self.d.shell('input -d 0 swipe {0} {1} {0} {1} 200'.format(px, py))
+        if result.exit_code:
+            raise RuntimeError('支付宝主屏点击失败：' + result.output)
 
     def swipe(self, upward=True):
         width, height = self.d.window_size()
@@ -99,8 +100,8 @@ class AlipayCase(Case):
         width, height = self.d.window_size()
         self.d.swipe(round(width * 0.5), round(height * 0.995),
                      round(width * 0.5), round(height * 0.62), duration=0.25)
-        # 适配不同厂商桌面包名；app_current 在桌面返回 launcher activity。
-        self.wait_for(lambda: 'launcher' in self.d.app_current()['activity'].lower(), '上滑后未返回Home页')
+        # 按主屏焦点检查桌面，避免副屏的 launcher 干扰返回判断。
+        self.wait_for(lambda: 'launcher' in self.current_app()['activity'].lower(), '上滑后未返回Home页')
 
     def check_preconditions(self):
         if self.d(text='暂不同意').exists or self.d(text='同意并继续').exists:
@@ -125,7 +126,7 @@ class AlipayCase(Case):
                 if name == '首页':
                     self.wait_for(self.is_home, '未返回支付宝首页')
                 return
-            if self.d.app_current()['package'] != PACKAGE:
+            if self.current_app()['package'] != PACKAGE:
                 raise RuntimeError('返回途中已离开支付宝')
             self.d.press('back')
             time.sleep(0.7)
@@ -136,7 +137,7 @@ class AlipayCase(Case):
             if self.has_tabs():
                 self.return_tab('首页')
                 return
-            if self.d.app_current()['package'] != PACKAGE:
+            if self.current_app()['package'] != PACKAGE:
                 raise RuntimeError('侧滑返回途中已离开支付宝')
             width, height = self.d.window_size()
             self.d.swipe(round(width * 0.005), round(height * 0.5),
@@ -171,7 +172,11 @@ class AlipayCase(Case):
 
     def launch(self):
         self.d.app_start(PACKAGE, use_monkey=True)
-        time.sleep(2)
+        self.wait_for(lambda: self.current_app()['package'] == PACKAGE,
+                      '支付宝未进入主屏前台', timeout=25)
+        if not self.d(packageName=PACKAGE).wait(timeout=10):
+            raise RuntimeError('支付宝主屏页面未就绪')
+        time.sleep(1)
         self.return_tab('首页')
         self.check_preconditions()
 
@@ -198,7 +203,7 @@ class AlipayCase(Case):
     def dismiss_promotions(self):
         # XRiver 弹层的层级 bounds 与实际渲染不一致，以下两个关闭按钮已通过截图核实。
         if self.d(text='恭喜获得碰一下券包').exists:
-            self.relative_click(0.5, 0.816)
+            self.relative_click(0.5, 0.845)
             self.wait_for(lambda: not self.d(text='恭喜获得碰一下券包').exists, '转账活动弹层未关闭')
         if self.d(text='明天继续来领惊喜红包哦～').exists:
             self.relative_click(0.5, 0.73)
@@ -208,9 +213,18 @@ class AlipayCase(Case):
         if self.d(text=text).exists:
             self.tap(text=text)
         else:
-            if activity not in self.d.app_current()['activity']:
+            if activity not in self.current_app()['activity']:
                 raise RuntimeError('{}比例定位的页面不匹配'.format(text))
-            logging.info('%s 无可访问控件，使用屏幕比例 %s', text, ratio)
+            reader = getattr(self, '_screen_text', None)
+            if reader and reader.command:
+                matches = [row for row in reader.read(self.d)
+                           if row['text'].replace(' ', '') == text.replace(' ', '')]
+                if len(matches) > 1:
+                    raise RuntimeError('截图中的控件不唯一：' + text)
+                if matches:
+                    row = matches[0]
+                    ratio = (row['x'] + row['w']/2, row['y'] + row['h']/2)
+            logging.info('%s 无可访问控件，按主屏截图/比例定位 %s', text, ratio)
             self.relative_click(*ratio)
         time.sleep(2)
         self.check_preconditions()
@@ -233,7 +247,7 @@ class AlipayCase(Case):
 
     def open_bank(self):
         self.tap(text='转到银行卡')
-        self.wait_for(lambda: 'TFToCardForm' in self.d.app_current()['activity'], '未打开转到银行卡页')
+        self.wait_for(lambda: 'TFToCardForm' in self.current_app()['activity'], '未打开转到银行卡页')
 
     def open_account(self):
         self.tap(text='转到支付宝')
@@ -242,14 +256,14 @@ class AlipayCase(Case):
 
     def open_album(self):
         self.tap(text='相册')
-        self.wait_for(lambda: 'PhotoSelectActivity' in self.d.app_current()['activity'], '未打开相册')
+        self.wait_for(lambda: 'PhotoSelectActivity' in self.current_app()['activity'], '未打开相册')
 
     def preview_first_photo(self):
         photos = self.d(resourceId=PHOTO_ID)
         if not photos.wait(timeout=8):
             raise RuntimeError('相册为空，请预置测试图片')
         photos[0].click()
-        self.wait_for(lambda: 'PhotoPreviewActivity' in self.d.app_current()['activity'], '未进入图片预览')
+        self.wait_for(lambda: 'PhotoPreviewActivity' in self.current_app()['activity'], '未进入图片预览')
 
     def search(self, query):
         obj = self.d(resourceId='com.alipay.mobile.antui:id/search_input_box')
@@ -278,7 +292,7 @@ class AlipayCase(Case):
         if result.exists:
             result[0].click()
         else:
-            if 'MainSearchActivity' not in self.d.app_current()['activity']:
+            if 'MainSearchActivity' not in self.current_app()['activity']:
                 raise RuntimeError('当前不是闪送搜索结果页')
             self.relative_click(0.4, 0.35)
         self.wait_for(lambda: self.d(resourceId=MINI_TAB_ID, text='订单').exists, '未打开闪送小程序')
@@ -363,14 +377,26 @@ class AlipayMessageCase(AlipayCase):
         self.wait_for(lambda: self.d(text='稳健理财', resourceId='com.alipay.multiplatform.phone.xriver_integration:id/textView_title').exists,
                       '未打开稳健理财页')
         time.sleep(3)
-        if not self.d(text='其他产品').exists:
-            # 首次“金选·稳健升级”介绍弹层无可访问控件，实机关闭位置。
-            for _ in range(2):
-                self.relative_click(0.5, 0.814)
-                time.sleep(1)
-                if self.d(text='其他产品').exists:
-                    break
+        # 弹层背后的“其他产品”也会进入控件树，必须按截图确认遮罩。
+        self.close_steady_intro()
         self.wait_for(lambda: self.d(text='其他产品').exists, '稳健理财内容未加载或首次介绍未关闭')
+
+    def close_steady_intro(self):
+        reader = getattr(self, '_screen_text', None)
+        if reader is None:
+            reader = self._screen_text = ScreenshotText()
+        if not reader.command:
+            raise RuntimeError('稳健理财需核实首次活动遮罩，请配置 ANDROID_OCR_COMMAND')
+        def covered():
+            texts = [row['text'].replace(' ', '') for row in reader.read(self.d)]
+            return any('去看看' in text for text in texts) and any('攒钱多点米' in text for text in texts)
+        for _ in range(3):
+            if not covered():
+                return
+            # 当前“攒钱多点米”介绍页的关闭叉号；不点击活动主按钮。
+            self.relative_click(.5, .717)
+            time.sleep(.8)
+        self.wait_for(lambda: not covered(), '稳健理财活动遮罩未关闭')
 
     def open_first_product(self):
         # 当前版本的热销区叫“大家都在买/一周热门榜”。从卡片容器读取产品名，
@@ -407,7 +433,7 @@ class AlipayMessageCase(AlipayCase):
             raise RuntimeError('查找测试联系人前不在消息页')
         # 消息列表为 Canvas；通讯录暴露真实好友 id，避免误点全局搜索建议。
         self.canvas_tap('通讯录', (0.825, 0.085), 'AlipayLogin')
-        self.wait_for(lambda: 'ContactMainPageActivity' in self.d.app_current()['activity'],
+        self.wait_for(lambda: 'ContactMainPageActivity' in self.current_app()['activity'],
                       '未进入通讯录')
         result = self.d(text=self.contact, resourceId='com.alipay.mobile.socialcontactsdk:id/list_item_title')
         for _ in range(10):
@@ -418,14 +444,14 @@ class AlipayMessageCase(AlipayCase):
         if not result.exists or result.count != 1:
             raise RuntimeError('测试联系人未找到或不唯一：{}'.format(self.contact))
         result.click()
-        self.wait_for(lambda: 'CSGAPushActivity' in self.d.app_current()['activity'],
+        self.wait_for(lambda: 'CSGAPushActivity' in self.current_app()['activity'],
                       '未进入已匹配测试账号的资料页')
         time.sleep(1)
         self.canvas_tap('发消息', (0.5, 0.94), 'CSGAPushActivity')
         self.wait_for(self.is_test_chat, '未进入指定测试联系人的聊天页')
 
     def is_test_chat(self):
-        current = self.d.app_current()
+        current = self.current_app()
         if current['package'] != PACKAGE or 'PersonalChatMsgActivity' not in current['activity']:
             return False
         return self.d(text=self.contact, resourceId='com.alipay.mobile.antui:id/title_text').exists
@@ -450,10 +476,10 @@ class AlipayMessageCase(AlipayCase):
                 raise RuntimeError('未找到聊天更多按钮，请用测试账号核实当前版本聊天定位')
             more.click()
         self.tap(text='图片')
-        self.wait_for(lambda: 'PhotoSelectActivity' in self.d.app_current()['activity'], '未打开聊天相册')
+        self.wait_for(lambda: 'PhotoSelectActivity' in self.current_app()['activity'], '未打开聊天相册')
 
     def send_test_photos(self):
-        if 'PhotoSelectActivity' not in self.d.app_current()['activity']:
+        if 'PhotoSelectActivity' not in self.current_app()['activity']:
             raise RuntimeError('当前不是聊天相册')
         initial = ET.fromstring(self.d.dump_hierarchy())
         if any(node.get('checked') == 'true' for node in initial.iter('node')):
@@ -512,7 +538,7 @@ class AlipayMessageCase(AlipayCase):
         title_id = 'com.alipay.mobile.antui:id/title_text'
         if not self.d(text='设置', resourceId=title_id).exists:
             raise RuntimeError('当前不是设置页')
-        ratios = {'新消息通知': (0.35, 0.412), '通用': (0.35, 0.652)}
+        ratios = {'新消息通知': (0.35, 0.412), '通用': (0.35, 0.594)}
         for _ in range(2):
             self.canvas_tap(name, ratios[name], 'CSPushActivity')
             if not self.d(text='设置', resourceId=title_id).exists:

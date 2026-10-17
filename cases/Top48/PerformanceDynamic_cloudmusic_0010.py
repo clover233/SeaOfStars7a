@@ -15,7 +15,8 @@ class PerformanceDynamic_cloudmusic_0010(DynamicAppCase):
         if self.has(rid='skipBtn'):
             self.click(rid='skipBtn')
         if (self.has(text='立即开通') or
-                any('听有声书即可领取' in n.get('text', '') for n in self.nodes())):
+                any(any(label in n.get('text', '') for label in (
+                    '听有声书即可领取', '看广告续时长')) for n in self.nodes())):
             self.back()
             time.sleep(1)
 
@@ -43,10 +44,13 @@ class PerformanceDynamic_cloudmusic_0010(DynamicAppCase):
 
     def media_state(self):
         output = self.d.shell('dumpsys media_session').output
-        session = re.search(r'package=' + re.escape(self.PACKAGE) +
-                            r'\s.*?state=PlaybackState\s*\{state=(?:[A-Z_]+\()?([0-9]+)',
-                            output, re.S)
-        return int(session.group(1)) if session else None
+        for block in output.split('package=')[1:]:
+            if block.splitlines()[0].strip() != self.PACKAGE:
+                continue
+            session = re.search(r'state=PlaybackState\s*\{state=(?:[A-Z_]+\()?([0-9]+)', block)
+            if session:
+                return int(session.group(1))
+        return None
 
     def play_all(self):
         self.click(text='播放全部')
@@ -58,18 +62,27 @@ class PerformanceDynamic_cloudmusic_0010(DynamicAppCase):
 
     def next_five(self):
         for index in range(5):
+            self.dismiss_promotion()
+            self.wait_for(lambda: self.has(rid='nextBtn') and self.has(rid='songName'),
+                          '会员提示关闭后播放器控件未恢复', timeout=8)
             previous = self.node(rid='songName').get('text')
             def changed():
                 self.dismiss_promotion()
                 names = self.nodes(rid='songName')
                 return bool(names and names[0].get('text') != previous)
-            self.transition(lambda: self.click(rid='nextBtn'), changed, '下一首后歌曲未切换')
+            # 每次切歌都可能出现提示；先恢复控件，再进行下一次单次点击。
+            def next_track():
+                self.dismiss_promotion()
+                self.wait_for(lambda: self.has(rid='nextBtn'), '下一首按钮未恢复', timeout=8)
+                self.click(rid='nextBtn')
+            self.transition(next_track, changed, '下一首后歌曲未切换')
             self.wait_for(lambda: self.media_state() == 3, '切歌后未播放', timeout=20)
             logging.info('切歌 %s/5：%s -> %s', index + 1, previous,
                          self.node(rid='songName').get('text'))
             time.sleep(1)
 
     def pause(self):
+        self.dismiss_promotion()
         self.wait_for(lambda: self.media_state() == 3, '暂停前歌曲未播放')
         self.transition(lambda: self.click(rid='playBtn'), lambda: self.media_state() == 2,
                         '歌曲未暂停')

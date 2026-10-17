@@ -34,6 +34,31 @@ class PerformanceDynamic_youku_0020(Case):
         # 保留已有应用后台
         logging.info("测试环境准备完成!")
 
+    def _enter_search_text(self, query):
+        device = SeaOfStarsAW.ut_device
+        search_input = device(resourceId='com.youku.phone:id/et_widget_search_text_soku')
+        if not search_input.wait(timeout=10):
+            raise RuntimeError('优酷搜索输入框未出现')
+        search_input.click()
+        focused_input = device(resourceId='com.youku.phone:id/et_widget_search_text_soku', focused=True)
+        if not focused_input.wait(timeout=5):
+            raise RuntimeError('优酷搜索输入框未获得焦点')
+        # 直接替换控件文本，避免 AdbKeyboard.clearText 的空指针异常。
+        focused_input.set_text(query)
+        if not device(resourceId='com.youku.phone:id/et_widget_search_text_soku',
+                      text=query).wait(timeout=5):
+            raise RuntimeError('优酷搜索词未写入：' + query)
+
+    def _search_video(self, query):
+        self._enter_search_text(query)
+        search_button = SeaOfStarsAW.ut_device(resourceId='com.youku.phone:id/tv_right', text='搜索')
+        if not search_button.wait(timeout=5):
+            raise RuntimeError('优酷搜索按钮未出现')
+        search_button.click()
+        if not SeaOfStarsAW.ut_device(resourceId='com.youku.phone:id/item_b_program_info_title',
+                                      text=query).wait(timeout=15):
+            raise RuntimeError('优酷搜索结果未出现：' + query)
+
     @SeaOfStarsAW.function_log
     def run_case(self):
         """
@@ -128,7 +153,7 @@ class PerformanceDynamic_youku_0020(Case):
         step = "8、输入大话天仙"
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
-        SeaOfStarsAW.ut_device.send_keys("大话天仙", clear=True)
+        self._enter_search_text("大话天仙")
         time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
@@ -138,12 +163,8 @@ class PerformanceDynamic_youku_0020(Case):
         SeaOfStarsAW.start_perfetto_trace()
         logging.info(step)
         for _ in range(2):
-            SeaOfStarsAW.ut_device.click(0.082, 0.138)
+            self._search_video("大话天仙")
             time.sleep(1)
-            SeaOfStarsAW.ut_device.send_keys("大话天仙", clear=True)
-            time.sleep(1)
-        SeaOfStarsAW.ut_device(text='搜索')[0].click()
-        time.sleep(1)
         SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
                                                  'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
         steps_num += 1
