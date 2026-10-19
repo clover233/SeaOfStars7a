@@ -3,6 +3,8 @@ from Cases.Top48.weixin_common import WeixinDynamicCase
 
 
 class PerformanceDynamic_weixin_0010(WeixinDynamicCase):
+    RECOVERY_CHECKPOINTS = ('wechat_home',)
+
     def steps(self):
         return [
             ('启动微信', self.launch, 2),

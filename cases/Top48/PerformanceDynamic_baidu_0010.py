@@ -32,7 +32,15 @@ class PerformanceDynamic_baidu_0010(DynamicAppCase):
     def launch_ready(self):
         if self.dismiss_splash_ad():
             return False
-        return self.is_home()
+        if self.is_home():
+            return True
+        activity = self.current_app()['activity']
+        if activity.endswith('.LightSearchActivity') or 'SwanAppActivity' in activity:
+            # 热启动会恢复上次搜索/百科页面；仅对已识别的内容页返回，
+            # Splash 等启动中页面仍只等待，避免返回退出应用。
+            self.return_home()
+            return self.is_home()
+        return False
 
     def return_home(self):
         for _ in range(10):
@@ -128,13 +136,22 @@ class PerformanceDynamic_baidu_0010(DynamicAppCase):
         if not edit.exists or edit.count != 1:
             raise RuntimeError('当前不是百度搜索输入页')
         edit.set_text(self.QUERY)
-        self.transition(lambda: self.tap(text='搜索', className='android.widget.TextView'),
-                        self.is_results, '百科搜索结果未加载')
+        # 输入页背后的旧结果可能仍留在 UiSelector 查询中；必须实际提交，
+        # 再只用主屏当前节点确认结果，不能让旧结果令 transition 提前返回。
+        height = self.d.window_size()[1]
+        buttons = [n for n in self.nodes(text='搜索') if self.bounds(n)[3] < height * .18]
+        if len(buttons) != 1:
+            raise RuntimeError('百度搜索提交入口不唯一')
+        self.click_node(buttons[0])
+        self.wait_for(self.is_results, '百科搜索结果未加载', timeout=25)
         time.sleep(3)
 
     def is_results(self):
-        return (self.d(text=self.QUERY, className='android.widget.TextView').exists
-                and self.d(text='综合').exists and not self.edit().exists)
+        nodes = self.nodes()
+        height = self.d.window_size()[1]
+        return (any(n.get('text') == self.QUERY and self.bounds(n)[3] < height * .18 for n in nodes)
+                and any(n.get('text') == '综合' and self.bounds(n)[3] < height * .3 for n in nodes)
+                and not any(n.get('class') == 'android.widget.EditText' for n in nodes))
 
     def open_first_result(self):
         if not self.is_results():

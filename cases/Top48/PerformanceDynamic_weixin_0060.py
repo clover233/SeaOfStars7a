@@ -3,6 +3,8 @@ from Cases.Top48.weixin_common import WeixinDynamicCase
 
 
 class PerformanceDynamic_weixin_0060(WeixinDynamicCase):
+    RECOVERY_CHECKPOINTS = ()
+
     NEED_IMAGES = True
 
     def steps(self):

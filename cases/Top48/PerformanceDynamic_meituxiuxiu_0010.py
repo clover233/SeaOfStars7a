@@ -3,6 +3,8 @@ from Cases.Top48.meituxiuxiu_common import MeituXiuxiuDynamicCase
 
 
 class PerformanceDynamic_meituxiuxiu_0010(MeituXiuxiuDynamicCase):
+    RECOVERY_CHECKPOINTS = ('main_page',)
+
     def steps(self):
         return [
             ('启动美图秀秀', self.launch, 2),

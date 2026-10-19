@@ -237,6 +237,9 @@ class WeixinDynamicCase(DynamicAppCase):
 
     def main_page(self):
         for _ in range(12):
+            if self.current_app()['package'] != self.PACKAGE:
+                self.start()
+            self.invalidate()
             if self.main_ready():
                 self._verified_chat = None
                 return
@@ -1159,10 +1162,13 @@ class WeixinDynamicCase(DynamicAppCase):
 
     @SeaOfStarsAW.function_log
     def run_case(self):
-        if not getattr(self, '_prepared', False):
-            self.set_up()
         records = []
         try:
+            if hasattr(self, 'RECOVERY_CHECKPOINTS'):
+                from Cases.Top48.step_recovery import run_recoverable_case
+                return run_recoverable_case(self)
+            if not getattr(self, '_prepared', False):
+                self.set_up()
             for run in range(self.TEST_TIME):
                 for number, (name, action, stay) in enumerate(self.steps(), 1):
                     self._adaptations = []

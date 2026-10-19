@@ -5,6 +5,8 @@ from Cases.Top48.dynamic_apps_common import DynamicAppCase
 
 
 class PerformanceDynamic_douyinjisu_0010(DynamicAppCase):
+    RECOVERY_CHECKPOINTS = ()
+
     PACKAGE = 'com.ss.android.ugc.aweme.lite'
     all_app_package_list = [PACKAGE]
 

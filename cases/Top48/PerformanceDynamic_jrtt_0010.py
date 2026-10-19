@@ -3,6 +3,8 @@ from Cases.Top48.jrtt_common import JrttDynamicCase
 
 
 class PerformanceDynamic_jrtt_0010(JrttDynamicCase):
+    RECOVERY_CHECKPOINTS = ('first_recommended_article',)
+
     def steps(self):
         return [
             ('启动今日头条', self.launch, 3),

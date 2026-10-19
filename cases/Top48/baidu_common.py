@@ -102,6 +102,9 @@ class BaiduDynamicCase(Case):
 
     @SeaOfStarsAW.function_log
     def run_case(self):
+        if hasattr(self, 'RECOVERY_CHECKPOINTS'):
+            from Cases.Top48.step_recovery import run_recoverable_case
+            return run_recoverable_case(self)
         # main.py 当前注释了 set_up，直接运行用例时仍保证前置准备。
         if not getattr(self, '_prepared', False):
             self.set_up()
