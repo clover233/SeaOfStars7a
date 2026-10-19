@@ -81,7 +81,7 @@ class SeaOfStarsAW:
                 time.sleep(0.5)
 
 
-    SN = 'cff0cbff'
+    SN = '24e4ef61'
     ut_device:Device = u2.connect(SN)
     ADB_PROC = None
     shell_temp_path = None
