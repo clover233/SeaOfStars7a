@@ -50,6 +50,7 @@ class DouyinDynamicCase(DynamicAppCase):
         self.click_node(node)
 
     def skip(self, message):
+        self._last_skip_reason = message
         logging.warning('SKIP：%s', message)
         return False
 
@@ -66,7 +67,7 @@ class DouyinDynamicCase(DynamicAppCase):
         return [node for node in self.nodes()
                 if name in node.get('content-desc', '')
                 and '按钮' in node.get('content-desc', '')
-                and self.bounds(node)[1] < self.d.window_size()[1] * .14]
+                and self.bounds(node)[1] < self.screen_size()[1] * .14]
 
     def top_selected(self, name):
         return any('已选中' in node.get('content-desc', '') for node in self.top_tabs(name))
@@ -148,7 +149,7 @@ class DouyinDynamicCase(DynamicAppCase):
             return True
         close_nodes = [node for node in nodes if '关闭' in node.get('content-desc', '')]
         close_nodes = [node for node in close_nodes
-                       if (self.bounds(node)[2] - self.bounds(node)[0]) < self.d.window_size()[0] * .25]
+                       if (self.bounds(node)[2] - self.bounds(node)[0]) < self.screen_size()[0] * .25]
         if close_nodes:
             self.click_node(min(close_nodes, key=lambda node: self.bounds(node)[1]))
             time.sleep(1)
@@ -281,7 +282,7 @@ class DouyinDynamicCase(DynamicAppCase):
             value = node.get('text', '') + node.get('content-desc', '')
             if any(word in value for word in words):
                 left, top, right, bottom = self.bounds(node)
-                if top > self.d.window_size()[1] * .2 and right - left < self.d.window_size()[0] * .7:
+                if top > self.screen_size()[1] * .2 and right - left < self.screen_size()[0] * .7:
                     candidates.append(node)
         if not candidates:
             self.live_cart_open = False
@@ -332,7 +333,12 @@ class DouyinDynamicCase(DynamicAppCase):
         return True
 
     def product_ready(self):
-        return bool(self.contains_nodes(desc='购物车')) and bool(self.contains_nodes(desc='进店'))
+        app = self.current_app()
+        # 新版“进店”改称“店铺”。Activity 相同但规格抽屉打开时，底栏不可见，
+        # 不能只按 Activity 判就绪，否则后续客服/进店会在规格抽屉上操作。
+        labels = {n.get(key, '') for n in self.nodes() for key in ('text', 'content-desc')}
+        return (app['package'] == self.PACKAGE and 'ProductDetail' in app['activity']
+                and '购物车' in labels and bool({'店铺', '进店'} & labels))
 
     def add_to_cart(self):
         if not self.product_ready():
@@ -354,7 +360,9 @@ class DouyinDynamicCase(DynamicAppCase):
         self.added_to_cart = bool(self.contains_nodes(text='已加入')
                                   or self.contains_nodes(desc='已加入'))
         if not self.added_to_cart:
-            logging.warning('SKIP：当前商品要求未暴露的规格选择，未确认新增购物车条目')
+            # 没有确认加购就退出本步骤打开的规格层，供独立的客服/店铺步骤继续。
+            self.return_to(self.product_ready, '规格选择后未能返回商品详情页')
+            return self.skip('当前商品需要选择规格，本轮未确认新增购物车条目')
         return self.added_to_cart
 
     def open_cart(self):
@@ -365,16 +373,20 @@ class DouyinDynamicCase(DynamicAppCase):
         time.sleep(3)
         self.cart_open = bool(self.contains_nodes(text='管理') or self.contains_nodes(desc='管理'))
         if not self.cart_open:
-            logging.warning('SKIP：购物车页面未公开稳定管理控件')
+            return self.skip('购物车页面未公开可核对的管理控件')
         return self.cart_open
 
     def product_action(self, label):
         self.return_to(self.product_ready, '未返回商品详情页')
-        node = self.first_any({'text': label}, {'desc': label})
+        node = self.first_any({'text': label}, {'desc': label},
+                              {'text': '店铺' if label == '进店' else label})
         if node is None:
             return self.skip('商品详情没有“{}”入口'.format(label))
+        before = self.current_app()['activity']
         self.click_node(node)
-        time.sleep(2)
+        self.wait_for(lambda: self.current_app()['activity'] != before or not self.product_ready(),
+                      '商品详情入口点击后页面没有变化：'+label)
+        time.sleep(1)
         return True
 
     def cart_manage(self):
@@ -456,7 +468,7 @@ class DouyinDynamicCase(DynamicAppCase):
         return True
 
     def profile_video_candidates(self):
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         result = []
         for node in self.nodes():
             left, top, right, bottom = self.bounds(node)
@@ -518,7 +530,7 @@ class DouyinDynamicCase(DynamicAppCase):
             self.author_profile_available = False
             return self.skip('用户搜索结果没有可打开的作者')
         first = min(follow_nodes, key=lambda node: self.bounds(node)[1])
-        width, _ = self.d.window_size()
+        width, _ = self.screen_size()
         _, top, _, bottom = self.bounds(first)
         # 用户卡片仅公开右侧关注按钮；按该按钮的纵向中心点击同卡片左侧作者区域。
         self.point(width * .25, (top + bottom) / 2)
@@ -732,7 +744,7 @@ class DouyinDynamicCase(DynamicAppCase):
         if self.contains_nodes(desc='立即抢购'):
             self.merchant_open = True
             return True
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         prices = [node for node in self.nodes(desc='¥')
                   if self.bounds(node)[1] > height * .2]
         if not prices:

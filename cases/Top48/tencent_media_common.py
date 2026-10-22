@@ -24,7 +24,7 @@ class TencentObservedCase(ObservedAppCase):
         root = ET.fromstring(self.d.dump_hierarchy())
         parents = {child: parent for parent in root.iter() for child in parent}
         rows = self.find(label)
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         for row in rows:
             for n in root.iter('node'):
                 if n.get('package') != self.PACKAGE or n.get('text') != label:
@@ -83,6 +83,21 @@ class QqMusicDynamicCase(TencentObservedCase):
 
     def dismiss_ads(self):
         super().dismiss_ads()
+        if self.has(text='歌曲同步') and self.has(rid='il_', text='知道了'):
+            self.native(rid='il_', text='知道了')
+            time.sleep(.5)
+        if self.activity_is('TMECoreActivity'):
+            # 全屏互动广告与启动页广告不同，优先使用明确的关闭属性。
+            for selector in ({'desc': '关闭'}, {'text': '关闭'}, {'text': '跳过'}):
+                if self.has(**selector):
+                    self.native(**selector)
+                    break
+            else:
+                # 该广告的 X 不导出节点；已核对截图右上“广告”胶囊旁关闭位置。
+                if self.visible('广告', True, (.7, .05, 1, .17)):
+                    self.pct(.938, .106)
+            time.sleep(.8)
+            self.invalidate()
         # 实机弹窗原生树仅有广告标签和此说明，关闭 X 位于广告标签右侧。
         # 只有这两个弹窗特征同时出现才使用截图核对过的比例，防止点穿到登录。
         if self.has(text='点击上方按钮/素材跳转详情页或第三方应用') and self.has(text='广告'):
@@ -91,13 +106,21 @@ class QqMusicDynamicCase(TencentObservedCase):
             self.invalidate()
 
     def main_ready(self):
-        return (not self.activity_is('NewPlayerActivity', 'LoginActivity')
+        return (not self.activity_is('NewPlayerActivity', 'LoginActivity', 'TMECoreActivity')
                 and self.visible('首页', region=(0, .9, .25, .99))
                 and self.visible('我的', region=(.75, .9, 1, .99)))
 
     def main_page(self):
-        self.dismiss_ads()
-        self.return_to(self.main_ready, '未返回QQ音乐主界面')
+        for _ in range(6):
+            self.dismiss_ads()
+            if self.main_ready():
+                break
+            if self.activity_is('TMECoreActivity'):
+                time.sleep(1)
+                self.invalidate()
+                continue
+            self.back()
+        self.content_wait(self.main_ready, '未返回QQ音乐主界面')
         self.collapse_player()
 
     def collapse_player(self):
@@ -135,7 +158,10 @@ class QqMusicDynamicCase(TencentObservedCase):
         self.my_page()
         for name in ('最近', '最近播放'):
             if self.visible(name):
-                self.go(lambda: self.label_node(name), self.recent_ready, '最近播放页面未打开')
+                def ready():
+                    self.dismiss_ads()
+                    return self.recent_ready()
+                self.go(lambda: self.label_node(name), ready, '最近播放页面未打开')
                 return
         raise StepUnavailable('20.9.5.8未登录的我的页没有“最近/最近播放”入口')
 
@@ -357,7 +383,7 @@ class QqMusicDynamicCase(TencentObservedCase):
         if not self.visible('新歌榜', True, (0, .08, .6, .25)):
             raise StepUnavailable('当前不在已核对的新歌榜详情')
         def share():
-            width, height = self.d.window_size()
+            width, height = self.screen_size()
             rows = [n for n in self.nodes(desc='分享')
                     if .8 < (self.bounds(n)[0]+self.bounds(n)[2])/2/width < .91
                     and self.bounds(n)[3] < height*.13]
@@ -406,9 +432,10 @@ class TencentNewsDynamicCase(TencentObservedCase):
     COMPONENT = PACKAGE + '/.activity.SplashActivity'
 
     def main_ready(self):
-        return (self.visible('新闻', region=(0, .9, .25, .99))
-                and self.visible('我的', region=(.75, .9, 1, .99))
-                and self.has(rid='channelbar_text'))
+        # 未登录版本底栏文字为“未登录”，其入口语义仍是“我的”。
+        # 不要求截图出现旧文案；以原生新闻底栏和频道栏确认首页。
+        return (self.has(rid='news_tab_button', desc='新闻')
+                and self.has(desc='我的') and self.has(rid='channelbar_text'))
 
     def main_page(self):
         self.dismiss_ads()
@@ -445,13 +472,15 @@ class TencentNewsDynamicCase(TencentObservedCase):
             time.sleep(1)
             self.invalidate()
         for _ in range(4):
-            rows = self.nodes(rid='title_text')
+            # 同一个 title_text 也用于视频卡片；图文语义可避免误入视频播放页。
+            rows = self.nodes(rid='title_text', desc='图文：', prefix=True)
             if rows:
                 break
             self.swipe(.5, .35, .5, .8)
         if not rows:
             raise StepUnavailable('首页没有可核对的图文新闻标题')
-        self.native(rid='title_text')
+        self._locators.add('tree')
+        self.click_node(rows[0])
         def ready():
             self.dismiss_ads()
             return self.article_ready()

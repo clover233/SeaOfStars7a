@@ -51,8 +51,17 @@ class CallDynamicCase(BaiduDynamicCase):
             raise RuntimeError('控件不存在或不唯一：{}'.format((rid, selector)))
         self.click_node(ns[0])
 
+    def tab_nodes(self, title):
+        # 新版 MIUI 改用 action_page 容器和 miuix 导航文字。
+        for rid, attrs in (('navigation_title', {'text': title}),
+                           ('miuix_navigation_bar_item_label_view', {'text': title})):
+            nodes = self.nodes(rid, **attrs)
+            if nodes:
+                return nodes
+        return []
+
     def tab_selected(self, title):
-        return self.has('navigation_title', text=title, selected='true')
+        return any(n.get('selected') == 'true' for n in self.tab_nodes(title))
 
     def contacts_ready(self):
         return self.tab_selected('联系人') and not self.has('search_text_cancel')
@@ -61,28 +70,31 @@ class CallDynamicCase(BaiduDynamicCase):
         return self.tab_selected('通话') and not self.has('search_text_cancel')
 
     def launch(self):
+        # 先等导航出现；启动动画期间 Back 会直接退出到桌面。
         self.d.app_start(self.PACKAGE, use_monkey=True)
-        self.wait_for(lambda: self.current_app()['package'] == self.PACKAGE, '电话未启动')
-        time.sleep(1)  # 等待热启动/返回桌面动画结束，避免使用上一帧的控件边界。
-        for _ in range(6):
-            if self.has('navigation_title', text='通话') and not self.has('search_text_cancel'):
-                time.sleep(.4)
-                if self.has('navigation_title', text='通话'):
-                    break
-            self.shell('input keyevent 4')
+        self.wait_for(lambda: bool(self.tab_nodes('通话')) or self.has('search_text_cancel'),
+                      '电话导航未加载', timeout=25)
+        time.sleep(.8)
+        for _ in range(5):
+            if self.tab_nodes('通话') and not self.has('search_text_cancel'):
+                self.phone()
+                return
+            self.foreground()
+            if self.has('search_text_cancel'):
+                self.click('search_text_cancel')
+            else:
+                self.shell('input -d 0 keyevent 4')
             time.sleep(.8)
-        self.wait_for(lambda: self.has('navigation_title', text='通话'), '未进入电话主界面')
-        self.phone()
+        raise RuntimeError('未进入电话主界面')
 
     def contacts(self):
-        self.transition(lambda: self.click('navigation_title', text='联系人'),
+        self.transition(lambda: self.click_node(self.tab_nodes('联系人')[0]),
                         self.contacts_ready, '未进入联系人页')
 
     def phone(self):
-        self.wait_for(lambda: self.has('navigation_title', text='通话'), '电话底部导航未加载')
-        self.transition(lambda: self.click('navigation_title', text='通话'),
+        self.wait_for(lambda: bool(self.tab_nodes('通话')), '电话底部导航未加载')
+        self.transition(lambda: self.click_node(self.tab_nodes('通话')[0]),
                         self.phone_ready, '未进入电话页')
-        # 清除上一次运行遗留的拨号文本，确保通话记录未被号码筛选。
         self.clear_number()
 
     def search_box(self):
@@ -136,11 +148,17 @@ class CallDynamicCase(BaiduDynamicCase):
                             lambda: self.dialed_number() == expected, '删除键未删除一位号码')
         raise RuntimeError('号码未清空')
 
+    def keypad_control(self, description):
+        controls = self.nodes(**{'content-desc': description})
+        if len(controls) != 1:
+            raise RuntimeError('拨号键盘开关不唯一：' + description)
+        self.click_node(controls[0])
+
     def number_and_delete(self):
         if not self.phone_ready():
             raise RuntimeError('输入号码前不在电话页')
         if not self.has('one'):
-            self.click('bottom_nav_white_fab')
+            self.keypad_control('打开拨号键盘')
         self.wait_for(lambda: self.has('one'), '未展开拨号键盘')
         self.clear_number()
         for rid, expected in (('one', '1'), ('zero', '10'), ('zero', '100'),
@@ -164,7 +182,7 @@ class CallDynamicCase(BaiduDynamicCase):
         blockers = [self.bounds(n) for n in ns if n.get('resource-id') in
                     ('android:id/input', self.PREFIX+'header_view',
                      self.PREFIX+'content_layout', self.PREFIX+'identify_numbers_text')]
-        w, h = self.d.window_size()
+        w, h = self.screen_size()
         bottom = max((b for _, _, _, b in blockers if b <= top), default=top)
         x, y = w*.5, (bottom+top)/2
         # 记录填满页面时没有安全空白，直接使用收起键盘控件适配该布局。
@@ -177,7 +195,7 @@ class CallDynamicCase(BaiduDynamicCase):
         if self.has('one'):
             if self.dialed_number():
                 raise RuntimeError('收起键盘前号码非空')
-            self.click('bottom_nav_white_fab', **{'content-desc': '关闭拨号键盘'})
+            self.keypad_control('关闭拨号键盘')
         self.wait_for(lambda: not self.has('one') and self.phone_ready(), '未收起拨号键盘')
 
     def browse(self, up=5, down=5):
@@ -186,7 +204,7 @@ class CallDynamicCase(BaiduDynamicCase):
         for count, start, end in ((up, .78, .32), (down, .32, .78)):
             for _ in range(count):
                 self.foreground()
-                w, h = self.d.window_size()
+                w, h = self.screen_size()
                 self.shell('input swipe {} {} {} {} 400'.format(
                     round(w*.5), round(h*start), round(w*.5), round(h*end)))
                 time.sleep(2)
@@ -194,7 +212,7 @@ class CallDynamicCase(BaiduDynamicCase):
     def launcher_gesture(self):
         def go_home():
             self.foreground()
-            w, h = self.d.window_size()
+            w, h = self.screen_size()
             self.shell('input swipe {} {} {} {} 250'.format(
                 round(w*.5), round(h*.995), round(w*.5), round(h*.62)))
         self.transition(go_home,

@@ -15,14 +15,14 @@ class PerformanceDynamic_baidu_0010(DynamicAppCase):
 
     def is_home(self):
         current = self.current_app()
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         return (current['package'] == self.PACKAGE
                 and current['activity'].endswith('.MainActivity')
                 and all(any(self.bounds(n)[1] > height * .9 for n in self.nodes(text=label))
                         for label in ('百度', '我的')))
 
     def dismiss_splash_ad(self):
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         skip = [n for n in self.nodes(text='跳过') if self.bounds(n)[3] < height * .16]
         if len(skip) == 1:
             self.click_node(skip[0])
@@ -64,8 +64,7 @@ class PerformanceDynamic_baidu_0010(DynamicAppCase):
             self.d(text='文心助手').exists or self.d(text='文心一言').exists)
 
     def open_ai(self):
-        if not self.is_home():
-            raise RuntimeError('打开文心前不在百度首页')
+        self.wait_for(self.launch_ready, '打开文心前百度首页未稳定', timeout=30)
         def click_entry():
             entry = self.d(text='文心一言', className='android.widget.TextView')
             if entry.exists:
@@ -100,7 +99,7 @@ class PerformanceDynamic_baidu_0010(DynamicAppCase):
                 raise RuntimeError('文心提交前输入内容或页面发生变化')
             root = ET.fromstring(self.d.dump_hierarchy())
             parents = {child: parent for parent in root.iter() for child in parent}
-            width = self.d.window_size()[0]
+            width = self.screen_size()[0]
             for node in root.iter('node'):
                 if node.get('class') != 'android.widget.EditText' or node.get('text') != self.QUESTION:
                     continue
@@ -138,7 +137,7 @@ class PerformanceDynamic_baidu_0010(DynamicAppCase):
         edit.set_text(self.QUERY)
         # 输入页背后的旧结果可能仍留在 UiSelector 查询中；必须实际提交，
         # 再只用主屏当前节点确认结果，不能让旧结果令 transition 提前返回。
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         buttons = [n for n in self.nodes(text='搜索') if self.bounds(n)[3] < height * .18]
         if len(buttons) != 1:
             raise RuntimeError('百度搜索提交入口不唯一')
@@ -148,7 +147,7 @@ class PerformanceDynamic_baidu_0010(DynamicAppCase):
 
     def is_results(self):
         nodes = self.nodes()
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         return (any(n.get('text') == self.QUERY and self.bounds(n)[3] < height * .18 for n in nodes)
                 and any(n.get('text') == '综合' and self.bounds(n)[3] < height * .3 for n in nodes)
                 and not any(n.get('class') == 'android.widget.EditText' for n in nodes))

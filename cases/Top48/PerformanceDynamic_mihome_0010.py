@@ -10,15 +10,23 @@ class PerformanceDynamic_mihome_0010(DynamicAppCase):
 
     def selected_tab(self, name):
         return any(n.get('selected') == 'true'
-                   for n in self.nodes(text=name, rid='e7m'))
+                   for n in self.tab_nodes(name))
+
+    def tab_nodes(self, name):
+        # 版本更新会重排混淆 id，以底栏文字和实时边界定位。
+        height = self.screen_size()[1]
+        return [n for n in self.nodes(text=name) if self.bounds(n)[1] > height * .9]
+
+    def navigation_ready(self):
+        return all(self.tab_nodes(name) for name in ('米家', '智能', '产品'))
 
     def switch_tab(self, name):
-        self.open_control(lambda: self.selected_tab(name),
-                          '米家未切换到{}页'.format(name), text=name, rid='e7m')
+        self.transition(lambda: self.click_node(self.tab_nodes(name)[0]),
+                        lambda: self.selected_tab(name), '米家未切换到{}页'.format(name))
 
     def launch(self):
         self.start()
-        self.return_to(lambda: self.has(text='米家', rid='e7m'),
+        self.return_to(self.navigation_ready,
                        '米家首页导航未就绪，请确认已登录')
         self.switch_tab('米家')
         self.require(desc='添加设备')
@@ -37,15 +45,19 @@ class PerformanceDynamic_mihome_0010(DynamicAppCase):
             for name in ('回家', '手机回家模式'):
                 if self.has(text=name):
                     logging.info('回家场景入口：%s', name)
-                    self.open_control(lambda: self.has(text=name) and not self.has(rid='e7m'),
+                    if name != '回家':
+                        self._adaptation = '新版米家以手机回家模式替代原回家场景入口，仅浏览不启用场景'
+                    self.open_control(lambda: self.has(text=name) and not self.navigation_ready(),
                                       '回家场景详情未打开', text=name)
                     return
             self.swipe()
         # 用户允许版本缺失功能跳过，保留明确日志；不以任意页面冒充回家场景。
-        logging.warning('SKIP：当前智能探索页未提供回家/手机回家模式入口')
+        self._last_skip_reason = '当前智能探索页未提供回家/手机回家模式入口'
+        logging.warning('SKIP：%s', self._last_skip_reason)
+        return False
 
     def main_page(self):
-        self.return_to(lambda: self.has(text='米家', rid='e7m'), '未返回米家导航页')
+        self.return_to(self.navigation_ready, '未返回米家导航页')
         self.switch_tab('米家')
         self.require(desc='添加设备')
 

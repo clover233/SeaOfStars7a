@@ -6,6 +6,7 @@ from Cases.Top48.dingding_common import DingTalkDynamicCase, ToutiaoDynamicFlow
 
 
 class PerformanceDynamic_dingding_0020(DingTalkDynamicCase):
+    PERMISSIONS = ('RECORD_AUDIO',)
     NEWS_PACKAGE = ToutiaoDynamicFlow.PACKAGE
     all_app_package_list = [DingTalkDynamicCase.PACKAGE, NEWS_PACKAGE]
 
@@ -16,15 +17,18 @@ class PerformanceDynamic_dingding_0020(DingTalkDynamicCase):
 
     def more_options(self):
         self.return_to(self.navigation_ready, '未返回钉钉底部导航')
-        self.open_control(lambda: self.has(rid='home_fern_grid_more_edit'),
-                          '钉钉更多选项未展开', text='更多')
+        self.open_control(lambda: self.has(rid='home_fern_grid_more_edit')
+                          or self.has(text='会议', rid='app_name'),
+                          '钉钉更多选项未展开', text='更多', rid='home_bottom_tab_text')
 
     def meeting_page(self):
-        # 设备上的新版钉钉将“会议”置于底栏，更多选项中已无此入口。
         self.more_options()
-        logging.info('替代：新版钉钉“会议”位于底栏，关闭更多面板后进入会议页')
-        self.back()
-        self.conference_page()
+        if self.has(text='会议', rid='app_name'):
+            self.open_control(lambda: self.has(text='发起会议', rid='item_text'),
+                              '钉钉会议页未加载', text='会议', rid='app_name')
+        else:
+            self.back()
+            self.conference_page()
 
     def live_meeting(self):
         return self.has(text='结束', rid='tv') and self.has(rid='conf_duration_text')
@@ -37,7 +41,19 @@ class PerformanceDynamic_dingding_0020(DingTalkDynamicCase):
                           '语音会议准备页未打开', text='语音会议', rid='tv_content')
         self.meeting_title = '动态性能测试_{}'.format(int(time.time()))
         self.d(resourceId=self.PACKAGE + ':id/edit_conf_title').set_text(self.meeting_title)
-        self.open_control(self.live_meeting, '未进入语音会议', text='进入会议', rid='tv')
+        # 仅在准备页仍显示入会按钮时重试；连接中不重复点击已消失的按钮。
+        for _ in range(3):
+            if self.live_meeting():
+                return
+            self.click(text='进入会议', rid='tv')
+            time.sleep(2)
+            if self.has(text='进入会议', rid='tv'):
+                continue
+            self.wait_for(lambda: self.live_meeting() or self.has(text='进入会议', rid='tv'),
+                          '语音会议连接未完成', timeout=60)
+            if self.live_meeting():
+                return
+        raise RuntimeError('进入会议后仍停在准备页')
 
     def leave_to_home_with_meeting(self):
         if not self.live_meeting():
@@ -86,7 +102,7 @@ class PerformanceDynamic_dingding_0020(DingTalkDynamicCase):
             time.sleep(1)
 
     def end_own_meeting(self):
-        if not self.live_meeting():
+        if not self.meeting_title or not self.has(text='结束', rid='tv'):
             return
         self.click(text='结束', rid='tv')
         time.sleep(1)
@@ -104,7 +120,8 @@ class PerformanceDynamic_dingding_0020(DingTalkDynamicCase):
     def clean_up(self):
         # 如中途失败，只结束本用例创建的正在进行的会议，避免遗留通话状态。
         try:
-            if self.current_app()['package'] == self.PACKAGE:
+            if self.meeting_title:
+                self.start()
                 self.end_own_meeting()
         except Exception:
             logging.exception('清理阶段未能结束测试会议')

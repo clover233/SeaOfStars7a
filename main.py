@@ -3,8 +3,17 @@ import shutil
 import time
 import os
 import logging
+import sys
+
+# 显式按失败日志回归，避免为了重跑几个失败项再次跑整套 Basic1。
+# 必须在导入全套用例和创建结果目录之前分流。
+if __name__ == '__main__' and '--failed-log' in sys.argv:
+    sys.argv[sys.argv.index('--failed-log')] = '--log'
+    from tools.rerun_failed import main as rerun_failed
+    raise SystemExit(rerun_failed())
+
 import uiautomator2 as u2
-from aw_new import ElementNotFoundError
+from aw_new import ElementNotFoundError, SeaOfStarsAW
 
 from Cases.Top48.PerformanceDynamic_fuzai import PerformanceDynamic_fuzai
 from Cases.Top48.PerformanceDynamic_alipay_0010 import PerformanceDynamic_alipay_0010
@@ -565,8 +574,8 @@ Basic5 = [
     PerformanceDynamic_weixin_0010,
 ]
 
-# case_list = Basic1 + Basic2 + Basic3
-case_list = Basic1
+case_list = Basic1 + Basic2 + Basic3
+#case_list = Basic4 + Basic5
 
 succ_num = 0
 fail_num = 0
@@ -579,11 +588,14 @@ if __name__ == "__main__":
         # SeaOfStarsAW.init_device()
         for l in case_list:
             logging.info(l.__name__)
+            case = None
+            failed = True
             try:
                 case = l(Result_Dir_Path)
                 logging.debug(case)
                 # case.set_up()
                 case.run_case()
+                failed = False
                 # case.clean_up()
                 succ_num += 1
             except (ElementNotFoundError, u2.exceptions.UiObjectNotFoundError, u2.exceptions.XPathElementNotFoundError, AttributeError, RuntimeError) as e:
@@ -595,7 +607,18 @@ if __name__ == "__main__":
                 else:
                     error_logs[l] += error_summary
             finally:
-                pass
+                if case is not None:
+                    try:
+                        if hasattr(case, 'restore_ime'):
+                            case.restore_ime()
+                        if failed:
+                            SeaOfStarsAW.ut_device.press('home')
+                    except Exception:
+                        logging.exception('失败用例状态恢复未完成')
+                    finally:
+                        # 每个用例的日志只属于本用例，避免处理器累积和串写日志。
+                        logging.getLogger().removeHandler(case.fh)
+                        case.fh.close()
 
         logging.info('succ_num - ' + str(succ_num))
         logging.info('fail_num - ' + str(fail_num))

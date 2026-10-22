@@ -4,6 +4,8 @@ from Cases.Top48.weixin_common import WeixinDynamicCase
 
 class PerformanceDynamic_weixin_0030(WeixinDynamicCase):
     NEED_IMAGES = True
+    # 旧设备有两个同名“微信性能素材”目录；使用本轮唯一生成的测试相册。
+    ALBUM = '微信回归素材7'
 
     def steps(self):
         return [

@@ -102,7 +102,7 @@ class TravelShopCase(TencentObservedCase):
 
     def swipe(self, x1=.5, y1=.78, x2=.5, y2=.32, duration=400):
         self.foreground()
-        w, h = self.d.window_size()
+        w, h = self.screen_size()
         r = self.d.shell('input -d 0 swipe {} {} {} {} {}'.format(
             round(w*x1), round(h*y1), round(w*x2), round(h*y2), duration))
         if r.exit_code:
@@ -593,6 +593,11 @@ class TaobaoDynamicCase(TravelShopCase):
         if self.has(desc='限时福利砸中你') and self.has(desc='关闭按钮'):
             self.native(desc='关闭按钮')
             time.sleep(.8);self.invalidate()
+        if (any(self.visible(label, True) for label in ('主播免定卡', '可享定金全免'))
+                and self.visible('领取1张', True)):
+            # 视频横滑会进入直播并弹出免定卡；返回关闭弹层，不领取优惠。
+            self.back()
+            time.sleep(.5);self.invalidate()
         # 原生首页券条，只点该条右端关闭区域，不领取优惠券。
         banners=self.nodes(rid='homepage_pop_view')
         if banners and self.ad_matches(rows,'待领取',True):
@@ -622,7 +627,7 @@ class TaobaoDynamicCase(TravelShopCase):
         def open_search():
             node = self.node(desc='搜索栏')
             left, top, right, bottom = self.bounds(node)
-            # Basic3 右上视频浮窗会覆盖搜索栏中心；输入区左侧仍可点击。
+            # Basic3-0 右上视频浮窗会覆盖搜索栏中心；输入区左侧仍可点击。
             self._locators.add('tree')
             self.point(left + (right-left)*.15, (top+bottom)/2)
         self.go(open_search,self.search_ready,'淘宝搜索输入页未打开')
@@ -880,16 +885,26 @@ class TaobaoDynamicCase(TravelShopCase):
         self.bottom_node(label)
         self.content_wait(lambda:not self.has(desc='搜索栏') and
                 (self.has(desc='已选中，推荐，按钮') or self.has(desc='已选中，关注，按钮')
+                 or self.has(desc='已选中，直播，按钮')
                  or self.visible('发现')),'逛逛/视频内容未打开')
-        if label=='视频':self.adapt('当前底栏“逛逛”已改为“视频”，改为浏览视频内容')
+        if label=='视频':
+            # 视频入口会恢复到上次直播频道；显式切换推荐，避免误判入口未打开。
+            if self.has(desc='未选中，推荐，按钮'):
+                self.go(lambda:self.native(desc='未选中，推荐，按钮'),
+                        lambda:self.has(desc='已选中，推荐，按钮'),'淘宝视频推荐频道未打开')
+            self.adapt('当前底栏“逛逛”已改为“视频”，切换推荐频道后浏览视频内容')
 
     @optional('explore')
     def browse_explore(self):
-        self.needs('explore');self.browse(5,5);self.horizontal(3,3)
+        self.needs('explore');self.browse(5,5)
+        self.horizontal(0,3);self.horizontal(3,0)
 
     def my_taobao(self):
-        # 先恢复主屏，避免点在商品或视频里的同名字样。
-        self.main_page();self.bottom_node('我的淘宝')
+        self.dismiss_ads()
+        # 视频/直播根页保留主底栏，直接使用底栏入口；无需先找旧版“首页”描述。
+        if not self.visible('我的淘宝', region=(.75, .9, 1, 1)):
+            self.main_page()
+        self.bottom_node('我的淘宝')
         self.content_wait(lambda:self.visible('我的订单',True) or self.visible('待付款'),'我的淘宝未打开')
 
     @optional('orders')

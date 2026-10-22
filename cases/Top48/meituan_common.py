@@ -82,27 +82,33 @@ class MeituanDynamicCase(DynamicAppCase):
     def search_box(self):
         self.require(rid='homepage_search_icon')
         self.transition(lambda: self.click(rid='homepage_search_icon'),
-                        lambda: self.has(rid='search_edit_text'), '外卖搜索页未打开')
+                        lambda: bool(self.search_editors()), '外卖搜索页未打开')
+
+    def search_editors(self):
+        h = self.screen_size()[1]
+        return [n for n in self.nodes() if n.get('class') == 'android.widget.EditText'
+                and self.bounds(n)[1] < h*.2 and n.get('enabled') == 'true']
 
     def enter_query(self, query):
-        self.require(rid='search_edit_text')
-        self.d(resourceId=self.PACKAGE + ':id/search_edit_text').set_text(query)
-        self.wait_for(lambda: self.has(rid='search_edit_text', text=query), '搜索词未输入')
+        self.wait_for(lambda: len(self.search_editors()) == 1, '搜索页未出现唯一输入框')
+        self.d(className='android.widget.EditText', packageName=self.PACKAGE).set_text(query)
+        self.wait_for(lambda: any(n.get('text') == query for n in self.search_editors()), '搜索词未输入')
         self._query = query
 
     def search(self):
         self.click(rid='search_button', text='搜索')
-        self.wait_for(lambda: self.has(rid='omj', text=self._query), '搜索结果未打开')
+        self.wait_for(lambda: self.has(rid='omj', text=self._query)
+                      or bool(self.delivery_titles()), '搜索结果未打开')
         self.wait_for(lambda: bool(self.delivery_titles()), '搜索商家未加载', timeout=25)
 
     def delivery_titles(self):
         # 两种外卖结果模板均无标题 id；商户标题字号较大，位于月售行上方。
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         return sorted([n for n in self.nodes() if n.get('text')
                        and not n.get('resource-id') and not n.get('content-desc')
                        and self.bounds(n)[3] - self.bounds(n)[1] >= height * .021
                        and height * .16 < self.bounds(n)[1] < height * .85
-                       and self.bounds(n)[0] > self.d.window_size()[0] * .16
+                       and self.bounds(n)[0] > self.screen_size()[0] * .16
                        and ('店' in n.get('text', '') or '（' in n.get('text', '')
                             or '汤' in n.get('text', ''))], key=lambda n: self.bounds(n)[1])
 
@@ -122,7 +128,7 @@ class MeituanDynamicCase(DynamicAppCase):
                       '商家详情未打开', timeout=20)
 
     def local_shop(self):
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         def cards():
             return sorted([n for n in self.nodes() if ', 分' in n.get('content-desc', '')
                            and self.bounds(n)[2]-self.bounds(n)[0] > width*.8
@@ -158,9 +164,9 @@ class MeituanDynamicCase(DynamicAppCase):
         # 同一行的商品标题，以加号的父卡片内 text 定位，排除左侧分类。
         y = self.bounds(add)[1]
         titles = [n for n in self.nodes() if n.get('text') and not n.get('content-desc')
-                  and self.bounds(n)[0] > self.d.window_size()[0]*.45
-                  and y-self.d.window_size()[1]*.15 < self.bounds(n)[1] < y
-                  and self.bounds(n)[3]-self.bounds(n)[1] > self.d.window_size()[1]*.02]
+                  and self.bounds(n)[0] > self.screen_size()[0]*.45
+                  and y-self.screen_size()[1]*.15 < self.bounds(n)[1] < y
+                  and self.bounds(n)[3]-self.bounds(n)[1] > self.screen_size()[1]*.02]
         if not titles:
             raise RuntimeError('食品加号存在但未定位到同卡片商品标题')
         self.click_node(sorted(titles,key=lambda n:self.bounds(n)[1])[0])
@@ -207,8 +213,8 @@ class MeituanDynamicCase(DynamicAppCase):
             nodes = self.nodes()
             titles = [n for n in nodes if len(n.get('text','')) >= 8
                       and not n.get('content-desc') and not n.get('resource-id')
-                      and self.bounds(n)[0] > self.d.window_size()[0]*.2
-                      and self.d.window_size()[1]*.55 < self.bounds(n)[1] < self.d.window_size()[1]*.9
+                      and self.bounds(n)[0] > self.screen_size()[0]*.2
+                      and self.screen_size()[1]*.55 < self.bounds(n)[1] < self.screen_size()[1]*.9
                       and not any(k in n.get('text','') for k in ('地址','公里','分钟','营业'))]
             if titles:
                 self.click_node(sorted(titles,key=lambda n:self.bounds(n)[1])[0])

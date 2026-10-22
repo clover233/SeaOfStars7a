@@ -14,7 +14,10 @@ class DoubaoDynamicCase(DynamicAppCase):
         self.d.click(round(x), round(y))
 
     def chat_ready(self):
-        return self.has(rid='chat_root') and self.has(rid='action_entrance')
+        # action_entrance 仅在语音首页存在，文字对话页改为 input_text。
+        return (self.has(rid='chat_root') and self.has(rid='action_entrance')
+                or self.has(rid='larus_chat_top_left_create_new_cvs')
+                and bool(self.text_editors()))
 
     def launch(self):
         # Monkey 启动后旧应用有时会重新抢到前台；使用当前安装版本的 launcher。
@@ -83,10 +86,13 @@ class DoubaoDynamicCase(DynamicAppCase):
         if not question:
             logging.warning('SKIP：没有待发送的豆包输入内容')
             return False
-        self.transition(lambda: self.click_node(self.send_button()),
-                        lambda: any(question in node.get('text', '')
-                                    for node in self.nodes()),
-                        '豆包未显示已发送的问题')
+        # 输入框本身也包含问题，不能把草稿误认成发送成功，更不能重试发送。
+        self.click_node(self.send_button())
+        self.wait_for(lambda: any(question in node.get('text', '')
+                                 and node.get('class') != 'android.widget.EditText'
+                                 for node in self.nodes())
+                      and not any(question == n.get('text') for n in self.text_editors()),
+                      '豆包未确认问题发送成功，不自动重发')
         # 等待模型生成区结束初始布局，避免随后滑动命中输入区。
         time.sleep(3)
         self.pending_question = None
@@ -147,7 +153,7 @@ class DoubaoDynamicCase(DynamicAppCase):
                 return False
             # 豆包 AI 相机的取景页是自绘画布，当前版本的层级仅暴露外层容器。
             # 严格确认相机 Activity 后按屏幕比例点快门，避免绑定具体分辨率。
-            width, height = self.d.window_size()
+            width, height = self.screen_size()
             result = self.d.shell('input -d 0 tap {} {}'.format(
                 round(width * .5), round(height * .875)))
             if result.exit_code:
@@ -227,7 +233,7 @@ class DoubaoDynamicCase(DynamicAppCase):
         if not getattr(self, 'album_open', False) or not self.album_ready():
             logging.warning('SKIP：未进入豆包相册，跳过图片浏览')
             return False
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         for upward, count in ((True, up), (False, down)):
             for _ in range(count):
                 start, end = (.78, .32) if upward else (.32, .78)
@@ -244,7 +250,7 @@ class DoubaoDynamicCase(DynamicAppCase):
             logging.warning('SKIP：未进入豆包相册，跳过选择图片')
             return False
         package = self.current_package()
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         if package == self.PACKAGE:
             candidates = [node for node in self.nodes(rid='media_item_select_indicator_check_box')
                           if node.get('content-desc', '').startswith('未选中')]
@@ -301,9 +307,9 @@ class DoubaoDynamicCase(DynamicAppCase):
         return True
 
     def call_active(self):
-        return (self.current_package() != self.PACKAGE
-                or self.has(rid='voice_call_hangup')
-                or self.has(desc='挂断') or self.has(text='结束通话'))
+        return (self.current_package() == self.PACKAGE
+                and (self.has(rid='voice_call_hangup')
+                     or self.has(desc='挂断') or self.has(text='结束通话')))
 
     def exit_call(self):
         if not getattr(self, 'call_available', False):

@@ -118,7 +118,7 @@ class HongguoDynamicCase(DynamicAppCase):
     def speed_play(self):
         # 推荐视频没有可访问的画面控件；以屏幕比例长按画面中央，再选 2x。
         self.foreground()
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         # 首页视频在当前布局约占屏幕高度 25%～46%，35% 处可避开顶部字幕和底部控件。
         x, y = round(width * .5), round(height * .35)
         result = self.d.shell(
@@ -133,11 +133,28 @@ class HongguoDynamicCase(DynamicAppCase):
                       '选择2倍速后未返回推荐视频', timeout=6)
 
     def comments_ready(self):
-        return (self.has(desc='back_unfold')
-                and any(node.get('text', '').endswith('条评论') for node in self.nodes()))
+        return (self.has(text='评论', rid='iup') and self.has(text='剧评', rid='iup')
+                or self.has(desc='back_unfold')
+                and any(node.get('text', '').endswith('条评论')
+                        or node.get('text', '').startswith('评论') for node in self.nodes()))
 
     def open_comments(self):
-        self.transition(lambda: self.click(rid=self.COMMENT_ID), self.comments_ready,
+        def open_button():
+            if self.has(rid=self.COMMENT_ID):
+                return self.click(rid=self.COMMENT_ID)
+            # 漫剧模板评论按钮没有 ID，以右侧收藏按钮的上一相邻按钮定位。
+            # 同屏截图已核对顺序：点赞、评论、收藏、分享。
+            root = self.nodes()
+            for parent in root:
+                children = list(parent)
+                for index, child in enumerate(children):
+                    if child.get('resource-id') == self.PACKAGE+':id/fn8' and index:
+                        candidate = children[index-1]
+                        clickable = [n for n in candidate.iter('node') if n.get('clickable') == 'true']
+                        if clickable:
+                            return self.click_node(clickable[0])
+            raise RuntimeError('未找到红果评论按钮或相邻收藏锚点')
+        self.transition(open_button, self.comments_ready,
                         '推荐视频评论面板未打开')
 
     def close_comments_by_swipe(self):
@@ -184,11 +201,11 @@ class HongguoDynamicCase(DynamicAppCase):
                         '第一条搜索结果未开始播放')
 
     def watch_portrait(self):
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         if width >= height or not self.video_ready():
             raise RuntimeError('短剧未处于竖屏播放状态')
 
     def fullscreen(self):
         self.transition(lambda: self.click(text='全屏观看', rid=self.FULLSCREEN_ID),
-                        lambda: self.d.window_size()[0] > self.d.window_size()[1],
+                        lambda: self.screen_size()[0] > self.screen_size()[1],
                         '短剧未切换至横屏播放')

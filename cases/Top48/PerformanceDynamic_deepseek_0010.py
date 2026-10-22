@@ -9,6 +9,13 @@ class PerformanceDynamic_deepseek_0010(DynamicAppCase):
     all_app_package_list = [PACKAGE]
     QUESTIONS = ('什么是AI', '华为终端的主要产品有哪些', '介绍几款市面上主流的手机')
 
+    def point(self, x, y):
+        # 输入区同时支持“按住说话”；250ms swipe 伪点击在已有对话中不激活编辑器。
+        # 使用当前主屏控件边界换算后的普通短点击。
+        self.foreground()
+        width, height = self.screen_size()
+        self.d.click(x / width, y / height)
+
     def launch(self):
         self.start()
         self.wait_for(lambda: self.has(text='发消息或按住说话') or

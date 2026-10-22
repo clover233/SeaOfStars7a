@@ -15,6 +15,11 @@ class StepUnavailable(Exception):
     """当前版本/账号确实没有此入口，允许跳过并记录原因。"""
 
 
+class AccountBlocked(StepUnavailable):
+    """安全验证遮挡应用，后续业务步骤都依赖人工完成账号验证。"""
+    blocks_case = True
+
+
 class ShoppingDynamicCase(DynamicAppCase):
     def nodes(self, rid=None, **kwargs):
         # React Native 使用不带包名前缀的 testID，京东模块使用独立资源包名。
@@ -74,7 +79,10 @@ class ShoppingDynamicCase(DynamicAppCase):
 
     def check_access(self):
         if self.activity_has('JDRiskHandleActivity'):
-            raise RuntimeError('京东要求安全验证，请在手机上手动验证后重新运行')
+            raise AccountBlocked('京东要求账号安全验证，跳过当前受限功能；验证后可重新运行')
+        if self.PACKAGE == 'com.jingdong.app.mall' and self.activity_has(
+                'SMSCheckActivity', 'LoginActivity', 'LoginMainActivity'):
+            raise StepUnavailable('京东当前功能要求重新登录，跳过依赖登录的步骤')
 
     def dismiss_popup(self):
         labels = ('关闭浮层活动', '知道了', '我知道了', '暂不', '以后再说')

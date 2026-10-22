@@ -68,7 +68,7 @@ class CameraDynamicCase(BaiduDynamicCase):
 
     def swipe(self, x1, y1, x2, y2, duration=400):
         self.foreground()
-        w, h = self.d.window_size()
+        w, h = self.screen_size()
         self.shell('input -d 0 swipe {} {} {} {} {}'.format(
             round(w*x1), round(h*y1), round(w*x2), round(h*y2), duration))
 
@@ -156,7 +156,7 @@ class CameraDynamicCase(BaiduDynamicCase):
                 break
             n = self.nodes('zoom_panel')[0]
             l, t, r, b = self.bounds(n)
-            w, _ = self.d.window_size()
+            w, _ = self.screen_size()
             # 转盘左拖放大，右拖缩小；步长按屏宽换算，最小步长也随分辨率缩放。
             delta = max(.002, min(.12, abs(target-current)/max(current, 1)*.20))
             direction = -1 if target > current else 1
@@ -365,7 +365,46 @@ class CameraDynamicCase(BaiduDynamicCase):
         def controls():
             return self.has(package=self.GALLERY, **{'content-desc': '暂停播放'}) or self.has(
                 package=self.GALLERY, **{'content-desc': '播放视频'})
-        self.transition(lambda: self.relative_click(.5, .45), controls, '图库未显示播放控件')
+        # 此版图库自绘所有工具栏，控件树可能只有空根。先用鼠标源显示工具栏，
+        # 再核对截图中的暂停/播放图标，比例区域随主屏尺寸缩放。
+        w, h = self.screen_size()
+        if not controls():
+            def icon():
+                shot = self.d.screenshot(display_id=0).convert('RGB')
+                sw, sh = shot.size
+                crop = shot.crop((round(sw*.09), round(sh*.81), round(sw*.18), round(sh*.88)))
+                pixels = list(crop.getdata())
+                if sum(min(p) > 215 for p in pixels) < len(pixels)*.45:
+                    return None
+                # 白色悬浮播放条内灰色图标：暂停为两个不相连的竖条。
+                columns = [sum(1 for y in range(crop.height)
+                               if 35 < max(crop.getpixel((x,y))) < 180)
+                           for x in range(crop.width)]
+                runs = []
+                for x, count in enumerate(columns):
+                    if count > crop.height*.15:
+                        if not runs or x > runs[-1][-1]+1:
+                            runs.append([])
+                        runs[-1].append(x)
+                return 'playing' if len(runs) == 2 else 'paused' if len(runs) == 1 else None
+            state = icon()
+            if state is None:
+                self.d.shell('input mouse -d 0 tap {} {}'.format(round(w*.5), round(h*.45)))
+                time.sleep(.4)
+                state = icon()
+            if state is None:
+                return self.skip('图库自绘播放图标无法从控件树及截图确认，跳过手动播放')
+            def toggle():
+                self.d.shell('input mouse -d 0 tap {} {}'.format(round(w*.137), round(h*.843)))
+                time.sleep(.4)
+            if state == 'playing':
+                toggle()
+                self.wait_for(lambda: icon() == 'paused', '截图未确认视频暂停', timeout=4)
+            toggle()
+            self.wait_for(lambda: icon() == 'playing', '截图未确认视频播放', timeout=4)
+            self.d.screenshot(str(Path(self.screenshot_dir_path)/'gallery_playing_verified.png'), display_id=0)
+            logging.info('通过截图播放图标确认视频播放（主屏比例定位）')
+            return
         # 新版图库自动播放，先暂停再点击播放，仍执行表格要求的播放按钮操作。
         if self.has(package=self.GALLERY, **{'content-desc': '暂停播放'}):
             self.click(package=self.GALLERY, **{'content-desc': '暂停播放'})

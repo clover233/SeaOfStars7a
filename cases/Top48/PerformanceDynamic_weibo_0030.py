@@ -3,6 +3,24 @@ from Cases.Top48.weibo_common import WeiboDynamicCase
 
 
 class PerformanceDynamic_weibo_0030(WeiboDynamicCase):
+    def launch(self):
+        self._liked_by_case = False
+        self._draft = False
+        self.start()
+        def ready():
+            if self.has(text='跳过'):
+                self.click(text='跳过')
+            return self.main_ready() or self.detail_ready() or self.activity_has('MPDialogActivity')
+        self.wait_for(ready, '微博启动广告未结束', timeout=30)
+        if self.activity_has('MPDialogActivity'):
+            self.back()
+        self.return_to(self.main_ready, '微博主界面未打开', limit=6)
+        self._visitor = self.activity_has('VisitorMainTabActivity')
+
+    def main_page(self):
+        # 表中要求返回主界面，并未要求切换首页；底部任一主 tab 均为主界面。
+        self.return_to(self.main_ready, '未返回微博主界面', limit=8)
+
     def steps(self):
         return [
             ('启动微博', self.launch, 3),

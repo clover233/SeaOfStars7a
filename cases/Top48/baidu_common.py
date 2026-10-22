@@ -45,6 +45,7 @@ class BaiduDynamicCase(Case):
             raise RuntimeError('前台不是目标应用，停止操作：{}'.format(current))
 
     wait_for = MainDisplayMixin.wait_for
+    screen_size = MainDisplayMixin.screen_size
 
     def tap(self, **selector):
         self.foreground()
@@ -79,12 +80,12 @@ class BaiduDynamicCase(Case):
         if not (0 < x < 1 and 0 < y < 1):
             raise ValueError('点击坐标必须为 (0, 1) 内的屏幕比例')
         self.foreground()
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         self.click_point(round(width * x), round(height * y))
 
     def browse(self, up=5, down=5):
         self.foreground()
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         for upward, count in ((True, up), (False, down)):
             for _ in range(count):
                 self.foreground()
@@ -95,7 +96,7 @@ class BaiduDynamicCase(Case):
 
     def launcher_gesture(self):
         self.foreground()
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         self.d.swipe(round(width * 0.5), round(height * 0.995),
                      round(width * 0.5), round(height * 0.62), duration=0.25)
         self.wait_for(lambda: 'launcher' in self.current_app()['activity'].lower(), '上滑后未返回桌面')

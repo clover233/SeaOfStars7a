@@ -1,4 +1,6 @@
 """今日头条动态性能用例的可复用页面操作。"""
+import re
+import time
 
 from Cases.Top48.dynamic_apps_common import DynamicAppCase
 
@@ -17,7 +19,7 @@ class JrttDynamicCase(DynamicAppCase):
             raise RuntimeError('今日头条点击失败：' + result.output)
 
     def bottom_nodes(self, name):
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         return [node for node in self.nodes(text=name, rid='tp')
                 if self.bounds(node)[1] > height * .88]
 
@@ -25,7 +27,9 @@ class JrttDynamicCase(DynamicAppCase):
         return any(node.get('selected') == 'true' for node in self.bottom_nodes(name))
 
     def bottom_ready(self):
-        return all(self.bottom_nodes(name) for name in ('首页', '视频', '我的'))
+        # 未登录版本将“我的”直接显示为“未登录”，不影响新闻和视频浏览。
+        return (all(self.bottom_nodes(name) for name in ('首页', '视频'))
+                and any(self.bottom_nodes(name) for name in ('我的', '未登录')))
 
     def switch_bottom(self, name):
         def tap_tab():
@@ -46,10 +50,10 @@ class JrttDynamicCase(DynamicAppCase):
                 and self.has(desc='推荐'))
 
     def comments_ready(self):
-        if not self.has(desc='评论', rid='s4'):
-            return False
-        return any(node.get('text', '').endswith('条评论')
-                   for node in self.nodes(rid='title_text'))
+        # 新版标题为“评论2540”，旧版为“2540条评论”；面板已打开时不能再点原入口。
+        return any(re.fullmatch(r'(?:评论\s*\d+|\d+\s*条评论)',
+                                node.get('text', ''))
+                   for node in self.nodes())
 
     def main_page(self):
         if self.comments_ready():
@@ -145,4 +149,10 @@ class JrttDynamicCase(DynamicAppCase):
     def browse_comments(self):
         if not self.comments_ready():
             raise RuntimeError('评论浏览前评论面板未打开')
-        self.browse(2, 2)
+        # 半屏评论的标题/拖动区在约 1/3 屏处，不能从通用 .32 起手下拉。
+        for start, end in ((.82, .56), (.56, .82)):
+            for _ in range(2):
+                self.swipe(.5, start, .5, end, 400)
+                time.sleep(2)
+                if not self.comments_ready():
+                    raise RuntimeError('滑动评论时离开了评论面板')

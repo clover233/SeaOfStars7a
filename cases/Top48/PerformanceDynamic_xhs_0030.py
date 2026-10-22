@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import os
-import shutil
 import time
-import uiautomator2 as u2
-from uiautomator2 import Device
 from Cases.Top48.observed_apps_common import ObservedAppCase
-from aw_new import SeaOfStarsAW
 
 class PerformanceDynamic_xhs_0030(ObservedAppCase):
 
@@ -20,7 +15,7 @@ class PerformanceDynamic_xhs_0030(ObservedAppCase):
         if self.has(text='免流量升级') and self.has(text='稍后再说'):
             self.click(text='稍后再说')
             time.sleep(.5)
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         skips = [n for n in self.nodes(text='跳过广告', prefix=True)
                  if self.bounds(n)[3] < height * .16]
         if len(skips) == 1:
@@ -37,6 +32,7 @@ class PerformanceDynamic_xhs_0030(ObservedAppCase):
     def launch(self):
         self._hot_query = None
         self.start()
+        self.main_page()
         def ready():
             self.dismiss_ads()
             return self.main_ready()
@@ -49,7 +45,7 @@ class PerformanceDynamic_xhs_0030(ObservedAppCase):
         return self.has(text='全部') and self.has(text='综合') and not self.search_ready()
 
     def search_header(self, query):
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         return [n for n in self.nodes(text=query) if self.bounds(n)[3] < height * .14]
 
     def open_search(self):
@@ -61,7 +57,7 @@ class PerformanceDynamic_xhs_0030(ObservedAppCase):
                 self.click(desc='搜索')
             elif self.results_ready():
                 # 点实际搜索词回到编辑页，不按固定次数返回到发现首页。
-                height = self.d.window_size()[1]
+                height = self.screen_size()[1]
                 titles = [n for n in self.nodes() if n.get('class') == 'android.widget.TextView'
                           and n.get('clickable') == 'true' and n.get('text') not in ('搜索', '')
                           and self.bounds(n)[3] < height * .14]
@@ -79,8 +75,11 @@ class PerformanceDynamic_xhs_0030(ObservedAppCase):
         self.invalidate()
 
     def submit_query(self):
-        self.require(text=self.QUERY)
-        buttons = [n for n in self.nodes(text='搜索') if self.bounds(n)[3] < self.d.window_size()[1]*.14]
+        # 新版无障碍文本为“搜索, 穿搭图片”，并非输入失败。
+        self.wait_for(lambda: any(n.get('class') == 'android.widget.EditText'
+                                  and n.get('text', '').removeprefix('搜索, ') == self.QUERY
+                                  for n in self.nodes()), '搜索框中未确认穿搭图片')
+        buttons = [n for n in self.nodes(text='搜索') if self.bounds(n)[3] < self.screen_size()[1]*.14]
         if len(buttons) != 1:
             raise RuntimeError('小红书搜索提交入口不唯一')
         self.click_node(buttons[0])
@@ -106,7 +105,7 @@ class PerformanceDynamic_xhs_0030(ObservedAppCase):
         if header is None:
             raise RuntimeError('当前小红书没有可核验的搜索发现入口')
         top = self.bounds(self.node(text=header))[3]
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         rows = [n for n in self.nodes() if n.get('class') == 'android.widget.TextView'
                 and len(n.get('text', '').strip()) >= 2
                 and not n.get('text', '').strip().isdigit()
@@ -132,169 +131,74 @@ class PerformanceDynamic_xhs_0030(ObservedAppCase):
         for _ in range(2):
             self.browse(3, 3)
 
-    @SeaOfStarsAW.function_log
-    def run_case(self):
-        if not getattr(self, '_prepared', False):
-            self.set_up()
-        try:
-            self._run_steps()
-        finally:
-            # main.py 的 clean_up 目前关闭，异常与正常结束都恢复输入法。
-            self.restore_ime()
-
-    def _run_steps(self):
-        """
-        测试用例执行
-        """
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ 请在下方添加自己的代码！↓ ↓ ↓ ↓
-        # ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-        if not getattr(self, "_prepared", False):
-            self.set_up()
-        self._adaptations = []
-        logging.info("用例开始执行!")
-        steps_num = 1
-
-        app = 'com.xingin.xhs'
-        step = "1、打开小红书（等待2s）"
-
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info("启动{}中".format("小红书"))
-        self.launch()
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "2、点击右上角搜索"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        self.open_search()
-        time.sleep(1)
-
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "3、搜索穿搭图片，返回上一级，重复操作3次"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
+    def repeat_search(self):
+        for _ in range(3):
+            self.set_query()
+            self.submit_query()
+            self.open_search()
         self.set_query()
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
 
-        step = "4、搜索穿搭图片"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        self.submit_query()
-        time.sleep(1)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
+    def first_note(self):
+        self.require(text=self.QUERY)
+        width, height = self.screen_size()
+        cards = [n for n in self.nodes() if n.get('class') == 'android.widget.LinearLayout'
+                 and n.get('clickable') == 'true' and self.bounds(n)[0] < width*.5
+                 and width*.35 < self.bounds(n)[2]-self.bounds(n)[0] < width*.55
+                 and self.bounds(n)[3]-self.bounds(n)[1] > height*.15
+                 and height*.2 < self.bounds(n)[1] < height*.8
+                 and any(c.get('text') for c in n.iter('node'))]
+        if not cards:
+            raise RuntimeError('搜索结果没有可核对的首条笔记')
+        self.click_node(min(cards, key=lambda n: (self.bounds(n)[1], self.bounds(n)[0])))
+        self.wait_for(lambda: self.has(desc='评论框'), '首条笔记详情未打开')
 
-        step = "5、点击左上角第一条消息"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(0.236, 0.386)
-        time.sleep(1)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "6、上滑1次，下滑1次浏览笔记详情   "
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.scroll_down(0.5)
-        time.sleep(2)
-        SeaOfStarsAW.scroll_up(0.5)
-        time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "7、点击图片看大图，左滑3次，右滑3次"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        SeaOfStarsAW.ut_device.click(0.492, 0.363)
-        time.sleep(1)
-        for _ in range(3):
-            SeaOfStarsAW.swipe_right()
-            time.sleep(2)
-        for _ in range(3):
-            SeaOfStarsAW.swipe_left()
-            time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "8、返回搜索结果页面"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        self.return_results()
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "9、上滑3次，下滑3次浏览搜索结果，重复操作2次"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        for i in range(2):
+    def note_pictures(self):
+        self.require(desc='评论框')
+        # 详情浏览后先回到图片区域，以图片语义节点进入大图。
+        for _ in range(4):
+            images = self.nodes(desc='图片,第', prefix=True)
+            if images:
+                break
+            self.swipe(y1=.32, y2=.78)
+        if not images:
+            raise RuntimeError('笔记没有可定位的图片')
+        self.click_node(images[0])
+        # 新版大图覆盖层保留详情旧树；用截图的黑色上下留白确认已进入查看器。
+        self.wait_for(self.picture_viewer_ready, '笔记大图未打开')
+        for x1, x2 in ((.8, .2), (.2, .8)):
             for _ in range(3):
-                SeaOfStarsAW.scroll_down()
+                self.swipe(x1, .45, x2, .45)
                 time.sleep(2)
-            for _ in range(3):
-                SeaOfStarsAW.scroll_up()
-                time.sleep(2)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
 
-        step = "10、返回搜索页面"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        self.return_search()
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
+    def picture_viewer_ready(self):
+        shot = self.d.screenshot(display_id=0).convert('RGB')
+        width, height = shot.size
+        samples = [shot.getpixel((round(width*x), round(height*y)))
+                   for x in (.1, .3, .5, .7, .9) for y in (.15, .18, .90, .93)]
+        if all(max(pixel) < 25 for pixel in samples):
+            return True
+        # 长图可能没有留白；截图确认详情的固定评论框、关注和搜索均已隐藏。
+        return not any(self.visible(label, True) for label in ('说点什么', '关注', '搜索'))
 
-        step = "11、点击搜索发现下的第一条热搜"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        self.first_hot()
-        if self._adaptations:
-            step += "_ADAPTED"
-        time.sleep(1)
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
+    def browse_results(self):
+        self.wait_for(self.results_ready, '浏览前不在搜索结果页')
+        for _ in range(2):
+            self.browse(3, 3)
 
-        step = "12、上滑3次，下滑3次浏览热搜，重复操作2次"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        self.browse_hot()
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-
-        step = "13、返回小红书主界面"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        self.main_page()
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-
-        steps_num += 1
-
-        step = "14、返回home页面"
-        SeaOfStarsAW.start_perfetto_trace()
-        logging.info(step)
-        self.home()
-        SeaOfStarsAW.stop_and_get_perfetto_trace(self.trace_dir_path, self.__class__.__name__,
-                                                 'step_' + str(steps_num) + "-" + step, "", self.screenshot_dir_path)
-        steps_num += 1
-        logging.info("用例执行结束!")
-
-    @SeaOfStarsAW.function_log
-    def clean_up(self):
-        super().clean_up()
+    def steps(self):
+        return [
+            ('启动小红书', self.launch, 2),
+            ('点击右上角搜索', self.open_search, 1),
+            ('搜索穿搭图片，返回上一级，重复操作3次', self.repeat_search, 2),
+            ('搜索穿搭图片', self.submit_query, 1),
+            ('点击左上角第一条消息', self.first_note, 1),
+            ('上滑1次，下滑1次浏览笔记详情', lambda: self.browse(1, 1), 0),
+            ('点击图片看大图，左滑3次，右滑3次', self.note_pictures, 0),
+            ('返回搜索结果页面', self.return_results, 1),
+            ('上滑3次，下滑3次浏览搜索结果，重复操作2次', self.browse_results, 0),
+            ('返回搜索页面', self.return_search, 1),
+            ('点击搜索发现下的第一条热搜', self.first_hot, 1),
+            ('上滑3次，下滑3次浏览热搜，重复操作2次', self.browse_hot, 0),
+            ('返回小红书主界面', self.main_page, 1),
+            ('滑动返回Home页', self.home, 1),
+        ]

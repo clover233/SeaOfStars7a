@@ -4,6 +4,7 @@ from Cases.Top48.weixin_common import WeixinRemainingCase
 
 class PerformanceDynamic_weixin_0190(WeixinRemainingCase):
     NEED_IMAGES = True
+    ALBUM = '微信回归素材7'
 
     def steps(self):
         return [

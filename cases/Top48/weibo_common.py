@@ -1,4 +1,4 @@
-"""微博实机定位：weditor 0.7.3 Dump Hierarchy / Android 17，2026-10-16。"""
+"""微博实机定位：Dump Hierarchy / Android 16，2026-10-19。"""
 import time
 
 from Cases.Top48.shopping_common import StepUnavailable, VisualShoppingDynamicCase
@@ -183,6 +183,8 @@ class WeiboDynamicCase(VisualShoppingDynamicCase):
         self.return_to(lambda: self.find_label('超话社区') is not None, '未返回超话社区', limit=6)
 
     def discover(self):
+        if self.main_ready() and self.has(rid='tv_search_keyword'):
+            return
         self.main_page()
         self.bottom('发现')
         self.await_page(lambda: self.has(rid='tv_search_keyword'), '发现页面未加载')
@@ -264,7 +266,12 @@ class WeiboDynamicCase(VisualShoppingDynamicCase):
         if node is None:
             raise StepUnavailable('当前正文未暴露可核实状态的点赞控件')
         self.click_node(node)
-        self.await_page(lambda: self.like_node(True) is not None, '点赞状态未确认')
+        def liked():
+            # 点赞成功后可能弹任务奖励，先关闭再核验正文点赞状态，不领取奖励。
+            if self.activity_has('MPDialogActivity') and self.has(text='完成点赞任务'):
+                self.label('close')
+            return self.like_node(True) is not None
+        self.await_page(liked, '点赞状态未确认')
         self._liked_by_case = True
 
     def unlike(self):

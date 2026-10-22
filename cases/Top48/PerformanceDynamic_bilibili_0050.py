@@ -11,7 +11,7 @@ class PerformanceDynamic_bilibili_0050(BilibiliDynamicCase):
             ('点击第一个直播进入直播间', self.live_room, 1),
             ('上滑5次下滑5次浏览直播间', self.browse, 1),
             ('观看直播10秒', self.watching_live, 10),
-            ('切换横屏观看直播20秒', self.live_fullscreen, 20),
+            ('切换横屏观看直播20秒', self.watch_live_fullscreen, 0),
             ('返回哔哩哔哩首页', self.home, 1),
             ('上滑返回桌面', self.launcher_gesture, 1),
         ]

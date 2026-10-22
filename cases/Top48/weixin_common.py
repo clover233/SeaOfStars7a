@@ -83,6 +83,7 @@ class WeixinDynamicCase(DynamicAppCase):
         self.unavailable = {}
         self._screen_cache = None
         self._locators = set()
+        self._adaptations = []
         self._ocr_command = None
         self._original_ime = self.d.current_ime()
         self._ime_changed = False
@@ -138,7 +139,7 @@ class WeixinDynamicCase(DynamicAppCase):
     def screen(self):
         if self._screen_cache and time.monotonic() - self._screen_cache[0] < .35:
             return self._screen_cache[1]
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         root = ET.fromstring(self.d.dump_hierarchy())
         rows = []
         for node in root.iter('node'):
@@ -186,6 +187,27 @@ class WeixinDynamicCase(DynamicAppCase):
     def visible(self, label, contains=False, region=None):
         return bool(self.find(label, contains, region))
 
+    def visible_crop(self, label, region, contains=False):
+        """短输入被光标干扰时，对已定位的区域放大 OCR，仍核对实际截图文字。"""
+        if not self._ocr_command:
+            return False
+        shot = self.d.screenshot(display_id=0)
+        w, h = shot.size
+        crop = shot.crop((round(region[0]*w), round(region[1]*h),
+                          round(region[2]*w), round(region[3]*h)))
+        crop = crop.resize((crop.width*3, crop.height*3))
+        with tempfile.TemporaryDirectory(prefix='weixin-input-ocr-') as folder:
+            path = Path(folder)/'input.png'
+            crop.save(path)
+            result = subprocess.run(self._ocr_command+[str(path)], capture_output=True,
+                                    text=True, check=True, timeout=30)
+        query = self.normalized(label)
+        found = any((query in self.normalized(row['text']) if contains
+                     else query == self.normalized(row['text'])) for row in json.loads(result.stdout))
+        if found:
+            self._locators.add('screenshot-ocr-crop')
+        return found
+
     def choose(self, label, contains=False, region=None, index=None):
         rows = self.find(label, contains, region)
         if not rows:
@@ -198,8 +220,8 @@ class WeixinDynamicCase(DynamicAppCase):
 
     def point(self, x, y):
         self.foreground()
-        # 与本工程 QQ 用例一致：Android 17 上鼠标源主屏注入可稳定关闭微信风险弹层。
-        result = self.d.shell('input mouse -d 0 tap {} {}'.format(round(x), round(y)))
+        # 与本工程 QQ 成功用例一致，使用鼠标源主屏 200ms 短按。
+        result = self.d.shell('input mouse -d 0 swipe {0} {1} {0} {1} 200'.format(round(x), round(y)))
         if result.exit_code:
             raise RuntimeError('主屏点击失败：' + result.output)
         self.invalidate()
@@ -212,7 +234,7 @@ class WeixinDynamicCase(DynamicAppCase):
 
     def swipe(self, x1=.5, y1=.78, x2=.5, y2=.32, duration=400):
         self.foreground()
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         result = self.d.shell('input mouse -d 0 swipe {} {} {} {} {}'.format(
             round(width*x1), round(height*y1), round(width*x2), round(height*y2), duration))
         if result.exit_code:
@@ -264,8 +286,12 @@ class WeixinDynamicCase(DynamicAppCase):
         # 底部图标的文字偶有 OCR 错字；已按截图核对四个等宽标签。
         slots = {'微信': .125, '通讯录': .375, '发现': .625, '我': .875}
         def action():
-            if self.find(label, region=(0, .90, 1, 1)):
-                self.choose(label, region=(0, .90, 1, 1))
+            rows = self.find(label, region=(0, .90, 1, 1))
+            if len(rows) == 1:
+                row = rows[0]
+                self._locators.add(row['source'])
+                # 部分沉浸式返回状态把标签文字压到系统手势区，改点同一标签图标。
+                self.pct(row['x']+row['w']/2, min(row['y']+row['h']/2, .945), record=False)
             else:
                 self.pct(slots[label], .943)
         def ready():
@@ -274,13 +300,14 @@ class WeixinDynamicCase(DynamicAppCase):
             if label in ('微信', '通讯录'):
                 return self.main_ready() and (
                     self.visible(label, label == '微信', (.2, .05, .8, .11))
-                    or (label == '微信' and self.wechat_tab_selected()))
+                    or self.bottom_tab_selected(label))
             return self.main_ready()
         self.transition(action, ready, '未切换到底部标签：' + label)
         if label == '发现':
             self.await_text('朋友圈')
         elif label == '通讯录':
-            self.await_text('通讯录', region=(.2, .05, .8, .11))
+            self.wait_for(lambda: self.bottom_tab_selected('通讯录') or
+                          self.visible('通讯录', region=(.2, .05, .8, .13)), '通讯录标签未选中')
             for _ in range(5):
                 if self.visible('新的朋友'):
                     break
@@ -290,12 +317,15 @@ class WeixinDynamicCase(DynamicAppCase):
             self.wait_for(self.main_ready, '底部标签切换后未显示主界面')
 
     def wechat_tab_selected(self):
-        """标题被视频浮窗遮住时，核对底栏“微信”的绿色选中文字。"""
+        return self.bottom_tab_selected('微信')
+
+    def bottom_tab_selected(self, label):
+        """标题识别不稳定时，核对底栏目标标签的绿色选中文字。"""
         if any(n.get('selected') == 'true' or n.get('checked') == 'true'
-               for n in self.nodes(text='微信')
-               if self.bounds(n)[1] > self.d.window_size()[1] * .9):
+               for n in self.nodes(text=label)
+               if self.bounds(n)[1] > self.screen_size()[1] * .9):
             return True
-        rows = self.find('微信', region=(0, .90, .25, 1))
+        rows = self.find(label, region=(0, .90, 1, 1))
         if len(rows) != 1:
             return False
         # 只检查已识别的文字框，不使用图标上的绿色未读数作选中依据。
@@ -375,10 +405,10 @@ class WeixinDynamicCase(DynamicAppCase):
 
     def chat_ready(self, name=None):
         name = name or getattr(self, '_chat', self.TEST_CONTACT)
-        title_ok = self.visible(name, name != self.TEST_CONTACT, (.15, .055, .85, .105))
+        title_ok = self.visible(name, name != self.TEST_CONTACT, (.15, .045, .85, .13))
         # 免打扰铃铛会被 OCR 连在短标题后读成 A；仅在聊天信息页精确核验后接受。
         if (name == self.TEST_CONTACT and getattr(self, '_verified_chat', None) == name
-                and self.visible(name+'A', region=(.15, .055, .85, .105))):
+                and self.visible(name, True, (.15, .045, .85, .13))):
             title_ok = True
         return (self.activity_is('ChattingUI', 'LauncherUI')
                 and title_ok
@@ -407,7 +437,7 @@ class WeixinDynamicCase(DynamicAppCase):
         self._verified_chat = self.TEST_CONTACT
         self.back()
         self.wait_for(lambda:self.chat_ready(self.TEST_CONTACT), '未进入置顶会话“{}”'.format(self.TEST_CONTACT))
-        self.adapt('按用户最新要求，使用置顶会话“{}”替代表中的测试账号'.format(self.TEST_CONTACT))
+        self.adapt('使用当前设备已核验的置顶会话“{}”替代表中的测试账号'.format(self.TEST_CONTACT))
         if self.visible('拒收', True):
             self.unavailable['delivery'] = '授权会话拒收消息，后续实发和通话步骤跳过'
             self.adapt(self.unavailable['delivery'])
@@ -434,7 +464,31 @@ class WeixinDynamicCase(DynamicAppCase):
         if self.visible('已过期', True) or self.visible('已被清理', True):
             raise WeixinStepSkipped('聊天媒体已过期或已被清理，不能作为有效浏览素材')
         return (self.activity_is('ImageGalleryUI', 'ImagePreviewUI', 'VideoPlayerUI', 'SnsBrowseUI')
-                or self.visible('倍速'))
+                or self.visible('倍速') or self.picture_canvas_ready())
+
+    def picture_canvas_ready(self):
+        # 新版大图以内嵌页面显示，焦点仍为 LauncherUI，且控件树不导出内容。
+        # 实机截图确认：黑色上下留白及底部四个灰色圆形工具按钮同时出现。
+        # 不能仅凭 activity 或黑屏判断成功，聊天页也不能作为大图页。
+        if not self.activity_is('LauncherUI') or self.chat_ready():
+            return False
+        shot = self.d.screenshot(display_id=0).convert('RGB')
+        width, height = shot.size
+        def pixel(x, y):
+            return shot.getpixel((round(width * x), round(height * y)))
+        if any(max(pixel(x, y)) > 25 for x, y in ((.5, .10), (.5, .88))):
+            return False
+        content = [pixel(x, y) for x in (.25, .5, .75) for y in (.3, .5, .7)]
+        if sum(max(rgb) > 35 for rgb in content) < 3:
+            return False
+        tools = [pixel(x - .025, .944) for x in (.59, .695, .805, .92)]
+        if sum(35 < min(rgb) and max(rgb) < 150 and max(rgb)-min(rgb) < 15
+               for rgb in tools) < 3:
+            # 工具栏会自动隐藏；只在本次已经核验工具栏后接受该状态。
+            return getattr(self, '_picture_canvas_verified', False)
+        self._picture_canvas_verified = True
+        self._locators.add('screenshot-media-toolbar')
+        return True
 
     def media_slides(self, right=3, left=3):
         if not self.media_ready():
@@ -449,6 +503,7 @@ class WeixinDynamicCase(DynamicAppCase):
     def open_chat_media(self, kind):
         if not self.chat_ready():
             raise WeixinStepSkipped('对应的媒体测试群未打开')
+        self._picture_canvas_verified = False
         candidates = self.nodes(desc='图片' if kind == 'picture' else '视频', prefix=True)
         if candidates:
             action = lambda:self.click_node(candidates[0])
@@ -618,7 +673,9 @@ class WeixinDynamicCase(DynamicAppCase):
             rows = [row for row in self.find(self.ALBUM, True, region=region)
                     if re.fullmatch(pattern, re.sub(r'\s+', '', row['text']))]
             if len(rows) == 1:
-                self.choose(rows[0]['text'], region=region)
+                row = rows[0]
+                self._locators.add(row['source'])
+                self.pct(row['x'] + row['w']/2, row['y'] + row['h']/2, record=False)
                 return
             if len(rows) > 1:
                 raise WeixinStepSkipped('测试相册名称不唯一，停止选图')
@@ -636,7 +693,7 @@ class WeixinDynamicCase(DynamicAppCase):
         self.await_text(self.ALBUM, region=(.1, .05, .9, .12))
         # 专用相册仅有九张生成图片。实机为四列正方形网格，勾选在单元右上。
         # 用屏幕宽度计算行高；不能把像素或全屏高度直接当作网格行高。
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         header = self.find(self.ALBUM, region=(.15, .05, .85, .12))[0]
         grid_top = (header['y'] + header['h']) * height + width * .035
         for index in range(count):
@@ -752,7 +809,7 @@ class WeixinDynamicCase(DynamicAppCase):
 
     @optional('friend-moments')
     def friend_pictures(self):
-        images = [n for n in self.nodes(desc='图片', prefix=True) if self.bounds(n)[1] > self.d.window_size()[1]*.2]
+        images = [n for n in self.nodes(desc='图片', prefix=True) if self.bounds(n)[1] > self.screen_size()[1]*.2]
         if images:
             self.click_node(images[0])
         else:
@@ -787,6 +844,8 @@ class WeixinDynamicCase(DynamicAppCase):
     @optional('scan')
     def scan_album(self):
         if not self.activity_is('ScanUI', 'BaseScanUI'):
+            if self.visible('扫码结果'):
+                raise WeixinStepSkipped('摄像头已自动识别现场条码并进入扫码结果，跳过依赖扫一扫预览的相册步骤')
             raise WeixinStepSkipped('扫一扫不可用')
         if self.visible('相册'):
             self.choose('相册')
@@ -800,9 +859,8 @@ class WeixinDynamicCase(DynamicAppCase):
     def scan_picture(self):
         # 不识别私人二维码；从专用素材相册选一张无二维码测试图。
         self.pct(.5, .083)
-        if not self.visible(self.ALBUM, True):
-            raise WeixinStepSkipped('扫码相册中未找到专用测试素材')
-        self.choose(self.ALBUM, True)
+        self.choose_fixture_album()
+        self.await_text(self.ALBUM, region=(.1, .05, .9, .12))
         self.pct(.12, .16)
         time.sleep(1)
         self.adapt('使用专用测试图验证相册选图；该图不含二维码')
@@ -822,7 +880,10 @@ class WeixinDynamicCase(DynamicAppCase):
         self.await_text('发送', region=(.7, .3, 1, .98))
         self.choose('发送', region=(.7, .3, 1, .98))
         self.wait_for(lambda:not self.visible('发送', region=(.7, .3, 1, .98)), '发送后输入框未清空')
-        self.await_text('哈哈哈')
+        # 短气泡会被全屏 OCR 与右侧头像合并；核对聊天正文裁图，不重复发送。
+        self.wait_for(lambda: self.visible('哈哈哈', True)
+                      or self.visible_crop('哈哈哈', (.15, .12, .93, .925), contains=True),
+                      '发送后未识别到哈哈哈消息气泡')
         if self.visible('未发送', True) or self.visible('发送失败', True):
             raise WeixinStepSkipped('微信报告消息未发送，保留失败消息，不自动重复发送')
         # 广播输入法没有可见键盘，不能盲目 Back（会退出当前会话）。
@@ -841,7 +902,7 @@ class WeixinDynamicCase(DynamicAppCase):
             self.pct(.06, .945)
         self.await_text('按住 说话')
         row = self.find('按住 说话')[0]
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         self.d.long_click(round(width*(row['x']+row['w']/2)), round(height*(row['y']+row['h']/2)), 1.5)
         self.invalidate()
         time.sleep(.5)
@@ -851,7 +912,8 @@ class WeixinDynamicCase(DynamicAppCase):
     def emoji_panel(self):
         self.require_test_chat()
         self.pct(.84, .945)
-        time.sleep(.5)
+        self.wait_for(lambda: self.visible('所有表情') or self.has(desc='微笑'),
+                      '点击表情按钮后未确认标准表情面板')
         # 页面出现标准表情的命名节点时直接使用它们；否则按核对过的网格选择。
         self._emoji_open = True
         self._panel_open = True
@@ -874,6 +936,10 @@ class WeixinDynamicCase(DynamicAppCase):
         self._emoji_open = False
 
     def chat_more(self):
+        # 选图被跳过/取消时先关闭相册，避免下一段在 AlbumPreviewUI 校验聊天页。
+        if self.activity_is('AlbumPreviewUI', 'ImagePreviewUI'):
+            self.return_to(lambda: self.chat_ready(self.TEST_CONTACT), '未从相册返回测试会话', limit=4)
+            self._album_origin_verified = False
         self.require_test_chat()
         if self.visible('拍摄') and self.visible('视频通话'):
             return
@@ -918,7 +984,8 @@ class WeixinDynamicCase(DynamicAppCase):
                 self.choose('取消')
             raise
         label = '视频通话' if video else '语音通话'
-        self.choose(label, True, region=(.2, .72, .8, .93))
+        # 背景工具栏和底部操作表同时包含“视频通话”；只选择操作表行。
+        self.choose(label, True, region=(.2, .79, .8, .92))
         self._call_active = True
         self.wait_for(lambda:self.activity_is('VideoActivity', 'Voip') or self.call_warning_reason(), '通话页未打开')
         time.sleep(1)
@@ -994,7 +1061,7 @@ class WeixinDynamicCase(DynamicAppCase):
     def start_recording(self):
         if not self.camera_ready() or self._camera_origin != 'chat':
             raise WeixinStepSkipped('授权会话录像入口未准备好')
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         self._shutter = (round(width*.5), round(height*.898))
         self.d.touch.down(*self._shutter)
         self._recording = True
@@ -1111,12 +1178,33 @@ class WeixinDynamicCase(DynamicAppCase):
         self.await_text('菜单', timeout=30, region=(0, .88, 1, 1))
 
     def dismiss_luckin_prompts(self):
+        if self.visible('瑞幸咖啡温馨提示') and self.visible('不同意', True):
+            # 首次打开菜单会出现独立隐私页，使用页面提供的“仅浏览”入口。
+            self.choose('不同意', True, region=(.1, .5, .5, .7))
+            self.adapt('瑞幸隐私提示选择仅浏览，继续菜单浏览')
+            time.sleep(.8)
         if self.visible('拒绝') and self.visible('申请', True):
             self.choose('拒绝')
             time.sleep(.6)
-        if self.visible('距你最近的门店', True):
-            # 实机门店推荐底部弹层的关闭 X；关闭推荐不改变已有门店。
-            self.pct(.897, .60)
+        # 截图 OCR 偶尔漏掉“的”，两版标题均保留“距你最近…门店”。
+        prompts = [r for r in self.find('距你最近', True) if '门店' in r['text']]
+        if prompts:
+            closes = [n for n in self.nodes(desc='关闭')
+                      if self.bounds(n)[1] > self.screen_size()[1] * .4]
+            if len(closes) == 1:
+                self._locators.add('tree')
+                self.click_node(closes[0])
+            else:
+                # H5 推荐弹窗未导出 X；以截图标题实时高度定位，使用触屏短按。
+                row = prompts[0]
+                y = row['y'] + row['h']/2 - .017
+                if not .3 < y < .9:
+                    raise RuntimeError('瑞幸门店推荐标题位置异常，停止关闭')
+                self._locators.add('verified-ratio')
+                self.d.click(.897, y)
+                self.invalidate()
+            self.wait_for(lambda: not self.visible('距你最近', True),
+                          '瑞幸门店推荐弹窗未关闭，停止点击背景商品', timeout=8)
 
     @optional('mini')
     def luckin_menu(self):
@@ -1134,10 +1222,19 @@ class WeixinDynamicCase(DynamicAppCase):
     @optional('mini')
     def luckin_product(self):
         self.dismiss_luckin_prompts()
-        rows = [r for r in self.screen() if .42 < r['x'] < .9 and .32 < r['y'] < .36 and len(r['text']) >= 4]
+        headers = self.find('人气Top', region=(.22, .2, .95, .6))
+        if not headers:
+            raise RuntimeError('未确认人气Top商品列表')
+        top = min(r['y'] + r['h'] for r in headers)
+        # 以分类标题为锚选择右侧首个商品名称，避免点到“全球销量”等营销标签。
+        rows = sorted([r for r in self.screen() if .42 < r['x'] < .9
+                       and top + .02 < r['y'] < .65 and len(r['text']) >= 4],
+                      key=lambda r: (r['y'], r['x']))
         if not rows:
             raise WeixinStepSkipped('当前人气Top菜单未展示首个商品标题')
         row = rows[0]
+        self._locators.add(row['source'])
+        self._luckin_product_name = row['text']
         self.pct(row['x']+row['w']/2, row['y']+row['h']/2)
         time.sleep(.8)
         self.dismiss_luckin_prompts()
@@ -1149,11 +1246,15 @@ class WeixinDynamicCase(DynamicAppCase):
 
     @optional('mini')
     def luckin_cart(self):
+        if not self.visible('1', region=(.8, .79, .92, .88)):
+            raise RuntimeError('瑞幸商品数量不是1，停止加购')
         self.choose('加入购物车')
         time.sleep(1)
         if self.visible('手机号', True) or self.visible('登录'):
             raise WeixinStepSkipped('加入购物车需要登录，停在登录入口')
-        self.wait_for(lambda:not self.visible('加入购物车'), '商品没有加入购物车')
+        self.wait_for(lambda: not self.visible('加入购物车') and self.visible('人气Top')
+                      and self.visible(self._luckin_product_name) and self.visible('去结算')
+                      and self.visible('预计到手', True), '加购后未恢复带购物车的商品菜单')
         self.adapt('仅加入一件默认规格商品，不提交订单或支付')
 
     def save_results(self, records):
@@ -1247,7 +1348,7 @@ class WeixinExtendedCase(WeixinDynamicCase):
             self.close_live_float()
 
     def live_float_box(self):
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         boxes = []
         for node in ET.fromstring(self.d.dump_hierarchy()).iter('node'):
             box = self.bounds(node)
@@ -1274,7 +1375,7 @@ class WeixinExtendedCase(WeixinDynamicCase):
             else:
                 # 浮窗有时不导出子控件；按截图核对的浮窗边界比例定位 X。
                 left, top, right, bottom = box
-                width, height = self.d.window_size()
+                width, height = self.screen_size()
                 self.pct((left+(right-left)*.74)/width, (top+(bottom-top)*.83)/height)
         self.transition(close, lambda: self.live_float_box() is None and not self.live_ready(),
                         '直播浮窗未关闭，停止以免遮挡后续入口')
@@ -1534,14 +1635,24 @@ class WeixinExtendedCase(WeixinDynamicCase):
         self.needs('transfer', 'transfer-memo')
         self.await_text('确定')
         self.input_text('修改')
-        self.await_text('修改')
+        self.wait_for(self.memo_input_ready, '转账说明未正确输入“修改”')
+
+    def memo_input_ready(self):
+        if self.visible('修改'):
+            return True
+        titles = self.find('转账说明', region=(0, .4, 1, .9))
+        if len(titles) != 1:
+            return False
+        top = titles[0]['y']+titles[0]['h']+.015
+        return self.visible_crop('修改', (.03, top, .85, min(top+.11, .89)))
 
     @optional('transfer-memo')
     def confirm_memo(self):
         self.needs('transfer', 'transfer-memo')
-        self.await_text('修改')
+        self.wait_for(self.memo_input_ready, '确认前未核对转账说明“修改”')
         self.choose('确定')
-        self.content_wait(lambda: self.visible('修改', True, (.04, .36, .8, .55))
+        self.content_wait(lambda: (self.visible('修改', True, (.04, .36, .8, .55))
+                          or self.visible_crop('修改', (.04, .36, .8, .55), contains=True))
                           and not self.visible('确定'), '转账说明未保存到编辑页')
 
     def return_test_chat(self):
@@ -1875,14 +1986,14 @@ class WeixinRemainingCase(WeixinExtendedCase):
         self.browse(3, 3)
 
     def fixture_grid_top(self):
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         header = self.find(self.ALBUM, region=(.1, .05, .9, .12))[0]
         return (header['y']+header['h'])*height + width*.035
 
     @optional('chat-album-selection')
     def select_chat_photos(self):
         self.require_fixture_album()
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         top = self.fixture_grid_top()
         for col in range(3):
             self.pct((col+.87)/4, (top+width*.03)/height)
@@ -1907,7 +2018,7 @@ class WeixinRemainingCase(WeixinExtendedCase):
     @optional('chat-album')
     def first_chat_photo(self):
         self.require_fixture_album()
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         self.pct(.125, (self.fixture_grid_top()+width*.125)/height)
         time.sleep(.7)
         if not self.activity_is('ImagePreviewUI') and self.visible('预览1', True, (0, .85, .4, 1)):

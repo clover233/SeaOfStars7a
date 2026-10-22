@@ -1,6 +1,7 @@
-"""快手 14.8.40 主屏定位；按 Excel 947～969 行逐步采集性能。"""
+"""快手 14.9.10 主屏定位；按 Excel 947～969 行逐步采集性能。"""
 import logging
 import time
+import xml.etree.ElementTree as ET
 
 from Cases.Top48.dynamic_apps_common import DynamicAppCase
 
@@ -19,11 +20,11 @@ class KuaishouDynamicCase(DynamicAppCase):
 
     def bottom_selected(self, name):
         return any(n.get('selected') == 'true' for n in self.nodes(desc=name)
-                   if self.bounds(n)[1] > self.d.window_size()[1] * .88)
+                   if self.bounds(n)[1] > self.screen_size()[1] * .88)
 
     def menu_ready(self):
         # 关闭抽屉后快手仍把移出屏幕的旧节点标为 visible；不能仅判断存在。
-        width = self.d.window_size()[0]
+        width = self.screen_size()[0]
         return any(self.bounds(n)[2] >= width * .78
                    for n in self.nodes(desc='sideBarScroller'))
 
@@ -68,10 +69,19 @@ class KuaishouDynamicCase(DynamicAppCase):
         self.return_home()
 
     def video_ready(self):
-        return self.bottom_selected('精选') and self.has(rid='comment_button')
+        # 当前版本首页也承载同一精选全屏流，底栏 selected 固定保留在首页。
+        nodes = self.nodes()
+        ids = {n.get('resource-id', '').split(':id/')[-1] for n in nodes}
+        selected = any(n.get('content-desc') == '精选' and n.get('selected') == 'true' for n in nodes)
+        return (selected or 'featured_left_hamburger' in ids) and {
+            'comment_button', 'like_button', 'collect_button'} <= ids
 
     def featured_videos(self):
-        self.switch_bottom('精选')
+        if not self.video_ready():
+            self.transition(lambda: self.click(desc='精选'), self.video_ready, '精选视频未加载')
+        if not self.bottom_selected('精选'):
+            self._adaptation = '本版本首页已展示全屏精选视频流，按实际视频及评论/赞/收藏控件验证主流程'
+            logging.info('ADAPTED：%s', self._adaptation)
         self.wait_for(self.video_ready, '精选视频未加载', timeout=20)
         for _ in range(3):
             self.swipe(duration=1000)
@@ -179,7 +189,7 @@ class KuaishouDynamicCase(DynamicAppCase):
 
     def product_titles(self):
         # 推荐商品名称含零宽字符；匹配当前可见卡片，不写死商品名称。
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         return sorted([n for n in self.nodes() if '\u200b' in n.get('text', '')
                        and height * .2 < self.bounds(n)[1] < height * .87],
                       key=lambda n: (self.bounds(n)[1], self.bounds(n)[0]))
@@ -190,7 +200,10 @@ class KuaishouDynamicCase(DynamicAppCase):
         self.browse(3, 3)
 
     def product_ready(self):
-        return self.has(text='进店') and self.has(text='客服') and self.has(text='购物车')
+        # 品牌商品将“进店”显示为“旗舰店”，以详情 Activity 和底栏功能核验。
+        app = self.current_app()
+        return (app['package'] == self.PACKAGE and 'MerchantDetail' in app['activity']
+                and self.has(text='客服') and self.has(text='购物车'))
 
     def first_product(self):
         self.wait_for(lambda: bool(self.product_titles()), '未找到小店第一件可见商品')
@@ -218,15 +231,14 @@ class KuaishouDynamicCase(DynamicAppCase):
         else:
             # 当前详情的加购图标没有 id/描述。截图与 hierarchy 核对后，
             # 从底栏无文本可点击节点中选择“购物车”和购买按钮之间的独立图标。
-            width, height = self.d.window_size()
+            width, height = self.screen_size()
             icons = [n for n in self.nodes() if n.get('clickable') == 'true'
                      and not any(c.get('text') for c in n.iter('node'))
                      and .30 < self.bounds(n)[0] / width < .45
                      and .44 < self.bounds(n)[2] / width < .52
                      and self.bounds(n)[1] > height * .90]
             if len(icons) != 1:
-                logging.warning('跳过加入购物袋：当前商品没有可确认的加购入口')
-                return
+                raise RuntimeError('当前商品没有可确认的加购入口')
             self.click_node(icons[0])
         self.wait_for(lambda: self.has(desc='merchant_sku_panel_count_input')
                       or (self.product_ready() and self.cart_count() > previous),
@@ -245,8 +257,10 @@ class KuaishouDynamicCase(DynamicAppCase):
                     and any('¥' in c.get('text', '') for c in n.iter('node'))],
                     key=lambda n: (self.bounds(n)[1], self.bounds(n)[0]))
             if not options:
-                logging.warning('跳过加入购物袋：首件商品需要未适配的规格选择')
-                self.back()
+                self.select_product_specs()
+                self.click(text='加入购物车')
+                self.wait_for(lambda: self.product_ready() and self.cart_count() > previous,
+                              '加购后购物车数量未增加', timeout=20)
                 return
             # 首个低价规格容易达到限购数；按用户要求优先选下面一个规格。
             # 若面板仍未关闭且角标未增加，再尝试其余规格，不重复提交同一规格。
@@ -272,8 +286,36 @@ class KuaishouDynamicCase(DynamicAppCase):
                 if not self.has(desc='merchant_sku_panel_count_input'):
                     raise RuntimeError('加购后未出现可确认的购物车数量变化')
                 logging.warning('当前规格未完成加购（可能已达限购数量），尝试下一个规格')
-            logging.warning('跳过加入购物袋：可见规格均未完成加购，请检查限购提示')
             self.back()
-            return
+            raise RuntimeError('可见规格均未完成加购，请检查限购提示')
         self.wait_for(lambda: self.product_ready() and self.cart_count() > previous,
                       '加购后购物车角标未增加', timeout=15)
+
+    def select_product_specs(self):
+        # 商品规格名动态变化，按实机分组结构选取可用选项，并核验“已选”摘要。
+        root = ET.fromstring(self.d.dump_hierarchy())
+        parents = {child: parent for parent in root.iter() for child in parent}
+        labels = ('机身颜色', '存储容量', '颜色', '尺码', '版本', '型号', '规格', '款式', '套餐', '包装规格')
+        headers = [n for n in root.iter('node') if n.get('text') in labels]
+        if not headers:
+            raise RuntimeError('规格页没有可核对的规格分组')
+        for header in sorted(headers, key=lambda n: self.bounds(n)[1]):
+            group = parents.get(parents.get(header))
+            if group is None:
+                raise RuntimeError('规格分组结构不完整')
+            options = [n for n in group.iter('node') if n.get('clickable') == 'true'
+                       and n.get('enabled') == 'true'
+                       and self.bounds(n)[1] >= self.bounds(header)[3]
+                       and any(c.get('text') for c in n.iter('node'))]
+            if not options:
+                raise RuntimeError('规格没有可用选项：' + header.get('text'))
+            selected = ' '.join(n.get('text', '') for n in self.nodes(text='已选：', prefix=True))
+            names = [','.join(c.get('text') for c in n.iter('node') if c.get('text')) for n in options]
+            if any(name in selected for name in names):
+                continue
+            index = 1 if len(options) > 1 else 0
+            self.click_node(options[index])
+            label = names[index]
+            self.wait_for(lambda: any(label in n.get('text', '')
+                                     for n in self.nodes(text='已选：', prefix=True)),
+                          '规格选择未生效：' + label)

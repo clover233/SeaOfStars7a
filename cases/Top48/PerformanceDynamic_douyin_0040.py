@@ -39,7 +39,8 @@ class PerformanceDynamic_douyin_0040(DouyinDynamicCase):
     def repeat_recommended_author(self):
         self.return_feed()
         self.browse_videos(5)
-        self.open_current_author()
+        if not self.open_current_author():
+            raise RuntimeError('重复推荐浏览未进入作者主页：' + self._last_skip_reason)
         self.return_feed()
 
     def back_profile(self):
@@ -59,11 +60,29 @@ class PerformanceDynamic_douyin_0040(DouyinDynamicCase):
             return True
         return self.skip_author_branch('有限返回后未找到作者主页')
 
+    def feed_ready(self):
+        # 作者/搜索页背后的推荐节点不能作为已返回首页的依据。
+        return (self.current_app()['activity'].endswith(('.MainActivity', '.SplashActivity'))
+                and super().feed_ready())
+
+    def profile_video_candidates(self):
+        width, height = self.screen_size()
+        # 作品 FrameLayout 不公开 clickable；以格子内“点赞数”语义节点确认作品，
+        # 排除同页店铺、系列合集和直播入口，不再按固定纵向位置过滤。
+        videos = []
+        for node in self.nodes(rid='container'):
+            left, top, right, bottom = self.bounds(node)
+            if (.2 < (right-left)/width < .5 and bottom-top > height*.08
+                    and any(c.get('content-desc', '').startswith('点赞数')
+                            for c in node.iter('node'))):
+                videos.append(node)
+        return sorted(videos, key=lambda node: (self.bounds(node)[1], self.bounds(node)[0]))
+
     def author_video_ready(self):
         self.foreground()
         if self.in_store():
             return False
-        width = self.d.window_size()[0]
+        width = self.screen_size()[0]
         return any((n.get('resource-id', '').endswith(':id/comment_container')
                     or n.get('content-desc', '').startswith('评论'))
                    and self.bounds(n)[0] > width * .6 for n in self.nodes())
@@ -96,8 +115,9 @@ class PerformanceDynamic_douyin_0040(DouyinDynamicCase):
     def repeat_two_search_visits(self):
         self.return_feed()
         for _ in range(2):
-            if self.search_author() and self.open_searched_author():
-                self.browse(3, 3)
+            if not self.search_author() or not self.open_searched_author():
+                raise RuntimeError('重复搜索未进入作者主页：' + self._last_skip_reason)
+            self.browse(3, 3)
             self.return_feed()
 
     @SeaOfStarsAW.function_log

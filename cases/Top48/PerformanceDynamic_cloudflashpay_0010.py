@@ -30,8 +30,14 @@ class PerformanceDynamic_cloudflashpay_0010(DynamicAppCase):
 
     def pay(self):
         self.app_home()
-        self.open_control(lambda: self.has(rid='tv_title', text='收付款'),
-                          '未进入收付款页', rid='firstItem')
+        self.click(rid='firstItem')
+        self.wait_for(lambda: self.has(rid='tv_title', text='收付款')
+                      or self.has(rid='btn_next') and self.has(rid='btn_register'),
+                      '未进入收付款页')
+        if self.has(rid='btn_next') and self.has(rid='btn_register'):
+            raise RuntimeError('云闪付收付款需要登录测试账号；当前为手机号登录页')
+        # 用例表要求“收付款，并返回”，扫一扫从首页独立进入。
+        self.app_home()
 
     def scan(self):
         if self.has(rid='tv_upper_skid', text='扫一扫'):

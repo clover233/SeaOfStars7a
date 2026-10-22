@@ -25,6 +25,15 @@ def component(output, marker):
 
 
 class MainDisplayMixin:
+    def screen_size(self):
+        """读取 display 0 尺寸，避免副屏 rotation 导致 window_size 宽高互换。"""
+        output = self.d.shell('dumpsys window displays').output
+        main = display_section(output, r'Display: mDisplayId=(\d+)\b')
+        match = re.search(r'\bcur=(\d+)x(\d+)', main)
+        if match:
+            return tuple(map(int, match.groups()))
+        return self.d.screenshot(display_id=0).size
+
     def current_app(self):
         windows = self.d.shell('dumpsys window displays').output
         main = display_section(windows, r'Display: mDisplayId=(\d+)\b')

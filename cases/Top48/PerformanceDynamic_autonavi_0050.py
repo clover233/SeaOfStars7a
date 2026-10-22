@@ -3,6 +3,14 @@ from Cases.Top48.autonavi_common import AutonaviDynamicCase
 
 
 class PerformanceDynamic_autonavi_0050(AutonaviDynamicCase):
+    def click_point(self, x, y):
+        # 打车 WebView 实机核对使用主屏触屏驻留点击，坐标来自控件 bounds。
+        self.foreground()
+        result = self.d.shell('input touchscreen -d 0 swipe {0} {1} {0} {1} 250'.format(
+            round(x), round(y)))
+        if result.exit_code:
+            raise RuntimeError('主屏点击失败：' + result.output)
+
     def taxi_tab(self):
         self.transition(lambda: self.click_node(text='打车', rid=self.PREFIX + 'tab_name_v2'),
                         lambda: self.has(text='你要去哪儿'), '未进入打车标签页')

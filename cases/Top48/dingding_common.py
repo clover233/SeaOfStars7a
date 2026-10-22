@@ -1,5 +1,8 @@
 """钉钉与今日头条动态性能用例的可复用页面操作。"""
 import logging
+import re
+
+from Cases.Top48.screen_text import ScreenshotText
 
 from Cases.Top48.dynamic_apps_common import DynamicAppCase
 
@@ -41,7 +44,14 @@ class DingTalkDynamicCase(DynamicAppCase):
 
     def conference_page(self):
         self.return_to(self.navigation_ready, '未返回钉钉底部导航')
-        self.switch_tab('会议')
+        if self.bottom_tabs('会议'):
+            self.switch_tab('会议')
+        else:
+            # 当前版本将会议收在底栏“更多”面板中。
+            self.open_control(lambda: self.has(text='会议', rid='app_name'),
+                              '更多面板没有会议入口', text='更多', rid='home_bottom_tab_text')
+            self.open_control(lambda: self.has(text='发起会议', rid='item_text'),
+                              '钉钉会议页未加载', text='会议', rid='app_name')
         self.wait_for(lambda: self.has(text='发起会议', rid='item_text'),
                       '钉钉会议页未加载')
 
@@ -66,7 +76,12 @@ class ToutiaoDynamicFlow(DynamicAppCase):
 
     def article_ready(self):
         # 图文和视频热榜详情的右上角语义不同，均有返回和更多操作控件。
-        return self.has(desc='返回') and (self.has(desc='更多操作') or self.has(desc='more'))
+        if self.has(desc='返回') and (self.has(desc='更多操作') or self.has(desc='more')):
+            return True
+        # 新版信息流文章的返回箭头没有无障碍描述，核对文章Activity、作者和正文。
+        return (self.current_app().get('activity', '').endswith('ArticleInflowActivity')
+                and self.has(desc='更多操作') and self.has(rid='n07')
+                and any(len(node.get('content-desc', '')) > 80 for node in self.nodes()))
 
     def search_page(self):
         self.open_control(lambda: self.has(rid='cx'),
@@ -77,16 +92,38 @@ class ToutiaoDynamicFlow(DynamicAppCase):
         self.transition(lambda: self.click(desc='热榜'),
                         lambda: self.channel_selected('热榜'),
                         '今日头条未切换到热榜频道')
-        # 热榜主体为自绘卡片，内容加载后会暴露“焦点关注”语义；该控件用于避免点到骨架屏。
-        self.wait_for(lambda: self.has(desc='焦点关注'), '今日头条热榜内容未加载', timeout=20)
+        # 新版热榜正文为自绘层，“焦点关注”节点已移除；用截图核对榜单与排名。
+        self.wait_for(lambda: self.has(desc='焦点关注') or bool(self.first_rank_rows()),
+                      '今日头条热榜内容未加载', timeout=20)
+
+    def first_rank_rows(self):
+        rows = ScreenshotText().read(self.d)
+        if not any('头条热榜' in r['text'] for r in rows):
+            return []
+        return [r for r in rows if .24 < r['y'] < .85 and len(r['text']) > 8
+                and re.match(r'^[1①](?:\s|[^0-9])', r['text'])]
 
     def first_hot_item(self):
-        if not self.channel_selected('热榜') or not self.has(desc='焦点关注'):
+        if not self.channel_selected('热榜'):
             raise RuntimeError('热榜首条点击前页面未完成加载')
-        # 热榜新闻卡片由自绘层承载，没有稳定控件 id。以已选中热榜和加载完成作前置，
-        # 再按屏幕比例点击第一张新闻卡的标题区，避开顶部专题与 AI 摘要区域。
-        self.transition(lambda: self.pct(.28, .50), self.article_ready,
-                        '热榜第一条文章未打开')
+        # 先恢复榜单顶部；仅点击截图中排名1的标题，避免固定位置误中其它排名。
+        for _ in range(8):
+            rows = self.first_rank_rows()
+            if rows:
+                break
+            self.swipe(y1=.32, y2=.78)
+        if not rows:
+            raise RuntimeError('热榜没有可核对的排名1标题')
+        row = min(rows, key=lambda r: r['y'])
+        self.pct(row['x'] + row['w']/2, row['y'] + row['h']/2)
+        # 新版榜单首条进入话题聚合页，仍是该排名的详情；与推荐文章详情分开核验。
+        self.wait_for(lambda: self.article_ready() or self.hot_topic_ready(),
+                      '热榜第一条详情未打开', timeout=30)
+
+    def hot_topic_ready(self):
+        return (self.current_app().get('activity', '').endswith('SearchActivity')
+                and self.has(text='完整榜单') and self.has(rid='cx')
+                and self.has(text='参与讨论', prefix=True))
 
     def channel_selected(self, name):
         return any(node.get('selected') == 'true' for node in self.nodes(desc=name))
@@ -99,13 +136,21 @@ class ToutiaoDynamicFlow(DynamicAppCase):
 
     def first_recommended_article(self):
         self.switch_channel('推荐')
-        height = self.d.window_size()[1]
-        cards = [node for node in self.nodes()
-                 if node.get('content-desc', '').endswith('文章')
-                 and self.bounds(node)[1] > height * .14
-                 and self.bounds(node)[1] < height * .80]
-        if not cards:
+        height = self.screen_size()[1]
+        def visible_articles():
+            return [node for node in self.nodes()
+                    if node.get('content-desc', '').endswith('文章')
+                    and height * .14 < self.bounds(node)[1] < height * .80
+                    and self.bounds(node)[3] - self.bounds(node)[1] > height * .03]
+        self.wait_for(lambda: bool(visible_articles()) or self.has(desc='播放视频'),
+                      '推荐内容未加载', timeout=30)
+        # 推荐流可能先显示视频，按业务要求继续找到首篇图文文章。
+        for _ in range(10):
+            if visible_articles():
+                break
+            self.swipe(y1=.8, y2=.35)
+        if not visible_articles():
             raise RuntimeError('推荐页没有可打开的文章卡片')
-        card = min(cards, key=lambda node: self.bounds(node)[1])
-        self.transition(lambda: self.click_node(card), self.article_ready,
-                        '推荐第一篇文章未打开')
+        card = min(visible_articles(), key=lambda node: self.bounds(node)[1])
+        self.click_node(card)
+        self.wait_for(self.article_ready, '推荐第一篇文章未打开', timeout=30)

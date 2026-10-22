@@ -3,8 +3,8 @@
 优先使用 resource-id/text/description。Canvas 没有可用控件时，才在已知页面
 按 window_size 换算比例坐标。协议、登录等前置条件失败会中断，避免空跑采集。
 
-0020 的理财、测试聊天及设置操作也在本模块。默认使用“测试账号”和相册前5张；
-可通过 ALIPAY_TEST_CONTACT、ALIPAY_TEST_PHOTOS 配置测试收件人和素材。
+0020 的理财、测试聊天及设置操作也在本模块。使用专用测试相册中的5张生成图片；
+可通过 ALIPAY_TEST_CONTACT、ALIPAY_TEST_PHOTOS 配置测试联系人和专用相册内序号。
 """
 import logging
 import os
@@ -76,7 +76,7 @@ class AlipayCase(MainDisplayMixin, Case):
             raise ValueError('坐标必须为屏幕比例，且在 (0, 1) 内')
         if self.current_app()['package'] != PACKAGE:
             raise RuntimeError('比例点击前台不是支付宝，停止操作')
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         px, py = round(width * x), round(height * y)
         # XRiver Canvas 在本机过滤 u2 短按；向主屏注入 200ms 的单次点击。
         result = self.d.shell('input -d 0 swipe {0} {1} {0} {1} 200'.format(px, py))
@@ -84,7 +84,7 @@ class AlipayCase(MainDisplayMixin, Case):
             raise RuntimeError('支付宝主屏点击失败：' + result.output)
 
     def swipe(self, upward=True):
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         start, end = (0.78, 0.32) if upward else (0.32, 0.78)
         self.d.swipe(round(width * 0.5), round(height * start),
                      round(width * 0.5), round(height * end), duration=0.4)
@@ -97,7 +97,7 @@ class AlipayCase(MainDisplayMixin, Case):
                 time.sleep(pause)
 
     def launcher_gesture(self):
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         self.d.swipe(round(width * 0.5), round(height * 0.995),
                      round(width * 0.5), round(height * 0.62), duration=0.25)
         # 按主屏焦点检查桌面，避免副屏的 launcher 干扰返回判断。
@@ -139,7 +139,7 @@ class AlipayCase(MainDisplayMixin, Case):
                 return
             if self.current_app()['package'] != PACKAGE:
                 raise RuntimeError('侧滑返回途中已离开支付宝')
-            width, height = self.d.window_size()
+            width, height = self.screen_size()
             self.d.swipe(round(width * 0.005), round(height * 0.5),
                          round(width * 0.65), round(height * 0.5), duration=0.3)
             time.sleep(0.8)
@@ -155,7 +155,7 @@ class AlipayCase(MainDisplayMixin, Case):
             # 首次理财促销弹窗在层级中是一张无 id 的全屏 ImageView。
             # 只在该已核实结构出现时点击截图中的关闭位置。
             def overlay():
-                width, height = self.d.window_size()
+                width, height = self.screen_size()
                 for node in ET.fromstring(self.d.dump_hierarchy()).iter('node'):
                     if node.get('package') == PACKAGE and node.get('class') == 'android.widget.ImageView' and not node.get('resource-id'):
                         box = list(map(int, re.findall(r'\d+', node.get('bounds', ''))))
@@ -208,6 +208,12 @@ class AlipayCase(MainDisplayMixin, Case):
         if self.d(text='明天继续来领惊喜红包哦～').exists:
             self.relative_click(0.5, 0.73)
             self.wait_for(lambda: not self.d(text='明天继续来领惊喜红包哦～').exists, '闪购活动弹层未关闭')
+        # 新版券包文案已变为“碰一下支付券”，异步出现在转账框架之后。
+        rows = self._screen_text.read(self.d) if self._screen_text.command else []
+        if any('碰一下支付券' in r['text'] for r in rows) and any('开心收下' in r['text'] for r in rows):
+            self.relative_click(.5, .773)
+            self.wait_for(lambda: not any('开心收下' in r['text'] for r in self._screen_text.read(self.d)),
+                          '碰一下支付券弹层未关闭')
 
     def canvas_tap(self, text, ratio, activity):
         if self.d(text=text).exists:
@@ -246,6 +252,7 @@ class AlipayCase(MainDisplayMixin, Case):
         self.wait_for(lambda: self.d(text='转到银行卡').exists, '未返回转账页')
 
     def open_bank(self):
+        self.dismiss_promotions()
         self.tap(text='转到银行卡')
         self.wait_for(lambda: 'TFToCardForm' in self.current_app()['activity'], '未打开转到银行卡页')
 
@@ -354,6 +361,8 @@ class AlipayCase(MainDisplayMixin, Case):
 
 
 class AlipayMessageCase(AlipayCase):
+    TEST_ALBUM = '动态性能素材'
+
     def set_up(self):
         self.contact = os.environ.get('ALIPAY_TEST_CONTACT', '测试账号').strip()
         raw_photos = os.environ.get('ALIPAY_TEST_PHOTOS', '1,2,3,4,5')
@@ -365,6 +374,8 @@ class AlipayMessageCase(AlipayCase):
             raise RuntimeError('0020 前置条件：配置 ALIPAY_TEST_CONTACT=准确联系人名，'
                                'ALIPAY_TEST_PHOTOS=五张允许发送的照片序号（如 1,2,3,4,5）')
         super().set_up()
+        from Cases.Top48.fixture_images import prepare_images
+        prepare_images(self.d, self.TEST_ALBUM, 5)
 
     def open_steady(self):
         target = self.d(text='稳健理财', resourceId='com.alipay.android.widget.fortunehome:id/title')
@@ -389,11 +400,13 @@ class AlipayMessageCase(AlipayCase):
             raise RuntimeError('稳健理财需核实首次活动遮罩，请配置 ANDROID_OCR_COMMAND')
         def covered():
             texts = [row['text'].replace(' ', '') for row in reader.read(self.d)]
-            return any('去看看' in text for text in texts) and any('攒钱多点米' in text for text in texts)
+            return (any('去看看' in text for text in texts) and any('攒钱多点米' in text for text in texts)
+                    or any('一键领红包' in text for text in texts)
+                    and any('超级星期' in text for text in texts))
         for _ in range(3):
             if not covered():
                 return
-            # 当前“攒钱多点米”介绍页的关闭叉号；不点击活动主按钮。
+            # 实机核对的“攒钱多点米/超级星期2”活动遮罩关闭叉号。
             self.relative_click(.5, .717)
             time.sleep(.8)
         self.wait_for(lambda: not covered(), '稳健理财活动遮罩未关闭')
@@ -402,6 +415,8 @@ class AlipayMessageCase(AlipayCase):
         # 当前版本的热销区叫“大家都在买/一周热门榜”。从卡片容器读取产品名，
         # 避免推荐变化后仍点击旧名称，也排除屏幕右侧预加载的其他榜单。
         for _ in range(8):
+            # 活动遮罩可能在浏览期间延迟弹出，先关闭再读取产品卡片。
+            self.close_steady_intro()
             root = ET.fromstring(self.d.dump_hierarchy())
             for section in root.iter('node'):
                 if section.get('class') == 'android.view.View' and section.get('text') in ('一周热门榜', '热销'):
@@ -411,12 +426,23 @@ class AlipayMessageCase(AlipayCase):
                     if len(candidates) > 1:
                         product = candidates[1]
                         box = bounds(product)
-                        width, height = self.d.window_size()
+                        width, height = self.screen_size()
                         if len(box) == 4 and box[0] < width * 0.5 and height * 0.14 < box[1] < height * 0.85:
                             logging.info('打开热销第一款产品：%s', product.get('text'))
                             self.tap(text=product.get('text'))
                             self.wait_for(lambda: not self.d(text='稳健理财', resourceId='com.alipay.multiplatform.phone.xriver_integration:id/textView_title').exists,
                                           '点击后未进入理财产品页')
+                            name = product.get('text')
+                            def product_ready():
+                                if self.d(textContains=name).exists:
+                                    return True
+                                # XRiver 产品详情也可能只导出画布，按截图核对同款产品和详情内容。
+                                texts = [row['text'].replace(' ', '')
+                                         for row in self._screen_text.read(self.d)]
+                                return (any(name.replace(' ', '') in text for text in texts)
+                                        and any('立即买入' in text or '净值' in text for text in texts))
+                            self.wait_for(product_ready,
+                                          '理财产品正文未加载：' + name, timeout=30)
                             return
             self.swipe()
             time.sleep(1)
@@ -436,11 +462,21 @@ class AlipayMessageCase(AlipayCase):
         self.wait_for(lambda: 'ContactMainPageActivity' in self.current_app()['activity'],
                       '未进入通讯录')
         result = self.d(text=self.contact, resourceId='com.alipay.mobile.socialcontactsdk:id/list_item_title')
+        contacts = set()
         for _ in range(10):
+            root = ET.fromstring(self.d.dump_hierarchy())
+            contacts.update(node.get('text') for node in root.iter('node')
+                            if node.get('resource-id') == 'com.alipay.mobile.socialcontactsdk:id/list_item_title'
+                            and node.get('text'))
             if result.exists:
                 break
             self.swipe()
             time.sleep(0.5)
+        if not result.exists and not os.environ.get('ALIPAY_TEST_CONTACT') and len(contacts) == 1:
+            # 本轮用户明确指定：通讯录仅一个联系人时使用该联系人。
+            self.contact = contacts.pop()
+            result = self.d(text=self.contact, resourceId='com.alipay.mobile.socialcontactsdk:id/list_item_title')
+            logging.info('已核对通讯录唯一测试联系人：%s', self.contact)
         if not result.exists or result.count != 1:
             raise RuntimeError('测试联系人未找到或不唯一：{}'.format(self.contact))
         result.click()
@@ -464,7 +500,9 @@ class AlipayMessageCase(AlipayCase):
             raise RuntimeError('未找到唯一的聊天输入框，请先完成测试账号聊天预置')
         edit.set_text('动态性能测试')
         self.tap(resource_id='com.alipay.mobile.chatapp:id/sendBtn', description='发送')
-        self.wait_for(lambda: self.d(text='动态性能测试', resourceId='com.alipay.mobile.chatapp:id/chat_msg_text').exists,
+        # 本版空输入框会把 hint“发送消息...”也导出为 text，不能要求 text 必须为空。
+        self.wait_for(lambda: self.d(text='动态性能测试', resourceId='com.alipay.mobile.chatapp:id/chat_msg_text').exists
+                      and edit.info.get('text') != '动态性能测试',
                       '消息发送后未出现在聊天记录中')
 
     def chat_album(self):
@@ -477,10 +515,40 @@ class AlipayMessageCase(AlipayCase):
             more.click()
         self.tap(text='图片')
         self.wait_for(lambda: 'PhotoSelectActivity' in self.current_app()['activity'], '未打开聊天相册')
+        self.tap(resource_id='com.alipay.android.phone.wallet.beephoto:id/tv_bucket')
+        # 相册数量增加后专用素材会排在首屏之外，只在相册列表中查找同名节点。
+        for _ in range(10):
+            if self.d(text=self.TEST_ALBUM,
+                      resourceId='com.alipay.android.phone.wallet.beephoto:id/tv_album_name').exists:
+                break
+            if not self.d(resourceId='com.alipay.android.phone.wallet.beephoto:id/tv_album_name').exists:
+                raise RuntimeError('未打开相册目录列表')
+            self.swipe()
+            time.sleep(.5)
+        album = self.d(text=self.TEST_ALBUM,
+                       resourceId='com.alipay.android.phone.wallet.beephoto:id/tv_album_name')
+        for _ in range(3):
+            if self.d(text=self.TEST_ALBUM,
+                      resourceId='com.alipay.android.phone.wallet.beephoto:id/tv_bucket').exists:
+                break
+            if not album.exists:
+                raise RuntimeError('相册目录中没有专用测试素材')
+            # 列表滚动停止后按原生节点中心短按，避免滚动中的瞬时click被吞掉。
+            box = album.info['bounds']
+            width, height = self.screen_size()
+            self.relative_click((box['left'] + box['right']) / (2 * width),
+                                (box['top'] + box['bottom']) / (2 * height))
+            time.sleep(1)
+        self.wait_for(lambda: self.d(text=self.TEST_ALBUM,
+                      resourceId='com.alipay.android.phone.wallet.beephoto:id/tv_bucket').exists,
+                      '未进入专用测试相册')
 
     def send_test_photos(self):
         if 'PhotoSelectActivity' not in self.current_app()['activity']:
             raise RuntimeError('当前不是聊天相册')
+        if not self.d(text=self.TEST_ALBUM,
+                      resourceId='com.alipay.android.phone.wallet.beephoto:id/tv_bucket').exists:
+            raise RuntimeError('当前不是专用测试相册，停止发送图片')
         initial = ET.fromstring(self.d.dump_hierarchy())
         if any(node.get('checked') == 'true' for node in initial.iter('node')):
             raise RuntimeError('相册已有勾选图片，请清空选择后重跑')

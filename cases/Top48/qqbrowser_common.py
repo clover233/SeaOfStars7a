@@ -3,6 +3,7 @@ import time
 from urllib.parse import urlsplit
 
 from Cases.Top48.qq_common import QQDynamicBase, QQStepSkipped
+from Cases.Top48.screen_text import ScreenshotText
 
 
 class QQBrowserDynamicCase(QQDynamicBase):
@@ -29,14 +30,16 @@ class QQBrowserDynamicCase(QQDynamicBase):
         return node.get('text') or node.get('content-desc') or ''
 
     def main_ready(self):
-        return self.has(desc='搜索栏') and self.has(rid='right_top_multi_window')
+        # 新版多窗口入口已移到底栏，取消旧版右上角 resource-id。
+        return (self.has(desc='搜索栏') and (self.has(rid='right_top_multi_window')
+                or self.has(text='首页') and self.has(text='多窗口')))
 
     def main_page(self):
         for _ in range(8):
             if self.main_ready():
                 return
-            if self.has(desc='首页'):
-                self.click(desc='首页')
+            if self.has(desc='首页') or self.has(text='首页'):
+                self.choose('首页')
                 time.sleep(1)
             else:
                 self.back()
@@ -46,6 +49,7 @@ class QQBrowserDynamicCase(QQDynamicBase):
         self._site_reason = None
         self._detail_reason = None
         self._detail_open = False
+        self._site_address = None
         self.start()
         # 已安装版本有开屏广告，等待结束或仅点击命名“跳过”控件。
         for _ in range(8):
@@ -79,12 +83,17 @@ class QQBrowserDynamicCase(QQDynamicBase):
             self.click(rid='search_frame_input_right', text='搜索')
         else:
             self.click(rid='search_frame_input_center_search')
-        self.wait_for(lambda:self.has(rid='white_tv_title', text='学信网'),
+        self.wait_for(self.results_ready,
                       '未进入学信网搜索结果', timeout=25)
         time.sleep(2)
 
+    def results_ready(self):
+        return (self.has(rid='white_tv_title', text='学信网')
+                or self.has(text='学信网') and self.has(desc='全部') and self.has(desc='资讯'))
+
     def browse_results(self):
-        self.require(rid='white_tv_title', text='学信网')
+        if not self.results_ready():
+            raise RuntimeError('浏览前未进入学信网搜索结果')
         self.browse(2, 2)
 
     def dismiss_default_prompt(self):
@@ -108,38 +117,94 @@ class QQBrowserDynamicCase(QQDynamicBase):
     def site_ready(self):
         self.dismiss_default_prompt()
         # 核对原生地址栏；搜索摘要出现官网域名不能代表已进入官网。
-        return (not self.has(rid='white_tv_title', text='学信网')
-                and any(self.official_address(n.get('text', ''))
-                        for n in self.nodes(rid='third_web_search_title')))
+        return (not self.results_ready()
+                and bool(self.nodes(rid='third_web_search_title'))
+                and (any(self.official_address(n.get('text', ''))
+                         for n in self.nodes(rid='third_web_search_title'))
+                     or bool(getattr(self, '_site_address', None))))
+
+    def verify_address(self):
+        # 新版地址栏显示网页标题，点开后首条原生语义才显示当前网址。
+        # 只核验顶部当前网址，不能拿下方搜索建议中的官方域名代替。
+        titles = self.nodes(rid='third_web_search_title')
+        if not titles:
+            raise RuntimeError('当前页面没有浏览器地址栏')
+        title = titles[0].get('text', '')
+        if self.official_address(title):
+            self._site_address = title
+            return title
+        self.dismiss_default_prompt()
+        self.transition(lambda: self.click(rid='third_web_search_title'),
+                        self.search_edit_ready, '地址编辑页未打开')
+        height = self.screen_size()[1]
+        def addresses():
+            self.dismiss_default_prompt()
+            return [self.label(n) for n in self.nodes()
+                    if height * .13 < self.bounds(n)[1] < height * .23
+                    and self.label(n).startswith(('https://', 'http://'))]
+        try:
+            self.wait_for(lambda: bool(addresses()), '当前网页网址未显示', timeout=10)
+            current = addresses()[0]
+            if not self.official_address(current):
+                raise RuntimeError('当前网页不是学信网官方域名：' + current)
+            self._site_address = current
+            return current
+        finally:
+            self.back()
 
     def official(self):
-        self.require(rid='white_tv_title', text='学信网')
+        if not self.results_ready():
+            raise RuntimeError('打开官网前不在学信网搜索结果')
         candidates=[n for n in self.nodes()
                     if ('www.chsi.com.cn' in self.label(n) or self.label(n)=='https://www.chsi.com.cn/')
-                    and self.bounds(n)[1] > self.d.window_size()[1]*.18]
+                    and self.bounds(n)[1] > self.screen_size()[1]*.18]
         if candidates:
             self.click_node(sorted(candidates,key=lambda n:self.bounds(n)[1])[0])
             time.sleep(2)
+        else:
+            # 搜索网页没有正文节点时，按截图识别首条官方结果标题并按比例点击。
+            rows = ScreenshotText().read(self.d)
+            headings = [r for r in rows if '中国高等教育学生信息网' in r['text']
+                        and .2 < r['y'] < .6]
+            if headings:
+                row = min(headings, key=lambda r: r['y'])
+                self.pct(row['x'] + row['w']/2, row['y'] + row['h']/2)
+                self.wait_for(lambda: bool(self.nodes(rid='third_web_search_title')),
+                              '首条官方结果未打开', timeout=20)
+                self.verify_address()
+                self.adapt('搜索正文未导出控件，按截图标题的比例位置进入首条官方结果并核验域名')
         if not self.site_ready():
             self.shell('am start --display 0 -a android.intent.action.VIEW -d ' + self.OFFICIAL_URL + ' -p ' + self.PACKAGE)
             self.adapt('搜索首条结果未能核验官方域名，改为在 QQ 浏览器打开学信网官方 HTTPS 地址')
+            self.wait_for(lambda: bool(self.nodes(rid='third_web_search_title')),
+                          '官方地址页面未打开', timeout=20)
+            self.verify_address()
         try:
             self.wait_for(self.site_ready,'官网页面标识未加载',timeout=25)
-            time.sleep(2)
+            self.wait_for(self.site_body_ready, '学信网官网正文未加载', timeout=45)
         except RuntimeError:
             # 网络/网站验证页只记录不可用，不操作验证码或账号登录。
             self._site_reason='当前网络或网站验证页面未展示学信网官网正文'
             raise QQStepSkipped(self._site_reason)
+
+    def site_body_ready(self):
+        # 地址栏可在断网错误页保留官网域名，必须另外确认网页正文已渲染。
+        rows = ScreenshotText().read(self.d)
+        body = [r['text'] for r in rows if .15 < r['y'] < .89]
+        return (not any('当前网络不可用' in text or '网页无法打开' in text for text in body)
+                and any('学信网' in text for text in body)
+                and sum(len(text) >= 12 for text in body) >= 2)
 
     def browse_site(self):
         if self._site_reason:
             raise QQStepSkipped(self._site_reason)
         if not self.site_ready():
             raise RuntimeError('浏览前未确认学信网官网')
+        self.wait_for(self.site_body_ready, '浏览前官网正文未加载', timeout=30)
         self.browse(2, 2)
 
     def body_labels(self):
-        height=self.d.window_size()[1]
+        height=self.screen_size()[1]
         return {self.label(n) for n in self.nodes()
                 if height*.16 < self.bounds(n)[1] < height*.89 and self.label(n)}
 
@@ -148,7 +213,7 @@ class QQBrowserDynamicCase(QQDynamicBase):
             self._detail_reason=self._site_reason
             raise QQStepSkipped(self._detail_reason)
         self.wait_for(self.site_ready,'进入内容前不在官网')
-        height=self.d.window_size()[1]
+        height=self.screen_size()[1]
         # 按可见顺序取官网正文链接；不固定会随时间更新的新闻标题。
         links=[n for n in self.nodes() if n.get('clickable')=='true'
                and len(self.label(n)) >= 12 and height*.2 < self.bounds(n)[1] < height*.85
@@ -163,35 +228,32 @@ class QQBrowserDynamicCase(QQDynamicBase):
         self._detail_open=True
 
     def first_content_from_screenshot_layout(self):
-        # QQ 内核未导出网页正文节点。实机截图核对：移动首页首条内容在
-        # 原生地址栏下方约 0.585 个屏幕宽度处；随宽度缩放，不能用固定像素。
-        titles=self.nodes(rid='third_web_search_title')
-        bars=self.nodes(desc='PortalAddressBarView')
-        if not titles or not bars or titles[0].get('text')!='chsi.com.cn/wap/index.jsp':
-            self._detail_reason='网页正文未导出控件，且当前布局不符合已核对的移动官网首页'
-            raise QQStepSkipped(self._detail_reason)
+        # 官网正文没有节点。先恢复顶部，按当前截图的首条正文标题定位，
+        # 不依赖固定标题或绝对像素；点击后再次核验官方域名和网址变化。
+        before = self.verify_address()
         for _ in range(3):
-            self.swipe(y1=.32,y2=.78)
+            self.swipe(y1=.32, y2=.78)
             time.sleep(.5)
-        width,height=self.d.window_size()
-        y=self.bounds(bars[0])[3]+width*.585
-        if y>=height*.85:
-            self._detail_reason='当前屏幕比例无法容纳已核对的官网首条内容位置'
-            raise QQStepSkipped(self._detail_reason)
-        self.point(width*.5,y)
-        def changed():
-            nodes=self.nodes(rid='third_web_search_title')
-            if not nodes:
-                return False
-            address=nodes[0].get('text','')
-            return self.official_address(address) and address!='chsi.com.cn/wap/index.jsp'
-        try:
-            self.wait_for(changed,'比例点击后未确认进入官网内容页',timeout=20)
-        except RuntimeError:
-            self._detail_reason='官网布局可能变化，比例点击未确认进入内容页'
-            raise QQStepSkipped(self._detail_reason)
-        self._detail_open=True
-        self.adapt('网页正文没有控件节点，按实机截图核对的相对位置点击首条内容，并验证官方域名及地址变化')
+        rows = ScreenshotText().read(self.d)
+        headings = [r for r in rows if .36 < r['y'] < .65 and r['h'] < .06
+                    and len(r['text']) >= 12
+                    and not any(word in r['text'] for word in ('登录', '注册', '官方网站'))]
+        if not headings:
+            raise QQStepSkipped('官网首屏没有可核对的正文标题')
+        row = min(headings, key=lambda r: r['y'])
+        self.pct(row['x'] + row['w']/2, row['y'] + row['h']/2)
+        time.sleep(2)
+        after = self.verify_address()
+        if after == before:
+            # QQ 内核有时在官网容器内打开内容，原生栏仍保留首页网址。
+            # 必须同时确认正文确实变化，不能只把同一页面再次截图当成详情。
+            previous = {r['text'] for r in rows if .15 < r['y'] < .89}
+            current = {r['text'] for r in ScreenshotText().read(self.d) if .15 < r['y'] < .89}
+            if len(previous.symmetric_difference(current)) < 3:
+                raise RuntimeError('点击官网首条内容后网址与正文均未变化')
+            self.adapt('官网内容在浏览器容器内打开，核验官方域名及正文变化')
+        self._detail_open = True
+        self.adapt('网页正文未导出节点，按截图首条标题的比例位置点击并核验地址或正文变化')
 
     def browse_detail(self):
         if self._detail_reason or self._site_reason:

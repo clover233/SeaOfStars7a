@@ -14,7 +14,7 @@ class JingdongDynamicCase(ShoppingDynamicCase):
         return self.activity_has('MainFrameActivity') and self.find_label('首页') is not None
 
     def bottom(self, label):
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         nodes = [n for n in self.nodes() if self.bounds(n)[1] > height*.85
                  and (n.get('text') == label or n.get('content-desc', '').startswith(label))]
         if not nodes:
@@ -27,7 +27,7 @@ class JingdongDynamicCase(ShoppingDynamicCase):
         time.sleep(1)
         # 底栏首页会恢复上次的“秒送”子页；还需选择顶部“首页”，否则
         # 搜索会进入外卖搜索，手机数码/京东超市等入口也不会出现。
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         headers = [n for n in self.nodes(text='首页') if self.bounds(n)[1] < height*.2]
         if headers and headers[0].get('selected') != 'true':
             self.click_node(headers[0])
@@ -121,7 +121,7 @@ class JingdongDynamicCase(ShoppingDynamicCase):
         return self.activity_has('ProductDetailActivity') and self.find_label('客服') is not None
 
     def first_product(self):
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         # 搜索商品无稳定标题 ID。描述含价格的卡片是完整商品入口，过滤购物车
         # 小按钮和顶部店铺广告，取当前屏幕第一条商品。
         cards = [n for n in self.nodes()
@@ -245,7 +245,7 @@ class JingdongDynamicCase(ShoppingDynamicCase):
                       '商品未成功加入购物车', timeout=15)
 
     def product_cart_quantity(self):
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         counts = []
         for node in self.nodes():
             desc = node.get('content-desc', '')
@@ -255,7 +255,7 @@ class JingdongDynamicCase(ShoppingDynamicCase):
         return max(counts, default=0)
 
     def open_first_grocery_product(self):
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         images = [n for n in self.nodes() if n.get('class') == 'android.widget.Image'
                   and len(n.get('content-desc', '')) > 5
                   and self.bounds(n)[0] > width*.18
@@ -340,7 +340,7 @@ class JingdongDynamicCase(ShoppingDynamicCase):
         raise RuntimeError('外卖列表未加载；当前页面 {}'.format(self.current_app()))
 
     def first_merchant(self):
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         cards = [n for n in self.nodes() if '起送' in n.get('content-desc', '')
                  and self.bounds(n)[2]-self.bounds(n)[0] > width*.7
                  and self.bounds(n)[3]-self.bounds(n)[1] > height*.07]
@@ -400,9 +400,9 @@ class JingdongDynamicCase(ShoppingDynamicCase):
     def live_list(self):
         self.main_page()
         self.bottom('逛')
-        self.wait_for(lambda: self.find_label('直播') is not None, '逛页面未加载')
+        self.wait_for(lambda: self.check_access() or self.find_label('直播') is not None, '逛页面未加载')
         self.label('直播', optional=True)
-        self.wait_for(lambda: self.find_label('直播间名称：', prefix=True) is not None,
+        self.wait_for(lambda: self.check_access() or self.find_label('直播间名称：', prefix=True) is not None,
                       '直播列表没有可观看的直播间', timeout=20)
 
     def first_live(self):
@@ -426,7 +426,7 @@ class JingdongDynamicCase(ShoppingDynamicCase):
     def mine(self):
         self.main_page()
         self.bottom('我的')
-        self.wait_for(lambda: self.find_label('待收货') is not None,
+        self.wait_for(lambda: self.check_access() or self.find_label('待收货') is not None,
                       '我的页面订单入口未加载')
 
     def orders(self):

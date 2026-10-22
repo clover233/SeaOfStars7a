@@ -57,7 +57,7 @@ class DynamicAppCase(BaiduDynamicCase):
 
     def click_node(self, node):
         left, top, right, bottom = self.bounds(node)
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         left, top = max(0, left), max(0, top)
         right, bottom = min(width, right), min(height, bottom)
         if right <= left or bottom <= top:
@@ -87,12 +87,12 @@ class DynamicAppCase(BaiduDynamicCase):
     def pct(self, x, y):
         if not (0 < x < 1 and 0 < y < 1):
             raise ValueError('比例必须在 0 到 1 之间')
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         self.point(width * x, height * y)
 
     def swipe(self, x1=.5, y1=.78, x2=.5, y2=.32, duration=400):
         self.foreground()
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         result = self.d.shell('input -d 0 swipe {} {} {} {} {}'.format(
             round(width*x1), round(height*y1), round(width*x2), round(height*y2), duration))
         if result.exit_code:
@@ -118,17 +118,18 @@ class DynamicAppCase(BaiduDynamicCase):
         time.sleep(.8)
 
     def start(self):
-        self.d.app_start(self.PACKAGE, use_monkey=True)
-        def resumed():
-            try:
-                return self.current_app()['package'] == self.PACKAGE
-            except RuntimeError as error:
-                # 启动切换期间焦点与 topResumedActivity 可能短暂同时为空。
-                # 仅将这一瞬态作为未就绪，其他错误仍交给用例报告。
-                if str(error) == '无法识别系统前台应用':
-                    return False
-                raise
-        self.wait_for(resumed,
+        # 启动与后续前台检查统一使用主显示屏 display 0。
+        output = self.d.shell(['cmd', 'package', 'resolve-activity', '--brief',
+                               '-a', 'android.intent.action.MAIN',
+                               '-c', 'android.intent.category.LAUNCHER', self.PACKAGE]).output
+        component = next((line.strip() for line in output.splitlines()
+                          if line.strip().startswith(self.PACKAGE + '/')), None)
+        if not component:
+            raise RuntimeError('未找到应用启动入口：' + self.PACKAGE)
+        result = self.d.shell(['am', 'start', '-W', '--display', '0', '-n', component])
+        if result.exit_code or 'Error:' in result.output:
+            raise RuntimeError('应用启动失败：' + result.output)
+        self.wait_for(lambda: self.current_app()['package'] == self.PACKAGE,
                       '应用未进入前台', timeout=25)
         time.sleep(2)
 
@@ -148,7 +149,7 @@ class DynamicAppCase(BaiduDynamicCase):
 
     def first_shop(self):
         # 搜索结果动态排序；取当前屏幕第一条商户条目，而非写死商户名称。
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         nodes = [n for n in self.nodes(desc='gridView_item_wrapper')
                  if self.bounds(n)[2] - self.bounds(n)[0] > width * .8
                  and self.bounds(n)[3] - self.bounds(n)[1] > height * .09

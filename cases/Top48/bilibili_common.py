@@ -38,7 +38,7 @@ class BilibiliDynamicCase(BaiduDynamicCase):
     def click_point(self, x, y):
         self.foreground()
         # 此 Android 17 实机过滤 u2 短按；100ms 系统注入手势可正常响应。
-        self.shell('input swipe {0} {1} {0} {1} 100'.format(round(x), round(y)))
+        self.shell('input mouse -d 0 tap {} {}'.format(round(x), round(y)))
 
     def click_node(self, node, x=.5, y=.5):
         l, t, r, b = self.bounds(node)
@@ -54,7 +54,7 @@ class BilibiliDynamicCase(BaiduDynamicCase):
 
     def swipe(self, x1, y1, x2, y2, duration=400):
         self.foreground()
-        w, h = self.d.window_size()
+        w, h = self.screen_size()
         self.shell('input swipe {} {} {} {} {}'.format(
             round(w*x1), round(h*y1), round(w*x2), round(h*y2), duration))
 
@@ -86,6 +86,13 @@ class BilibiliDynamicCase(BaiduDynamicCase):
     def channel(self, title):
         self.click('tab_title', text=title)
         time.sleep(1)
+        if not any(n.get('selected') == 'true' for n in
+                   self.nodes(resourceId=self.PREFIX+'tab_title', text=title)):
+            # 直播频道的新版标签会过滤鼠标源 tap；仍按原生节点边界触屏点击。
+            node = self.nodes(resourceId=self.PREFIX+'tab_title', text=title)[0]
+            l, t, r, b = self.bounds(node)
+            w, h = self.screen_size()
+            self.d.click((l+r)/2/w, (t+b)/2/h)
         self.wait_for(lambda: any(n.get('selected') == 'true' for n in
                       self.nodes(resourceId=self.PREFIX+'tab_title', text=title)),
                       '未切换频道：'+title)
@@ -136,8 +143,10 @@ class BilibiliDynamicCase(BaiduDynamicCase):
 
     def up_page(self):
         self.wait_for(lambda: self.has('avatar'), '视频UP主头像未加载')
-        self.click('avatar')
-        self.wait_for(lambda: self.has(text='空间页'), '未进入UP主空间')
+        self.transition(lambda: self.click('avatar'),
+                        lambda: 'space' in self.current_app()['activity'].lower()
+                        or self.has(text='空间页') or self.has(text='投稿') and not self.is_video(),
+                        '未进入UP主空间')
         time.sleep(2)
 
     def up_video(self):
@@ -151,7 +160,7 @@ class BilibiliDynamicCase(BaiduDynamicCase):
         if len(tabs) != 1:
             raise RuntimeError('UP主投稿页标签不可定位')
         _, _, _, bottom = self.bounds(tabs[0])
-        w, h = self.d.window_size()
+        w, h = self.screen_size()
         self.click_point(w*.20, bottom + h*.10)
         self.wait_for(lambda: self.is_video() and self.has('avatar'), '比例点击未打开UP主首个视频')
 
@@ -174,7 +183,7 @@ class BilibiliDynamicCase(BaiduDynamicCase):
         time.sleep(2)
 
     def landscape(self):
-        w, h = self.d.window_size()
+        w, h = self.screen_size()
         return w > h
 
     def show_video_controls(self):
@@ -203,7 +212,7 @@ class BilibiliDynamicCase(BaiduDynamicCase):
         if not self.landscape():
             raise RuntimeError('双击播放操作要求横屏全屏')
         self.foreground()
-        w, h = self.d.window_size()
+        w, h = self.screen_size()
         # 短于80ms的按下在此机可能被过滤；连续两次80ms原地手势构成双击。
         self.shell('input swipe {0} {1} {0} {1} 80; input swipe {0} {1} {0} {1} 80'.format(
             round(w*.5), round(h*.5)))
@@ -250,8 +259,32 @@ class BilibiliDynamicCase(BaiduDynamicCase):
         self.click('controller_underlay')
         # 直播旋转按钮没有 ID/描述；相对播放器实时边界右下角定位，已实机验证。
         self.click_node(self.nodes(resourceId=self.PREFIX+'controller_underlay')[0], .94, .90)
-        self.wait_for(lambda: self.landscape() and self.has('live_room_landscape_input_view'),
+        # 新版横屏会自动隐藏输入栏，不能用弹幕输入框判断播放器方向。
+        def ready():
+            self.dismiss_live_prompt()
+            return self.landscape() and self.has('roomid')
+        self.wait_for(lambda: ready()
+                      and self.has('controller_underlay')
+                      and 'LiveRoomActivity' in self.current_app()['activity'],
                       '直播未切换横屏')
+
+    def dismiss_live_prompt(self):
+        # 横屏后延迟出现的关注弹窗有独立 close 节点，不点击关注按钮。
+        if self.has('follow_text') and self.has('close'):
+            self.click('close')
+            self.wait_for(lambda: not self.has('follow_text'), '直播关注提示未关闭')
+
+    def watch_live_fullscreen(self):
+        self.live_fullscreen()
+        deadline = time.monotonic() + 20
+        while time.monotonic() < deadline:
+            self.dismiss_live_prompt()
+            if not self.landscape() or 'LiveRoomActivity' not in self.current_app()['activity']:
+                raise RuntimeError('横屏观看期间离开直播播放器')
+            time.sleep(.8)
+        self.dismiss_live_prompt()
+        self.wait_for(lambda: self.landscape() and self.has('roomid')
+                      and self.has('controller_underlay'), '横屏观看结束时直播播放器不可用')
 
     def launcher_gesture(self):
         self.swipe(.5, .995, .5, .62, 250)

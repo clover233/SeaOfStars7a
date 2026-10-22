@@ -1,4 +1,4 @@
-"""小米相册 5.4.2.10：控件定位、比例手势及逐步性能采集。"""
+"""小米相册：控件定位、比例手势及逐步性能采集。"""
 import json
 import logging
 import os
@@ -25,11 +25,15 @@ class PhotoDynamicCase(DynamicAppCase):
         return result.output
 
     def foreground(self):
-        if self.current_app()['package'] not in (self.PACKAGE, 'com.hyper.gallery.plugin'):
-            raise RuntimeError('当前不在相册流程：' + str(self.current_app()))
+        current = self.current_app()
+        if (current['package'] not in (self.PACKAGE, 'com.hyper.gallery.plugin')
+                and not (current['package'] == 'com.miui.core'
+                         and current['activity'] == 'com.miui.gallery.activity.PhotoDetailActivity')):
+            raise RuntimeError('当前不在相册流程：' + str(current))
 
     def mark(self, reason):
         self._adapted = reason
+        self._adaptation = reason
         logging.info('适配替代：%s', reason)
 
     def ready(self, predicate, message):
@@ -38,7 +42,8 @@ class PhotoDynamicCase(DynamicAppCase):
 
     def choose(self, label):
         # 新版 Compose 控件多数将文字放在 content-desc。
-        for selector in ({'desc': label}, {'text': label}):
+        for selector in ({'desc': label}, {'text': label},
+                         {'desc': '未选中, ' + label}, {'desc': '已选中, ' + label}):
             if self.has(**selector):
                 self.click(**selector)
                 return
@@ -65,11 +70,19 @@ class PhotoDynamicCase(DynamicAppCase):
     def photos_ready(self):
         return self.has(desc='点击首页显示设置') and self.has(desc='点击搜索')
 
+    def bottom_tab(self, title):
+        height = self.screen_size()[1]
+        # Compose 新版将选中状态移至 selected，不再放进 content-desc。
+        return [n for n in self.nodes() if self.bounds(n)[1] > height * .85
+                and n.get('clickable') == 'true'
+                and n.get('content-desc') in (title, '未选中, ' + title, '已选中, ' + title)]
+
     def photos(self):
-        # 底部 tab 是语义控件；标题“照片”不能当成 tab 点击。
         for _ in range(8):
-            if self.has(desc='未选中, 照片'):
-                self.click(desc='未选中, 照片')
+            tabs = self.bottom_tab('照片')
+            if tabs:
+                if tabs[0].get('selected') != 'true':
+                    self.click_node(tabs[0])
                 self.ready(self.photos_ready, '照片 tab 未打开')
                 return
             if self.photos_ready():
@@ -79,7 +92,8 @@ class PhotoDynamicCase(DynamicAppCase):
 
     def albums(self):
         self.photos()
-        self.click(desc='未选中, 影集')
+        self.wait_for(lambda: bool(self.bottom_tab('影集')), '未找到影集 tab')
+        self.click_node(self.bottom_tab('影集')[0])
         self.ready(lambda:self.has(desc='全部照片\n', prefix=True), '影集主页未打开')
 
     def all_photos(self):
@@ -101,10 +115,17 @@ class PhotoDynamicCase(DynamicAppCase):
         for cycle in range(5):
             for inward in (True, True, False, False):
                 self.foreground()
+                # ScrollView 的默认 pinch 从全屏边缘起手，会触及底部“影集”tab。
+                # 将双指轨迹限制在截图核对过的照片网格内部，均按主屏比例换算。
+                width, height = self.screen_size()
+                wide = ((round(width * .22), round(height * .48)),
+                        (round(width * .78), round(height * .48)))
+                narrow = ((round(width * .44), round(height * .48)),
+                          (round(width * .56), round(height * .48)))
                 if inward:
-                    scroller.pinch_in(percent=35, steps=40)
+                    scroller.gesture(*wide, *narrow, steps=40)
                 else:
-                    scroller.pinch_out(percent=35, steps=40)
+                    scroller.gesture(*narrow, *wide, steps=40)
                 time.sleep(1)
                 self.require(desc='点击首页显示设置')
             self.d.screenshot(os.path.join(self.screenshot_dir_path, 'zoom_cycle_{}.png'.format(cycle+1)))
@@ -125,7 +146,7 @@ class PhotoDynamicCase(DynamicAppCase):
     def first_grid_point(self):
         # 自绘网格没有节点；从截图寻找持续的缩略图色块，排除短小的日期/统计文字。
         # 所有采样位置、连续高度和点击偏移均相对截图尺寸计算。
-        image=self.d.screenshot().convert('RGB')
+        image=self.d.screenshot(display_id=0).convert('RGB')
         width,height=image.size
         background=image.getpixel((round(width*.98),round(height*.18)))
         start=None
@@ -137,7 +158,7 @@ class PhotoDynamicCase(DynamicAppCase):
                     start=y
             elif start is not None:
                 if y-start>height*.04:
-                    return width*.1,start+min(width*.08,(y-start)*.4)
+                    return .1,(start+min(width*.08,(y-start)*.4))/height
                 start=None
         raise RuntimeError('截图中未识别到首行缩略图，不点击未知区域')
 
@@ -148,7 +169,9 @@ class PhotoDynamicCase(DynamicAppCase):
             self.require(desc='点击首页显示设置')
         elif not (self.has(desc='全部照片') or self.has(desc='视频')):
             raise RuntimeError('不在全部照片或视频相册')
-        self.transition(lambda:self.point(*self.first_grid_point()),self.viewer,'首个媒体未进入大图')
+        # 视频大图挂载比普通照片慢，重复点击会把已打开的大图再次当成网格识别。
+        self.pct(*self.first_grid_point())
+        self.wait_for(self.viewer, '首个媒体未进入大图', timeout=30)
 
     def controls(self):
         self.require_viewer()
@@ -213,8 +236,11 @@ class PhotoDynamicCase(DynamicAppCase):
         self.choose('更多')
         self.ready(lambda:self.has(desc='详情'), '视频更多菜单未打开')
         self.choose('详情')
-        self.ready(lambda:self.has(rid='file_info_title',package='com.hyper.gallery.plugin'), '视频详情未打开')
-        name = self.node(rid='file_info_title',package='com.hyper.gallery.plugin').get('text')
+        def details():
+            return [n for package in ('com.hyper.gallery.plugin', 'com.miui.core')
+                    for n in self.nodes(rid='file_info_title', package=package)]
+        self.ready(lambda: len(details()) == 1, '视频详情未打开')
+        name = details()[0].get('text')
         self._video_verified = name == getattr(self,'_video_name',None)
         self.back()
         self.ready(self.viewer,'详情返回后未回到视频')
@@ -257,9 +283,15 @@ class PhotoDynamicCase(DynamicAppCase):
         self.check_album_flow()
         self.d.send_keys('动态测试',clear=True)
         self.ready(lambda:self.has(text='动态测试'), '相册名称未输入')
-        self.choose('确定')
-        self.ready(lambda:self.has(desc='请选择项目'), '媒体选择页未打开')
+        self.transition(lambda:self.choose('确定'),
+                        lambda:self.has(desc='请选择项目'), '媒体选择页未打开')
         self._album_owned=True
+
+    def picker_tab_selected(self, index):
+        rid = 'segment_{}'.format(index)
+        # Compose 测试标签不一定是 Android 包名:id/resource 格式。
+        return any(n.get('resource-id') in (rid, self.PACKAGE + ':id/' + rid)
+                   and n.get('selected') == 'true' for n in self.nodes())
 
     def browse_picker(self):
         self.check_album_flow()
@@ -267,21 +299,24 @@ class PhotoDynamicCase(DynamicAppCase):
         self.scroll_grid()
         # 当前选择器以“照片/影集”分栏，照片列表同时包含图片和视频。
         self.choose('影集')
-        self.ready(lambda:self.has(desc='影集'), '选择器影集分栏未打开')
+        self.ready(lambda:self.picker_tab_selected(1), '选择器影集分栏未打开')
         self.choose('照片')
-        self.ready(lambda:self.has(desc='请选择项目'), '未返回媒体选择列表')
+        self.ready(lambda:self.picker_tab_selected(0)
+                   and self.has(desc='照片，', prefix=True), '未返回媒体选择列表')
         self.mark('图片和视频合并在照片列表，另浏览本版的影集分栏')
 
     def copy_media(self):
         self.check_album_flow()
         self.require(desc='请选择项目')
+        self.wait_for(lambda:self.has(desc='照片，',prefix=True), '选择器照片未加载')
         media=self.nodes(desc='照片，',prefix=True)
         if not media:
             raise RuntimeError('选择器没有可复制照片')
         l,t,r,b=self.bounds(media[0])
         # 选择圆圈在缩略图右下角；中心点击会进入预览，不能当成勾选。
         self.point(l+(r-l)*.82,t+(b-t)*.82)
-        self.ready(lambda:self.has(desc='显示1项所选内容'), '未勾选一张照片')
+        self.ready(lambda:self.has(desc='显示1项所选内容') or self.has(desc='显示所选内容1项'),
+                   '未勾选一张照片')
         self.choose('确认')
         self.ready(lambda:self.has(desc='选择照片添加方式'), '添加方式面板未打开')
         self.choose('复制')

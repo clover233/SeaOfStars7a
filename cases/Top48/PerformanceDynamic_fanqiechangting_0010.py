@@ -15,7 +15,7 @@ class PerformanceDynamic_fanqiechangting_0010(DynamicAppCase):
         return self.has(rid=self.HOME_ID) and bool(self.home_search_boxes())
 
     def home_search_boxes(self):
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         return [node for node in self.nodes(rid='title')
                 if self.bounds(node)[1] < height * .12]
 
@@ -27,9 +27,9 @@ class PerformanceDynamic_fanqiechangting_0010(DynamicAppCase):
                 self.pct(.1, .94)
                 time.sleep(2)
         self.wait_for(lambda: self.has(rid=self.HOME_ID), '未显示番茄畅听底部导航')
-        if not self.home_ready():
-            self.transition(lambda: self.click(rid=self.HOME_ID), self.home_ready,
-                            '番茄畅听未切换到首页')
+        # 底部首页在短剧频道也存在；仍实际点击，以恢复首页并滚回顶部。
+        self.click(rid=self.HOME_ID)
+        self.wait_for(self.home_ready, '番茄畅听未切换到首页')
 
     def launch(self):
         self.start()
@@ -44,6 +44,8 @@ class PerformanceDynamic_fanqiechangting_0010(DynamicAppCase):
         return sorted(nodes, key=lambda node: self.bounds(node)[1])[0]
 
     def search_olympics(self):
+        # 浏览/播放器返回后先恢复首页，不能假定先前的顶部搜索框仍在当前页。
+        self.return_home_tab()
         self.transition(lambda: self.click_node(self.search_box()),
                         lambda: self.has(rid='fpw') and self.has(text='搜索', rid='io'),
                         '番茄畅听搜索页未打开')

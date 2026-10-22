@@ -93,7 +93,7 @@ class ObservedAppCase(WeixinExtendedCase):
         self.browse(0, count)
 
     def bottom_node(self, label):
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         rows = [n for n in self.nodes() if self.bounds(n)[1] > height*.85
                 and (n.get('text') == label or n.get('content-desc') == label)]
         if rows:

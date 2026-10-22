@@ -26,7 +26,7 @@ class QQDynamicBase(DynamicAppCase):
 
     def swipe(self, x1=.5, y1=.78, x2=.5, y2=.32, duration=400):
         self.foreground()
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         self.shell('input mouse -d 0 swipe {} {} {} {} {}'.format(
             round(width*x1), round(height*y1), round(width*x2), round(height*y2), duration))
 
@@ -47,7 +47,7 @@ class QQDynamicBase(DynamicAppCase):
 
     def home(self):
         self.foreground()
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         self.shell('input touchscreen -d 0 swipe {} {} {} {} 300'.format(
             round(width*.5), round(height*.995), round(width*.5), round(height*.62)))
         time.sleep(1)
@@ -103,6 +103,8 @@ class QQDynamicCase(QQDynamicBase):
 
     def set_up(self):
         super().set_up()
+        from Cases.Top48.screen_text import ScreenshotText
+        self._picture_text = ScreenshotText()
         if self.NEED_TEST_IMAGE:
             # 素材准备放在性能步骤之外，避免推图/扫描计入发送图片的采集区间。
             self.prepare_image()
@@ -151,11 +153,17 @@ class QQDynamicCase(QQDynamicBase):
     def picture_ready(self):
         return self.has(rid='r90') or self.has(rid='1eh')
 
+    def expired_picture(self):
+        if self.has(text='图片已过期') or self.has(text='原图已过期'):
+            return True
+        return any('已过期' in row['text'] or '已被清理' in row['text']
+                   for row in self._picture_text.read(self.d))
+
     def space_picture(self):
         for _ in range(7):
             pictures = [n for n in self.nodes(desc='图片第', prefix=True)
-                        if self.bounds(n)[1] > self.d.window_size()[1]*.13
-                        and self.bounds(n)[3] < self.d.window_size()[1]*.94]
+                        if self.bounds(n)[1] > self.screen_size()[1]*.13
+                        and self.bounds(n)[3] < self.screen_size()[1]*.94]
             if pictures:
                 self.transition(lambda:self.click_node(pictures[0]), self.picture_ready, '动态图片未打开')
                 self.adapt('使用当前可见空间动态图片；当前实机素材为本人动态，替代好友动态图片')
@@ -175,6 +183,8 @@ class QQDynamicCase(QQDynamicBase):
                 self.swipe(start, .5, end, .5)
                 time.sleep(1)
                 if not self.picture_ready():
+                    if self.expired_picture():
+                        raise QQStepSkipped('群聊图片已过期，跳过剩余图片滑动；继续后续消息浏览')
                     raise RuntimeError('滑动图片后离开大图页')
 
     def space_slides(self):
@@ -223,7 +233,7 @@ class QQDynamicCase(QQDynamicBase):
 
     def side_to_messages(self):
         self.foreground()
-        width, height = self.d.window_size()
+        width, height = self.screen_size()
         self.shell('input touchscreen -d 0 swipe {} {} {} {} 300'.format(
             round(width*.005), round(height*.5), round(width*.45), round(height*.5)))
         time.sleep(1)

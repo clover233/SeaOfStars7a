@@ -105,7 +105,9 @@ class PerformanceDynamic_baidumap_0010(DynamicAppCase):
         self.transition(lambda: self.tap(resourceId=self.PREFIX + 'aiSearchActionBtn'),
                         lambda: self.d(resourceId=self.PREFIX + 'tv_first_text', text=query).exists,
                         '钟楼搜索未提交')
-        self.wait_for(lambda: self.d(className='android.webkit.WebView', text='检索列表页').exists,
+        # 新版检索 WebView 不再导出“检索列表页”名称，地点卡片仍有“到这去”。
+        self.wait_for(lambda: self.d(className='android.webkit.WebView', text='检索列表页').exists
+                      or self.control('tv_first_text').exists and self.d(text='到这去').exists,
                       '地点结果列表未加载，请检查网络', timeout=30)
 
     def select_xian_tower(self):
@@ -129,7 +131,7 @@ class PerformanceDynamic_baidumap_0010(DynamicAppCase):
 
     def tower_result_box(self):
         # UiSelector 的空 resourceId 会被忽略；从 XML 严格排除顶部搜索栏。
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         candidates = []
         for node in ET.fromstring(self.d.dump_hierarchy()).iter('node'):
             if (node.get('text') == '西安钟楼' and not node.get('resource-id')

@@ -10,6 +10,11 @@ class UcDynamicCase(ObservedAppCase):
     all_app_package_list = [PACKAGE]
     COMPONENT = PACKAGE + '/.main.UCMobile'
 
+    def foreground(self):
+        # 信息流广告在滑动中也会请求唤起其他应用，不能只在启动时关闭系统确认窗。
+        self.dismiss_system_prompt()
+        super().foreground()
+
     def dismiss_ads(self):
         super().dismiss_ads()
         if self.visible('退出UC', True) and self.visible('取消'):
@@ -25,7 +30,7 @@ class UcDynamicCase(ObservedAppCase):
 
     def main_ready(self):
         if self.has(desc='菜单') and self.has(desc='网盘') and self.has(desc='小说'):
-            height = self.d.window_size()[1]
+            height = self.screen_size()[1]
             if any(.12 < (self.bounds(n)[1]+self.bounds(n)[3])/2/height < .17
                    and n.get('text') for n in self.nodes()):
                 return True
@@ -48,7 +53,7 @@ class UcDynamicCase(ObservedAppCase):
 
     def channel(self, label):
         self.main_page()
-        height = self.d.window_size()[1]
+        height = self.screen_size()[1]
         for _ in range(6):
             nodes = [n for n in self.nodes(text=label) if self.bounds(n)[1] < height*.23]
             if nodes or self.visible(label, region=(0, .1, 1, .23)):
@@ -133,7 +138,7 @@ class UcDynamicCase(ObservedAppCase):
         self.main_page()
         def open_search():
             # 动态热词的 TextSwitcher 属于输入区；排除仅绘制边框的 search ID。
-            nodes = [n for n in self.nodes() if self.bounds(n)[1] < self.d.window_size()[1]*.13
+            nodes = [n for n in self.nodes() if self.bounds(n)[1] < self.screen_size()[1]*.13
                      and '搜索框' in n.get('content-desc', '')]
             text_nodes = [n for n in nodes if n.get('class') == 'android.widget.TextSwitcher']
             if not nodes:
